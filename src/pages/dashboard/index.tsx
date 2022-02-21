@@ -1,17 +1,20 @@
 import { NextPage } from 'next';
 import styled from 'styled-components';
+import Layout from '../../components/Layout';
 import TextFieldComponent from '../../components/Textfield';
 import Typography from '../../components/Typography';
+import graySum from '../../../public/image/icon/graySum.svg';
+import OverviewCard from '../../components/OverviewCard';
 
-const PageHeader = styled.section`
+const PageHeader = styled.div`
   display: flex;
 `;
 
-const Section = styled.section``;
+const FirstViewport = styled.section``;
 
-const SectionHeaderContent = styled.div``;
+const ViewportHeaderContent = styled.div``;
 
-const SectionHeader = styled.div`
+const ViewportHeader = styled.div`
   display: flex;
   justify-content: space-between;
 `;
@@ -20,19 +23,10 @@ const FilterDropdown = styled.div``;
 
 const Cards = styled.div`
   display: flex;
-  flex-basis: 30%;
+  flex-wrap: wrap;
 `;
 
-const OverviewCard = styled.div`
-  border-radius: 10px;
-  border: 1px solid #dbe3eb;
-  padding: 2rem;
-  margin-right: 2rem;
-`;
-
-const CardPeriod = styled.div`
-  display: flex;
-`;
+const SecondViewport = styled.section``;
 
 const Dashboard: NextPage = () => {
   const overviewCards = [
@@ -94,45 +88,73 @@ const Dashboard: NextPage = () => {
     },
   ];
   return (
-    <>
+    <Layout
+      menuItems={[
+        {
+          menuName: 'Invoices',
+          pathName: '',
+        },
+        {
+          menuName: 'Pay by Link',
+          pathName: '',
+        },
+        {
+          menuName: 'QR code payments',
+          pathName: '',
+        },
+      ]}
+    >
       <PageHeader>
         <Typography variant="h3">Dashboard</Typography>
         <TextFieldComponent />
       </PageHeader>
-      <Section>
-        <SectionHeader>
-          <SectionHeaderContent>
+      <FirstViewport>
+        <ViewportHeader>
+          <ViewportHeaderContent>
             <Typography variant="subtitle4">Overview</Typography>
             <Typography variant="body1">
               Headline figures for all merchants. Shows selected timeframe and
               all time
             </Typography>
-          </SectionHeaderContent>
+          </ViewportHeaderContent>
 
           <FilterDropdown>
             <Typography variant="body4">Period</Typography>
           </FilterDropdown>
-        </SectionHeader>
+        </ViewportHeader>
         <Cards>
           {overviewCards.map((el) => {
             return (
-              <OverviewCard key={el.label}>
-                <Typography variant="body4">{el.label}</Typography>
-                <Typography variant="subtitle4">{el.value}</Typography>
-                <CardPeriod>
-                  <Typography variant="body4">
-                    {el.totalValue}
-                    {' '}
-                  </Typography>
-
-                  <Typography variant="body4">{el.period}</Typography>
-                </CardPeriod>
-              </OverviewCard>
+              <OverviewCard
+                key={el.label}
+                props={{
+                  label: el.label,
+                  value: el.value,
+                  totalValue: el.totalValue,
+                  period: el.period,
+                  icon: el.icon,
+                }}
+              />
             );
           })}
         </Cards>
-      </Section>
-    </>
+      </FirstViewport>
+
+      <SecondViewport>
+        <ViewportHeader>
+          <ViewportHeaderContent>
+            <Typography variant="subtitle4">Transactions by size</Typography>
+            <Typography variant="body1">
+              Please filter by merchant(s) and timeframe
+            </Typography>
+            <TextFieldComponent />
+          </ViewportHeaderContent>
+          <FilterDropdown>
+            <Typography variant="body4">Period</Typography>
+          </FilterDropdown>
+        </ViewportHeader>
+      </SecondViewport>
+    </Layout>
   );
 };
 
