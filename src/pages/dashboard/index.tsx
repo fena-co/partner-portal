@@ -5,12 +5,21 @@ import TextFieldComponent from '../../components/Textfield';
 import Typography from '../../components/Typography';
 import graySum from '../../../public/image/icon/graySum.svg';
 import OverviewCard from '../../components/OverviewCard';
+import MerchantChart from '../../components/MerchantChart';
 
 const PageHeader = styled.div`
   display: flex;
+  align-items: center;
+  margin-bottom: 5rem;
 `;
 
-const FirstViewport = styled.section``;
+const H3 = styled(Typography)`
+  margin-right: 5rem;
+`;
+
+const FirstViewport = styled.section`
+  margin-bottom: 2rem;
+`;
 
 const ViewportHeaderContent = styled.div``;
 
@@ -26,7 +35,11 @@ const Cards = styled.div`
   flex-wrap: wrap;
 `;
 
-const SecondViewport = styled.section``;
+const SecondViewport = styled(FirstViewport)``;
+
+const ThirdViewport = styled(FirstViewport)``;
+
+const Chart = styled.div``;
 
 const Dashboard: NextPage = () => {
   const overviewCards = [
@@ -87,6 +100,30 @@ const Dashboard: NextPage = () => {
       icon: '',
     },
   ];
+
+  const transactionChartData = {
+    byAverageTransactionValue: [
+      { company: 'Allies Computing Ltd.', value: '1,450' },
+      { company: 'Anglo American Plc.', value: '1,380' },
+      { company: 'Antofagasta Plc.', value: '1,100' },
+      { company: 'Ashtead Group Plc.', value: '1,050' },
+      { company: 'Antofagasta Plc.', value: '980' },
+    ],
+    byNumberOfTransactions: [
+      { company: '', value: '' },
+      { company: '', value: '' },
+      { company: '', value: '' },
+      { company: '', value: '' },
+      { company: '', value: '' },
+    ],
+    byTransactionVolume: [
+      { company: '', value: '' },
+      { company: '', value: '' },
+      { company: '', value: '' },
+      { company: '', value: '' },
+      { company: '', value: '' },
+    ],
+  };
   return (
     <Layout
       menuItems={[
@@ -105,8 +142,13 @@ const Dashboard: NextPage = () => {
       ]}
     >
       <PageHeader>
-        <Typography variant="h3">Dashboard</Typography>
-        <TextFieldComponent />
+        <H3 variant="h3">Dashboard</H3>
+        <TextFieldComponent
+          inputProps={{
+            placeholder: 'Search',
+            type: 'text',
+          }}
+        />
       </PageHeader>
       <FirstViewport>
         <ViewportHeader>
@@ -119,7 +161,7 @@ const Dashboard: NextPage = () => {
           </ViewportHeaderContent>
 
           <FilterDropdown>
-            <Typography variant="body4">Period</Typography>
+            <Typography variant="body4">Period:</Typography>
           </FilterDropdown>
         </ViewportHeader>
         <Cards>
@@ -147,13 +189,39 @@ const Dashboard: NextPage = () => {
             <Typography variant="body1">
               Please filter by merchant(s) and timeframe
             </Typography>
-            <TextFieldComponent />
+            <TextFieldComponent
+              inputProps={{
+                placeholder: 'Search merchant',
+                type: 'text',
+              }}
+            />
           </ViewportHeaderContent>
           <FilterDropdown>
-            <Typography variant="body4">Period</Typography>
+            <Typography variant="body4">Period:</Typography>
           </FilterDropdown>
         </ViewportHeader>
       </SecondViewport>
+
+      <ThirdViewport>
+        <ViewportHeader>
+          <ViewportHeaderContent>
+            <Typography variant="subtitle4">Top 5 merchants</Typography>
+          </ViewportHeaderContent>
+          <FilterDropdown>
+            <Typography variant="body4">Period:</Typography>
+          </FilterDropdown>
+        </ViewportHeader>
+        <Chart>
+          <Typography variant="subtitle5">
+            By average transaction value{' '}
+          </Typography>
+          {transactionChartData.byAverageTransactionValue.map((el) => {
+            return (
+              <MerchantChart key={el.company} props={{ company: el.company, value: el.value }} />
+            );
+          })}
+        </Chart>
+      </ThirdViewport>
     </Layout>
   );
 };
