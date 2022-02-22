@@ -64,75 +64,75 @@ const Dashboard: NextPage = () => {
       value: '£1,000,400',
       totalValue: '£15,800,540',
       period: 'all time',
-      icon: '',
+      icon: '/image/icon/graySum.svg',
     },
     {
       label: 'Average transaction value',
       value: '£650.00',
       totalValue: '£683.00',
       period: 'all time',
-      icon: '',
+      icon: '/image/icon/graySum.svg',
     },
     {
       label: 'Average number of transactions',
       value: '74',
       totalValue: '72',
       period: 'all time',
-      icon: '',
+      icon: '/image/icon/graySum.svg',
     },
     {
       label: 'Average transaction volume',
       value: '£48,100',
       totalValue: '£62,100',
       period: 'all time',
-      icon: '',
+      icon: '/image/icon/graySum.svg',
     },
     {
       label: 'Fees charged by Fena',
       value: '£216.48',
       totalValue: '£1,927.20',
       period: 'all time',
-      icon: '',
+      icon: '/image/icon/graySum.svg',
     },
     {
       label: 'Number of active merchants',
       value: '1200',
       totalValue: '1200',
       period: 'all time',
-      icon: '',
+      icon: '/image/icon/graySum.svg',
     },
     {
       label: 'Number of inactive merchants',
       value: '12',
       totalValue: '30',
       period: 'all time',
-      icon: '',
+      icon: '/image/icon/graySum.svg',
     },
   ];
 
-  const transactionChartData = {
-    byAverageTransactionValue: [
-      { company: 'Allies Computing Ltd.', value: '1,450' },
-      { company: 'Anglo American Plc.', value: '1,380' },
-      { company: 'Antofagasta Plc.', value: '1,100' },
-      { company: 'Ashtead Group Plc.', value: '1,050' },
-      { company: 'Antofagasta Plc.', value: '980' },
-    ],
-    byNumberOfTransactions: [
-      { company: '', value: '' },
-      { company: '', value: '' },
-      { company: '', value: '' },
-      { company: '', value: '' },
-      { company: '', value: '' },
-    ],
-    byTransactionVolume: [
-      { company: '', value: '' },
-      { company: '', value: '' },
-      { company: '', value: '' },
-      { company: '', value: '' },
-      { company: '', value: '' },
-    ],
-  };
+  const transactionChartData = [
+    {
+      name: 'byAverageTransactionValue',
+      items: [
+        { company: 'Allies Computing Ltd.', value: '1,450' },
+        { company: 'Anglo American Plc.', value: '1,380' },
+        { company: 'Antofagasta Plc.', value: '1,100' },
+        { company: 'Ashtead Group Plc.', value: '1,050' },
+        { company: 'Antofagasta Plc.', value: '980' },
+      ],
+    },
+    {
+      name: 'byAverageTransactionValue',
+      items: [
+        { company: '', value: '' },
+        { company: '', value: '' },
+        { company: '', value: '' },
+        { company: '', value: '' },
+        { company: '', value: '' },
+      ],
+    },
+  ];
+
   return (
     <Layout
       menuItems={[
@@ -224,14 +224,6 @@ const Dashboard: NextPage = () => {
           <Typography variant="subtitle5">
             By average transaction value.{' '}
           </Typography>
-          {transactionChartData.byAverageTransactionValue.map((el) => {
-            return (
-              <MerchantChart
-                key={el.value}
-                props={{ company: el.company, value: el.value }}
-              />
-            );
-          })}
         </Chart>
       </ThirdViewport>
     </Layout>

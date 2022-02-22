@@ -42,6 +42,7 @@ interface OverviewCardProps {
 }
 
 const OverviewCard = ({ props }: OverviewCardProps) => {
+  console.log(props.icon)
   return (
     <Container key={props.label}>
       <CardHeader>
@@ -52,7 +53,7 @@ const OverviewCard = ({ props }: OverviewCardProps) => {
       <Subtitle4 variant="subtitle4">{props.value}</Subtitle4>
       <CardPeriod>
         <Typography variant="body1">{props.totalValue}</Typography>
-
+        &nbsp;
         <Typography variant="body4">{props.period}</Typography>
       </CardPeriod>
     </Container>
