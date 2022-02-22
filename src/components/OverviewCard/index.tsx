@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import Typography from '../Typography';
 
 const Container = styled.div`
+  background-color: #fff;
   border-radius: 10px;
   border: 1px solid #dbe3eb;
   padding: 2rem;
@@ -19,7 +20,9 @@ const Container = styled.div`
 `;
 
 const CardHeader = styled.div`
-  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 `;
 
 const Subtitle4 = styled(Typography)`
@@ -42,12 +45,11 @@ interface OverviewCardProps {
 }
 
 const OverviewCard = ({ props }: OverviewCardProps) => {
-  console.log(props.icon)
   return (
     <Container key={props.label}>
       <CardHeader>
-        {/* <Image src={props.icon} layout='fill' alt="card icon" /> */}
         <Typography variant="body4">{props.label}</Typography>
+        <Image src={props.icon} width="50px" height="50px" alt="card icon" />
       </CardHeader>
 
       <Subtitle4 variant="subtitle4">{props.value}</Subtitle4>
