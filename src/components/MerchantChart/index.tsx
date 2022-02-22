@@ -5,6 +5,10 @@ const Container = styled.div``;
 
 const Item = styled.div`
   display: flex;
+  border: 1px solid #dbe3eb;
+  padding: 1rem;
+  border-radius: 5px;
+  margin-bottom: 1rem;
 `;
 
 interface MerchantChart {

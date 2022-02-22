@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import Layout from '../../components/Layout';
 import TextFieldComponent from '../../components/Textfield';
 import Typography from '../../components/Typography';
-import graySum from '../../../public/image/icon/graySum.svg';
+import graySum from '/image/icon/graySum.svg';
 import OverviewCard from '../../components/OverviewCard';
 import MerchantChart from '../../components/MerchantChart';
 
@@ -15,6 +15,15 @@ const PageHeader = styled.div`
 
 const H3 = styled(Typography)`
   margin-right: 5rem;
+`;
+
+const Subtitle4 = styled(Typography)`
+  font-weight: bold;
+  margin-bottom: 1rem;
+`;
+
+const Body1 = styled(Typography)`
+  margin-bottom: 1rem;
 `;
 
 const FirstViewport = styled.section`
@@ -48,7 +57,7 @@ const Dashboard: NextPage = () => {
       value: '984',
       totalValue: '8,760',
       period: 'all time',
-      icon: '',
+      icon: '/image/icon/graySum.svg',
     },
     {
       label: 'Total transaction value',
@@ -153,11 +162,11 @@ const Dashboard: NextPage = () => {
       <FirstViewport>
         <ViewportHeader>
           <ViewportHeaderContent>
-            <Typography variant="subtitle4">Overview</Typography>
-            <Typography variant="body1">
+            <Subtitle4 variant="subtitle4">Overview</Subtitle4>
+            <Body1 variant="body1">
               Headline figures for all merchants. Shows selected timeframe and
               all time
-            </Typography>
+            </Body1>
           </ViewportHeaderContent>
 
           <FilterDropdown>
@@ -185,10 +194,10 @@ const Dashboard: NextPage = () => {
       <SecondViewport>
         <ViewportHeader>
           <ViewportHeaderContent>
-            <Typography variant="subtitle4">Transactions by size</Typography>
-            <Typography variant="body1">
+            <Subtitle4 variant="subtitle4">Transactions by size</Subtitle4>
+            <Body1 variant="body1">
               Please filter by merchant(s) and timeframe
-            </Typography>
+            </Body1>
             <TextFieldComponent
               inputProps={{
                 placeholder: 'Search merchant',
@@ -205,7 +214,7 @@ const Dashboard: NextPage = () => {
       <ThirdViewport>
         <ViewportHeader>
           <ViewportHeaderContent>
-            <Typography variant="subtitle4">Top 5 merchants</Typography>
+            <Subtitle4 variant="subtitle4">Top 5 merchants</Subtitle4>
           </ViewportHeaderContent>
           <FilterDropdown>
             <Typography variant="body4">Period:</Typography>
@@ -213,11 +222,14 @@ const Dashboard: NextPage = () => {
         </ViewportHeader>
         <Chart>
           <Typography variant="subtitle5">
-            By average transaction value{' '}
+            By average transaction value.{' '}
           </Typography>
           {transactionChartData.byAverageTransactionValue.map((el) => {
             return (
-              <MerchantChart key={el.company} props={{ company: el.company, value: el.value }} />
+              <MerchantChart
+                key={el.value}
+                props={{ company: el.company, value: el.value }}
+              />
             );
           })}
         </Chart>
