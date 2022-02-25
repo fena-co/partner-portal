@@ -8,6 +8,8 @@ import OverviewCard from '../../components/OverviewCard';
 import MerchantChart from '../../components/MerchantChart';
 import FeeCard from '../../components/FeeCard';
 import Image from 'next/image';
+import TransactionsTable from '../../components/TransactionsTable';
+import PeriodSelectDropdown from '../../components/PeriodSelectDropdown';
 
 const PageHeader = styled.div`
   display: flex;
@@ -54,7 +56,15 @@ const ViewportHeader = styled.div`
   justify-content: space-between;
 `;
 
-const FilterDropdown = styled.div``;
+const FilterDropdown = styled.div`
+  display: flex;
+  align-items: center;
+  height: 2rem;
+`;
+
+const Period = styled(Typography)`
+  margin-right: 1rem;
+`;
 
 const Cards = styled.div`
   display: flex;
@@ -64,6 +74,10 @@ const Cards = styled.div`
 const FeeCards = styled(Cards)``;
 
 const SecondViewport = styled(FirstViewport)``;
+
+const TableWrapper = styled.div`
+  margin-top: 1rem;
+`;
 
 const ThirdViewport = styled(FirstViewport)``;
 
@@ -240,7 +254,8 @@ const Dashboard: NextPage = () => {
           </ViewportHeaderContent>
 
           <FilterDropdown>
-            <Typography variant="body4">Period:</Typography>
+            <Period variant="body4">Period:</Period>
+            <PeriodSelectDropdown />
           </FilterDropdown>
         </ViewportHeader>
         <Cards>
@@ -276,9 +291,13 @@ const Dashboard: NextPage = () => {
             />
           </ViewportHeaderContent>
           <FilterDropdown>
-            <Typography variant="body4">Period:</Typography>
+            <Period variant="body4">Period:</Period>
+            <PeriodSelectDropdown />
           </FilterDropdown>
         </ViewportHeader>
+        <TableWrapper>
+          <TransactionsTable />
+        </TableWrapper>
       </SecondViewport>
 
       <ThirdViewport>
@@ -297,7 +316,8 @@ const Dashboard: NextPage = () => {
             </TitleAndImage>
           </ViewportHeaderContent>
           <FilterDropdown>
-            <Typography variant="body4">Period:</Typography>
+            <Period variant="body4">Period:</Period>
+            <PeriodSelectDropdown />
           </FilterDropdown>
         </ViewportHeader>
 
@@ -339,7 +359,8 @@ const Dashboard: NextPage = () => {
             </TitleAndImage>
           </ViewportHeaderContent>
           <FilterDropdown>
-            <Typography variant="body4">Period:</Typography>
+            <Period variant="body4">Period:</Period>
+            <PeriodSelectDropdown />
           </FilterDropdown>
         </ViewportHeader>
         <Chart>
@@ -374,7 +395,8 @@ const Dashboard: NextPage = () => {
             </Body1>
           </ViewportHeaderContent>
           <FilterDropdown>
-            <Typography variant="body4">Period:</Typography>
+            <Period variant="body4">Period:</Period>
+            <PeriodSelectDropdown />
           </FilterDropdown>
         </ViewportHeader>
         <FeeCards>
