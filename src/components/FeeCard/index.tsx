@@ -12,9 +12,6 @@ const Wrapper = styled.div`
       font-weight: bold;
       font-size: 20px;
       padding: 2rem;
-      /* display: flex;
-      flex-basis: 100%;
-      justify-content: center; */
     }
   }
   &:nth-child(2n) {

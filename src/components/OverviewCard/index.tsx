@@ -25,6 +25,8 @@ const CardHeader = styled.div`
   justify-content: space-between;
 `;
 
+const Icon = styled(Image)``;
+
 const Subtitle4 = styled(Typography)`
   font-weight: bold;
 `;
@@ -41,6 +43,7 @@ interface OverviewCardProps {
     totalValue: string;
     period: string;
     icon: string;
+    iconsDisabled?: boolean;
   };
 }
 
@@ -49,7 +52,15 @@ const OverviewCard = ({ props }: OverviewCardProps) => {
     <Container key={props.label}>
       <CardHeader>
         <Typography variant="body4">{props.label}</Typography>
-        <Image src={props.icon} width="50px" height="50px" alt="card icon" />
+        {!props.iconsDisabled && (
+          <Icon
+            aria-disabled={props.iconsDisabled}
+            src={props.icon}
+            width="50px"
+            height="50px"
+            alt="card icon"
+          />
+        )}
       </CardHeader>
 
       <Subtitle4 variant="subtitle4">{props.value}</Subtitle4>

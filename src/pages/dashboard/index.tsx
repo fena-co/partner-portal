@@ -3,13 +3,15 @@ import styled from 'styled-components';
 import Layout from '../../components/Layout';
 import TextFieldComponent from '../../components/Textfield';
 import Typography from '../../components/Typography';
-import graySum from '/image/icon/graySum.svg';
 import OverviewCard from '../../components/OverviewCard';
 import MerchantChart from '../../components/MerchantChart';
 import FeeCard from '../../components/FeeCard';
 import Image from 'next/image';
 import TransactionsTable from '../../components/TransactionsTable';
 import PeriodSelectDropdown from '../../components/PeriodSelectDropdown';
+import SelectDropDown from '../../components/PeriodSelectDropdown';
+import { ChangeEvent, useState } from 'react';
+import DropdownItems from '../../components/PeriodSelectDropdown/dropdownItems';
 
 const PageHeader = styled.div`
   display: flex;
@@ -60,6 +62,7 @@ const FilterDropdown = styled.div`
   display: flex;
   align-items: center;
   height: 2rem;
+  width: 25%;
 `;
 
 const Period = styled(Typography)`
@@ -217,6 +220,17 @@ const Dashboard: NextPage = () => {
       icon: '/image/icon/greenDollar.svg',
     },
   ];
+
+  const [isAllTime, setAllTime] = useState(false);
+
+  const onItemChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.value === 'All time') {
+      setAllTime(!false);
+    } else {
+      setAllTime(!true);
+    }
+  };
+
   return (
     <Layout
       menuItems={[
@@ -255,7 +269,7 @@ const Dashboard: NextPage = () => {
 
           <FilterDropdown>
             <Period variant="body4">Period:</Period>
-            <PeriodSelectDropdown />
+            <DropdownItems onItemChangeHandler={onItemChangeHandler} />
           </FilterDropdown>
         </ViewportHeader>
         <Cards>
@@ -269,6 +283,7 @@ const Dashboard: NextPage = () => {
                   totalValue: el.totalValue,
                   period: el.period,
                   icon: el.icon,
+                  iconsDisabled: isAllTime,
                 }}
               />
             );
@@ -292,7 +307,7 @@ const Dashboard: NextPage = () => {
           </ViewportHeaderContent>
           <FilterDropdown>
             <Period variant="body4">Period:</Period>
-            <PeriodSelectDropdown />
+            <DropdownItems onItemChangeHandler={onItemChangeHandler} />
           </FilterDropdown>
         </ViewportHeader>
         <TableWrapper>
@@ -317,7 +332,7 @@ const Dashboard: NextPage = () => {
           </ViewportHeaderContent>
           <FilterDropdown>
             <Period variant="body4">Period:</Period>
-            <PeriodSelectDropdown />
+            <DropdownItems onItemChangeHandler={onItemChangeHandler} />
           </FilterDropdown>
         </ViewportHeader>
 
@@ -360,7 +375,7 @@ const Dashboard: NextPage = () => {
           </ViewportHeaderContent>
           <FilterDropdown>
             <Period variant="body4">Period:</Period>
-            <PeriodSelectDropdown />
+            <DropdownItems onItemChangeHandler={onItemChangeHandler} />
           </FilterDropdown>
         </ViewportHeader>
         <Chart>
@@ -396,7 +411,7 @@ const Dashboard: NextPage = () => {
           </ViewportHeaderContent>
           <FilterDropdown>
             <Period variant="body4">Period:</Period>
-            <PeriodSelectDropdown />
+            <DropdownItems onItemChangeHandler={onItemChangeHandler} />
           </FilterDropdown>
         </ViewportHeader>
         <FeeCards>
