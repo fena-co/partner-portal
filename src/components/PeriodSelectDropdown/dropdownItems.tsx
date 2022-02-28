@@ -1,5 +1,4 @@
 import { ChangeEvent } from 'react';
-import Select from 'react-dropdown-select';
 import styled from 'styled-components';
 import SelectDropDown from '.';
 
@@ -8,7 +7,7 @@ const DropdownItemLabel = styled.label`
 `;
 
 interface DropdownItemsContent {
-  onItemChangeHandler: (e: any) => any;
+  onItemChangeHandler: (e: ChangeEvent<HTMLInputElement>) => void;
 }
 
 const DropdownItems = ({ onItemChangeHandler }: DropdownItemsContent) => {

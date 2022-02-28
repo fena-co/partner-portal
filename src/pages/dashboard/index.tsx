@@ -8,8 +8,6 @@ import MerchantChart from '../../components/MerchantChart';
 import FeeCard from '../../components/FeeCard';
 import Image from 'next/image';
 import TransactionsTable from '../../components/TransactionsTable';
-import PeriodSelectDropdown from '../../components/PeriodSelectDropdown';
-import SelectDropDown from '../../components/PeriodSelectDropdown';
 import { ChangeEvent, useState } from 'react';
 import DropdownItems from '../../components/PeriodSelectDropdown/dropdownItems';
 
