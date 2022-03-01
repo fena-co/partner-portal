@@ -1,0 +1,8 @@
+[
+  { "size": "£0-500", "value": "20", "totalValue": "200" },
+  { "size": "£501-100", "value": "30", "totalValue": "300" },
+  { "size": "£1001-5000", "value": "15", "totalValue": "150" },
+  { "size": "£5000-20,000", "value": "10", "totalValue": "100" },
+  { "size": "£20,000+", "value": "5", "totalValue": "50" },
+  { "size": "Total", "value": "80", "totalValue": "800" }
+]

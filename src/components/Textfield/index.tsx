@@ -68,7 +68,6 @@ const Container = styled.div<{ fullWidth?: boolean }>`
   ${({ fullWidth }) => (fullWidth ? FullWidth : '')}
   display: flex;
   flex-direction: column;
-  padding-top: 20px;
 `;
 
 const WrapperTextField = styled.div<{
