@@ -2,9 +2,18 @@ import { ChangeEvent } from 'react';
 import styled from 'styled-components';
 import SelectDropDown from '.';
 
+
 const DropdownItemLabel = styled.label`
-  margin-bottom: 1rem;
+  padding: 1rem;
+  cursor: pointer;
+  transition: 300ms;
+  &:hover {
+    background-color: #f4f7f9;
+  }
 `;
+
+
+const StyledInput = styled.input``;
 
 interface DropdownItemsContent {
   onItemChangeHandler: (e: ChangeEvent<HTMLInputElement>) => void;
@@ -14,7 +23,7 @@ const DropdownItems = ({ onItemChangeHandler }: DropdownItemsContent) => {
   return (
     <SelectDropDown fullWidth>
       <DropdownItemLabel>
-        <input
+        <StyledInput
           onChange={(e) => onItemChangeHandler(e)}
           type="checkbox"
           value="Last 7 days"
@@ -22,7 +31,7 @@ const DropdownItems = ({ onItemChangeHandler }: DropdownItemsContent) => {
         Last 7 days
       </DropdownItemLabel>
       <DropdownItemLabel>
-        <input
+        <StyledInput
           onChange={(e) => onItemChangeHandler(e)}
           type="checkbox"
           value="Last 28 days"
@@ -31,7 +40,7 @@ const DropdownItems = ({ onItemChangeHandler }: DropdownItemsContent) => {
         Last 28 days
       </DropdownItemLabel>
       <DropdownItemLabel>
-        <input
+        <StyledInput
           onChange={(e) => onItemChangeHandler(e)}
           type="checkbox"
           value="Last year"
@@ -40,7 +49,7 @@ const DropdownItems = ({ onItemChangeHandler }: DropdownItemsContent) => {
         Last year
       </DropdownItemLabel>
       <DropdownItemLabel>
-        <input
+        <StyledInput
           onChange={(e) => onItemChangeHandler(e)}
           type="checkbox"
           value="All time"

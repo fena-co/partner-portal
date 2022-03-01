@@ -43,7 +43,6 @@ interface OverviewCardProps {
     totalValue: string;
     period: string;
     icon: string;
-    iconsDisabled?: boolean;
   };
 }
 
@@ -52,15 +51,8 @@ const OverviewCard = ({ props }: OverviewCardProps) => {
     <Container key={props.label}>
       <CardHeader>
         <Typography variant="body4">{props.label}</Typography>
-        {!props.iconsDisabled && (
-          <Icon
-            aria-disabled={props.iconsDisabled}
-            src={props.icon}
-            width="50px"
-            height="50px"
-            alt="card icon"
-          />
-        )}
+
+        <Icon src={props.icon} width="50px" height="50px" alt="card icon" />
       </CardHeader>
 
       <Subtitle4 variant="subtitle4">{props.value}</Subtitle4>
