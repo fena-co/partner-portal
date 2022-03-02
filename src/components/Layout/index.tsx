@@ -45,7 +45,7 @@ const Layout: FC<ILayout> = ({
   return (
     <Container>
       <Header variant={hideControls ? 'home' : 'dashboard'} />
-      {!!menuItems && <Navbar variant={'dashboard'} />}
+      {!!menuItems && <Navbar menuItems={menuItems} variant={'dashboard'} />}
       <Body>
         <Main bgColorMain={bgColorMain} isHiddenNavbar={!menuItems}>
           {children}

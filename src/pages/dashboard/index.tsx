@@ -10,6 +10,7 @@ import Image from 'next/image';
 import TransactionsTable from '../../components/TransactionsTable';
 import { ChangeEvent, useState } from 'react';
 import DropdownItems from '../../components/PeriodSelectDropdown/dropdownItems';
+import { ROUTES } from '../../constant/route';
 
 const PageHeader = styled.div`
   display: flex;
@@ -228,16 +229,16 @@ const Dashboard: NextPage = () => {
     <Layout
       menuItems={[
         {
-          menuName: 'Invoices',
-          pathName: '',
+          menuName: 'Dashboard',
+          pathName: ROUTES.DASHBOARD,
         },
         {
-          menuName: 'Pay by Link',
-          pathName: '',
+          menuName: 'Transactions',
+          pathName: ROUTES.TRANSACTION,
         },
         {
-          menuName: 'QR code payments',
-          pathName: '',
+          menuName: 'Merchants',
+          pathName: ROUTES.MERCHANTS,
         },
       ]}
     >
