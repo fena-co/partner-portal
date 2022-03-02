@@ -7,7 +7,9 @@ export enum ROUTES {
   PRODUCT = '/product',
   CONNECT = '/connect',
   REPROT = '/report',
-  TRANSACTION = '/dashboard/transactions',
+  DASHBOARD = '/dashboard',
+  TRANSACTION = '/transactions',
+  MERCHANTS = '/merchants',
   PAYMENT = '/dashboard/payment',
   PAYMENT_INVOICE = '/dashboard/payment/invoice',
   // PAYMENT_INVOICE_PREVIEW = '/dashboard/payment/invoice/preview',
@@ -25,4 +27,5 @@ export enum ROUTES {
   MANAGE_TERMINAL = '/dashboard/settings/terminal',
   TERMINAL_SETTINGS = '/dashboard/settings/terminal',
   CREATE_TERMINAL = '/dashboard/settings/terminal/create',
+  
 }

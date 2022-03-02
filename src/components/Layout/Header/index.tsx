@@ -159,20 +159,20 @@ const ContextMenuItem = styled.div`
   }
 `;
 
-const menus = [
-  {
-    name: 'Transactions',
-    pathName: ROUTES.TRANSACTION,
-  },
-  {
-    name: 'Payments',
-    pathName: ROUTES.PAYMENT,
-  },
-  /*{
-    name: 'Products',
-    pathName: ROUTES.PRODUCT,
-  },*/
-];
+// const menus = [
+//   {
+//     name: 'Transactions',
+//     pathName: ROUTES.TRANSACTION,
+//   },
+//   {
+//     name: 'Payments',
+//     pathName: ROUTES.PAYMENT,
+//   },
+//   /*{
+//     name: 'Products',
+//     pathName: ROUTES.PRODUCT,
+//   },*/
+// ];
 
 const homeMenus = [
   {
@@ -248,7 +248,7 @@ const Header = ({ variant }: { variant: 'home' | 'dashboard' }) => {
         <Logo />
       </LogoContainer>
       <MenuList moveRight={variant === 'home'}>
-        {(variant === 'dashboard' ? menus : homeMenus).map((menu: any) => (
+        {/* {(variant === 'dashboard' ? menus : homeMenus).map((menu: any) => (
           <MenuItem
             active={isMenuActive(menu.pathName)}
             key={menu.name}
@@ -256,7 +256,7 @@ const Header = ({ variant }: { variant: 'home' | 'dashboard' }) => {
           >
             {menu.name}
           </MenuItem>
-        ))}
+        ))} */}
       </MenuList>
       {variant === 'dashboard' && (
         <HeaderButtonContainer>
