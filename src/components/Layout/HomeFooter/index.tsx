@@ -40,6 +40,7 @@ const SocialWrapper = styled.div`
 
   svg:not(:first-child):not(:last-child) {
     padding: 0 4px;
+    box-sizing: content-box;
   }
 `;
 
