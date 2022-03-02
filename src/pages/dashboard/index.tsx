@@ -15,6 +15,7 @@ const PageHeader = styled.div`
   display: flex;
   align-items: center;
   margin-bottom: 5rem;
+  width: 50%;
 `;
 
 const TitleAndImage = styled.div`
@@ -219,14 +220,8 @@ const Dashboard: NextPage = () => {
     },
   ];
 
-  const [isAllTime, setAllTime] = useState(false);
-
   const onItemChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.value === 'All time') {
-      setAllTime(!false);
-    } else {
-      setAllTime(!true);
-    }
+    console.log(e.target.value);
   };
 
   return (
@@ -249,6 +244,7 @@ const Dashboard: NextPage = () => {
       <PageHeader>
         <H3 variant="h3">Dashboard</H3>
         <TextFieldComponent
+          fullWidth
           inputProps={{
             placeholder: 'Search',
             type: 'text',
@@ -264,7 +260,6 @@ const Dashboard: NextPage = () => {
               all time
             </Body1>
           </ViewportHeaderContent>
-
           <FilterDropdown>
             <Period variant="body4">Period:</Period>
             <DropdownItems onItemChangeHandler={onItemChangeHandler} />
@@ -281,7 +276,6 @@ const Dashboard: NextPage = () => {
                   totalValue: el.totalValue,
                   period: el.period,
                   icon: el.icon,
-                  iconsDisabled: isAllTime,
                 }}
               />
             );
