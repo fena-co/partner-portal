@@ -26,9 +26,7 @@ const StyledCheckbox = styled.div<{ checked?: boolean }>`
   margin-right: 13px;
 `;
 
-const HiddenCheckBox = styled.input`
-  display: none;
-`;
+const HiddenCheckBox = styled.input``;
 
 const Label = styled.label`
   display: flex;
@@ -39,13 +37,26 @@ const Label = styled.label`
 interface ICheckBox {
   checked?: boolean;
   label?: string;
-  onChange?: (event?: any) => void;
+  onChange: (event: any) => void;
 }
 
-const CheckBox: FC<ICheckBox> = ({ checked, label, ...rest }) => {
+const CheckBox: FC<ICheckBox> = ({
+  onChange,
+  checked,
+  label,
+  ...rest
+}) => {
+
+
   return (
     <Label>
-      <HiddenCheckBox type="checkbox" {...rest} checked={checked} />
+      <HiddenCheckBox
+        value={label}
+        onChange={(e) => onChange(e)}
+        type="checkbox"
+        {...rest}
+        checked={checked}
+      />
       <StyledCheckbox checked={checked}>
         {checked && <CheckIcon />}
       </StyledCheckbox>

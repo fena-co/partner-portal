@@ -1,28 +1,51 @@
-import { ChangeEvent } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import SelectDropDown from '.';
+import CheckBox from '../Checkbox';
 
+// const DropdownItemLabel = styled.label`
+//   padding: 1rem;
+//   cursor: pointer;
+//   transition: 300ms;
+//   &:hover {
+//     background-color: #f4f7f9;
+//   }
+// `;
 
-const DropdownItemLabel = styled.label`
+// const StyledInput = styled.input``;
+
+const CheckBoxWrapper = styled.div`
   padding: 1rem;
-  cursor: pointer;
-  transition: 300ms;
+  transition: 500ms;
   &:hover {
     background-color: #f4f7f9;
   }
 `;
 
+// interface DropdownItemsContent {
+//   onItemChangeHandler: (e: ChangeEvent<HTMLInputElement>) => void;
+// }
 
-const StyledInput = styled.input``;
+const DropdownItems = () => {
+  const [isChecked, setChecked] = useState(false);
 
-interface DropdownItemsContent {
-  onItemChangeHandler: (e: ChangeEvent<HTMLInputElement>) => void;
-}
+  const onChangeHandler = (e: any) => {
+    console.log(e.target.value);
+  };
 
-const DropdownItems = ({ onItemChangeHandler }: DropdownItemsContent) => {
   return (
     <SelectDropDown fullWidth>
-      <DropdownItemLabel>
+      <CheckBoxWrapper>
+        <CheckBox onChange={onChangeHandler} checked={isChecked} />
+      </CheckBoxWrapper>
+      <CheckBoxWrapper>
+        <CheckBox onChange={onChangeHandler} checked={isChecked} />
+      </CheckBoxWrapper>
+      <CheckBoxWrapper>
+        <CheckBox onChange={onChangeHandler} checked={isChecked} />
+      </CheckBoxWrapper>
+
+      {/* <DropdownItemLabel>
         <StyledInput
           onChange={(e) => onItemChangeHandler(e)}
           type="checkbox"
@@ -56,7 +79,7 @@ const DropdownItems = ({ onItemChangeHandler }: DropdownItemsContent) => {
           name="2"
         />
         All time
-      </DropdownItemLabel>
+      </DropdownItemLabel> */}
     </SelectDropDown>
   );
 };
