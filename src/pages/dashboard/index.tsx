@@ -6,10 +6,11 @@ import Typography from '../../components/Typography';
 import OverviewCard from '../../components/OverviewCard';
 import MerchantChart from '../../components/MerchantChart';
 import FeeCard from '../../components/FeeCard';
-import Image from 'next/image';
 import TransactionsTable from '../../components/TransactionsTable';
 import { ChangeEvent, useState } from 'react';
 import DropdownItems from '../../components/PeriodSelectDropdown/dropdownItems';
+import RedArrowDown from 'image/icon/redArrowDown.svg';
+import GreenArrowUp from 'image/icon/greenArrowUp.svg';
 
 const PageHeader = styled.div`
   display: flex;
@@ -317,10 +318,11 @@ const Dashboard: NextPage = () => {
         <ViewportHeader>
           <ViewportHeaderContent>
             <TitleAndImage>
-              <Image
-                src="/image/icon/greenArrowUp.svg"
-                width="50px"
-                height="50px"
+              <GreenArrowUp
+                style={{
+                  width: '50px',
+                  height: '50px',
+                }}
                 alt="card icon"
               />
               <Subtitle4NoMargin variant="subtitle4">
@@ -360,10 +362,11 @@ const Dashboard: NextPage = () => {
         <ViewportHeader>
           <ViewportHeaderContent>
             <TitleAndImage>
-              <Image
-                src="/image/icon/redArrowDown.svg"
-                width="50px"
-                height="50px"
+              <RedArrowDown
+                style={{
+                  width: '50px',
+                  height: '50px',
+                }}
                 alt="card icon"
               />
               <Subtitle4NoMargin variant="subtitle4">
