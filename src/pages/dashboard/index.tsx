@@ -260,7 +260,6 @@ const Dashboard: NextPage = () => {
               all time
             </Body1>
           </ViewportHeaderContent>
-
           <FilterDropdown>
             <Period variant="body4">Period:</Period>
             <DropdownItems onItemChangeHandler={onItemChangeHandler} />
