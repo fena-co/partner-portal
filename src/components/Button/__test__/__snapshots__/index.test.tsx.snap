@@ -1,0 +1,98 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Button Block renders correctly with variant contained  1`] = `
+.c0 {
+  font-family: Montserrat;
+  font-style: normal;
+  font-size: 15px;
+  line-height: 18px;
+  text-align: center;
+  border-radius: 5px;
+  padding: 12px 21px;
+  cursor: pointer;
+  box-sizing: border-box;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: space-evenly;
+  -webkit-justify-content: space-evenly;
+  -ms-flex-pack: space-evenly;
+  justify-content: space-evenly;
+  background-color: #13273f;
+  color: #ffffff;
+  border: none;
+  font-weight: 600;
+}
+
+.c0:hover {
+  background-color: #19385e;
+  box-sizing: border-box;
+  -webkit-filter: drop-shadow(0px 7px 20px rgba(108,108,138,0.6));
+  filter: drop-shadow(0px 7px 20px rgba(108,108,138,0.6));
+}
+
+.c0:disabled {
+  box-sizing: border-box;
+  background: #dbe3eb;
+  -webkit-filter: none;
+  filter: none;
+}
+
+<button
+  className="c0"
+>
+  Submit
+</button>
+`;
+
+exports[`Button Block renders correctly with variant outlined  1`] = `
+.c0 {
+  font-family: Montserrat;
+  font-style: normal;
+  font-size: 15px;
+  line-height: 18px;
+  text-align: center;
+  border-radius: 5px;
+  padding: 12px 21px;
+  cursor: pointer;
+  box-sizing: border-box;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: space-evenly;
+  -webkit-justify-content: space-evenly;
+  -ms-flex-pack: space-evenly;
+  justify-content: space-evenly;
+  background-color: #ffffff;
+  font-weight: 600;
+  border: 1px solid #dbe3eb;
+  color: #0e233e;
+}
+
+.c0:hover {
+  box-sizing: border-box;
+  border: 1px solid #13273f;
+}
+
+.c0:disabled {
+  border: 1px solid #dbe3eb;
+  box-sizing: border-box;
+  color: #dbe3eb;
+}
+
+<button
+  className="c0"
+>
+  Submit
+</button>
+`;
