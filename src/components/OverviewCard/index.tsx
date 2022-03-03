@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import styled from 'styled-components';
 import Typography from '../Typography';
 
@@ -25,7 +24,10 @@ const CardHeader = styled.div`
   justify-content: space-between;
 `;
 
-const Icon = styled(Image)``;
+const Icon = styled.img`
+  width: 50px;
+  height: 50px;
+`;
 
 const Subtitle4 = styled(Typography)`
   font-weight: bold;

@@ -1,15 +1,16 @@
+import GreenArrowUp from 'image/icon/greenArrowUp.svg';
+import RedArrowDown from 'image/icon/redArrowDown.svg';
 import { NextPage } from 'next';
+import { ChangeEvent } from 'react';
 import styled from 'styled-components';
-import Layout from '../../components/Layout';
-import TextFieldComponent from '../../components/Textfield';
-import Typography from '../../components/Typography';
-import OverviewCard from '../../components/OverviewCard';
-import MerchantChart from '../../components/MerchantChart';
 import FeeCard from '../../components/FeeCard';
-import Image from 'next/image';
-import TransactionsTable from '../../components/TransactionsTable';
-import { ChangeEvent, useState } from 'react';
+import Layout from '../../components/Layout';
+import MerchantChart from '../../components/MerchantChart';
+import OverviewCard from '../../components/OverviewCard';
 import DropdownItems from '../../components/PeriodSelectDropdown/dropdownItems';
+import TextFieldComponent from '../../components/Textfield';
+import TransactionsTable from '../../components/TransactionsTable';
+import Typography from '../../components/Typography';
 import { ROUTES } from '../../constant/route';
 
 const PageHeader = styled.div`
@@ -312,10 +313,11 @@ const Dashboard: NextPage = () => {
         <ViewportHeader>
           <ViewportHeaderContent>
             <TitleAndImage>
-              <Image
-                src="/image/icon/greenArrowUp.svg"
-                width="50px"
-                height="50px"
+              <GreenArrowUp
+                style={{
+                  width: '50px',
+                  height: '50px',
+                }}
                 alt="card icon"
               />
               <Subtitle4NoMargin variant="subtitle4">
@@ -355,10 +357,11 @@ const Dashboard: NextPage = () => {
         <ViewportHeader>
           <ViewportHeaderContent>
             <TitleAndImage>
-              <Image
-                src="/image/icon/redArrowDown.svg"
-                width="50px"
-                height="50px"
+              <RedArrowDown
+                style={{
+                  width: '50px',
+                  height: '50px',
+                }}
                 alt="card icon"
               />
               <Subtitle4NoMargin variant="subtitle4">

@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import styled from 'styled-components';
 import Typography from '../Typography';
 
@@ -69,7 +68,7 @@ const FeeCard = ({ props }: OverviewCardProps) => {
       <Container key={props.label}>
         <CardHeader>
           <Typography variant="body4">{props.label}</Typography>
-          <Image src={props.icon} width="50px" height="50px" alt="card icon" />
+          <img src={props.icon} width="50px" height="50px" alt="card icon" />
         </CardHeader>
 
         <Subtitle4 variant="subtitle4">{props.value}</Subtitle4>
