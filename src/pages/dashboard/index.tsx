@@ -61,8 +61,8 @@ const ViewportHeader = styled.div`
 const FilterDropdown = styled.div`
   display: flex;
   align-items: center;
-  height: 2rem;
   width: 25%;
+  max-height: 2rem;
 `;
 
 const Period = styled(Typography)`
@@ -263,7 +263,7 @@ const Dashboard: NextPage = () => {
           </ViewportHeaderContent>
           <FilterDropdown>
             <Period variant="body4">Period:</Period>
-            <DropdownItems onItemChangeHandler={onItemChangeHandler} />
+            <DropdownItems />
           </FilterDropdown>
         </ViewportHeader>
         <Cards>
@@ -300,7 +300,7 @@ const Dashboard: NextPage = () => {
           </ViewportHeaderContent>
           <FilterDropdown>
             <Period variant="body4">Period:</Period>
-            <DropdownItems onItemChangeHandler={onItemChangeHandler} />
+            <DropdownItems />
           </FilterDropdown>
         </ViewportHeader>
         <TableWrapper>
@@ -325,7 +325,7 @@ const Dashboard: NextPage = () => {
           </ViewportHeaderContent>
           <FilterDropdown>
             <Period variant="body4">Period:</Period>
-            <DropdownItems onItemChangeHandler={onItemChangeHandler} />
+            <DropdownItems />
           </FilterDropdown>
         </ViewportHeader>
 
@@ -368,7 +368,7 @@ const Dashboard: NextPage = () => {
           </ViewportHeaderContent>
           <FilterDropdown>
             <Period variant="body4">Period:</Period>
-            <DropdownItems onItemChangeHandler={onItemChangeHandler} />
+            <DropdownItems />
           </FilterDropdown>
         </ViewportHeader>
         <Chart>
@@ -404,7 +404,7 @@ const Dashboard: NextPage = () => {
           </ViewportHeaderContent>
           <FilterDropdown>
             <Period variant="body4">Period:</Period>
-            <DropdownItems onItemChangeHandler={onItemChangeHandler} />
+            <DropdownItems />
           </FilterDropdown>
         </ViewportHeader>
         <FeeCards>

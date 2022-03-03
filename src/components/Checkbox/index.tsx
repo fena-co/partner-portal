@@ -1,11 +1,11 @@
-import { FC } from 'react';
+import { FC, useEffect, useState } from 'react';
 import styled, { css } from 'styled-components';
 import Typography from '../Typography';
 
 import CheckIcon from 'image/icon/check.svg';
 
 const CheckedStyle = css`
-  background: #13273f;
+  background: #2cd19e;
 `;
 
 const UncheckedStyle = css`
@@ -26,39 +26,56 @@ const StyledCheckbox = styled.div<{ checked?: boolean }>`
   margin-right: 13px;
 `;
 
-const HiddenCheckBox = styled.input``;
+const HiddenCheckBox = styled.input`
+  /* display: none; */
+`;
 
 const Label = styled.label`
   display: flex;
   align-items: center;
   cursor: pointer;
+  & > input {
+    &:hover {
+      ${CheckIcon}
+    }
+  }
 `;
 
 interface ICheckBox {
   checked?: boolean;
   label?: string;
   onChange: (event: any) => void;
+  id?: string;
+  value: string;
 }
 
 const CheckBox: FC<ICheckBox> = ({
   onChange,
+  id,
+  value,
   checked,
   label,
   ...rest
 }) => {
-
+  const [isChecked, setChecked] = useState(false);
+  useEffect(() => {
+    if (id === value) {
+      setChecked(!false);
+    }
+  }, [id, value]);
 
   return (
-    <Label>
+    <Label form={id}>
       <HiddenCheckBox
         value={label}
         onChange={(e) => onChange(e)}
         type="checkbox"
+        id={id}
         {...rest}
-        checked={checked}
+        checked={isChecked}
       />
-      <StyledCheckbox checked={checked}>
-        {checked && <CheckIcon />}
+      <StyledCheckbox checked={isChecked}>
+        {isChecked && <CheckIcon />}
       </StyledCheckbox>
       {label && (
         <Typography variant="body4" style={{ color: '#6c6c8a' }}>
