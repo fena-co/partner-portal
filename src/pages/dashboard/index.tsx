@@ -11,6 +11,7 @@ import TransactionsTable from '../../components/TransactionsTable';
 import { ChangeEvent, useState } from 'react';
 import DropdownItems from '../../components/PeriodSelectDropdown/dropdownItems';
 import { ROUTES } from '../../constant/route';
+import SearchBox from '../../components/SearchBox';
 
 const PageHeader = styled.div`
   display: flex;
@@ -244,13 +245,7 @@ const Dashboard: NextPage = () => {
     >
       <PageHeader>
         <H3 variant="h3">Dashboard</H3>
-        <TextFieldComponent
-          fullWidth
-          inputProps={{
-            placeholder: 'Search',
-            type: 'text',
-          }}
-        />
+        <SearchBox />
       </PageHeader>
       <FirstViewport>
         <ViewportHeader>
@@ -291,12 +286,7 @@ const Dashboard: NextPage = () => {
             <Body1 variant="body1">
               Please filter by merchant(s) and timeframe
             </Body1>
-            <TextFieldComponent
-              inputProps={{
-                placeholder: 'Search merchant',
-                type: 'text',
-              }}
-            />
+            <SearchBox />
           </ViewportHeaderContent>
           <FilterDropdown>
             <Period variant="body4">Period:</Period>
