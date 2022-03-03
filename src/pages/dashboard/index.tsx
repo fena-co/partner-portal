@@ -1,21 +1,23 @@
-import { NextPage } from 'next';
-import styled from 'styled-components';
-import Layout from '../../components/Layout';
-import TextFieldComponent from '../../components/Textfield';
-import Typography from '../../components/Typography';
-import OverviewCard from '../../components/OverviewCard';
-import MerchantChart from '../../components/MerchantChart';
-import FeeCard from '../../components/FeeCard';
-import TransactionsTable from '../../components/TransactionsTable';
-import { ChangeEvent, useState } from 'react';
-import DropdownItems from '../../components/PeriodSelectDropdown/dropdownItems';
-import RedArrowDown from 'image/icon/redArrowDown.svg';
 import GreenArrowUp from 'image/icon/greenArrowUp.svg';
+import RedArrowDown from 'image/icon/redArrowDown.svg';
+import { NextPage } from 'next';
+import { ChangeEvent } from 'react';
+import styled from 'styled-components';
+import FeeCard from '../../components/FeeCard';
+import Layout from '../../components/Layout';
+import MerchantChart from '../../components/MerchantChart';
+import OverviewCard from '../../components/OverviewCard';
+import DropdownItems from '../../components/PeriodSelectDropdown/dropdownItems';
+import TextFieldComponent from '../../components/Textfield';
+import TransactionsTable from '../../components/TransactionsTable';
+import Typography from '../../components/Typography';
+import { ROUTES } from '../../constant/route';
 
 const PageHeader = styled.div`
   display: flex;
   align-items: center;
   margin-bottom: 5rem;
+  width: 50%;
 `;
 
 const TitleAndImage = styled.div`
@@ -220,36 +222,31 @@ const Dashboard: NextPage = () => {
     },
   ];
 
-  const [isAllTime, setAllTime] = useState(false);
-
   const onItemChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.value === 'All time') {
-      setAllTime(!false);
-    } else {
-      setAllTime(!true);
-    }
+    console.log(e.target.value);
   };
 
   return (
     <Layout
       menuItems={[
         {
-          menuName: 'Invoices',
-          pathName: '',
+          menuName: 'Dashboard',
+          pathName: ROUTES.DASHBOARD,
         },
         {
-          menuName: 'Pay by Link',
-          pathName: '',
+          menuName: 'Transactions',
+          pathName: ROUTES.TRANSACTION,
         },
         {
-          menuName: 'QR code payments',
-          pathName: '',
+          menuName: 'Merchants',
+          pathName: ROUTES.MERCHANTS,
         },
       ]}
     >
       <PageHeader>
         <H3 variant="h3">Dashboard</H3>
         <TextFieldComponent
+          fullWidth
           inputProps={{
             placeholder: 'Search',
             type: 'text',
@@ -265,7 +262,6 @@ const Dashboard: NextPage = () => {
               all time
             </Body1>
           </ViewportHeaderContent>
-
           <FilterDropdown>
             <Period variant="body4">Period:</Period>
             <DropdownItems onItemChangeHandler={onItemChangeHandler} />
@@ -282,7 +278,6 @@ const Dashboard: NextPage = () => {
                   totalValue: el.totalValue,
                   period: el.period,
                   icon: el.icon,
-                  iconsDisabled: isAllTime,
                 }}
               />
             );

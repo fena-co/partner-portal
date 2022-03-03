@@ -65,7 +65,6 @@ const DropDownList = styled.div`
   border: 1px solid #dbe3eb;
   box-sizing: border-box;
   border-radius: 5px;
-  padding: 1rem;
   margin-top: 8px;
   background: #fff;
   max-height: 300px;
@@ -97,12 +96,6 @@ const FieldLabel = styled.div`
   padding-bottom: 8px;
   line-height: 17px;
 `;
-
-interface ValContent {
-  val: {
-    label: string;
-  }[];
-}
 
 interface ISelectDropdown {
   leftIcon?: any;
