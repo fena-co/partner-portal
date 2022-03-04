@@ -23,25 +23,28 @@ const DropdownItems = () => {
     <SelectDropDown value={displayValue} fullWidth>
       <CheckBoxWrapper>
         <CheckBox
-          onChange={onChangeHandler}
-          value={displayValue}
-          id="Last 7 days"
+          onChange={(e) => {
+            e.target.checked && setValue('7');
+          }}
+          checked={displayValue === '7'}
           label="Last 7 days"
         />
       </CheckBoxWrapper>
       <CheckBoxWrapper>
         <CheckBox
-          onChange={onChangeHandler}
-          value={displayValue}
-          id="Last 28 days"
+          onChange={(e) => {
+            e.target.checked && setValue('28');
+          }}
+          checked={displayValue === '28'}
           label="Last 28 days"
         />
       </CheckBoxWrapper>
       <CheckBoxWrapper>
         <CheckBox
-          onChange={onChangeHandler}
-          value={displayValue}
-          id="Last year"
+          onChange={(e) => {
+            e.target.checked && setValue('year');
+          }}
+          checked={displayValue === 'year'}
           label="Last year"
         />
       </CheckBoxWrapper>
