@@ -14,11 +14,6 @@ const CheckBoxWrapper = styled.div`
 const DropdownItems = () => {
   const [displayValue, setValue] = useState('');
 
-  const onChangeHandler = (e: any) => {
-    setValue(e.target.value);
-    console.log(e.target.value);
-  };
-
   return (
     <SelectDropDown value={displayValue} fullWidth>
       <CheckBoxWrapper>

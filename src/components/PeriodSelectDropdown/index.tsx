@@ -116,16 +116,16 @@ const SelectDropDown: FC<ISelectDropdown> = (props) => {
 
   const handleExpand = () => setIsOpen(!isOpen);
 
-  useEffect(() => {
-    const clickOnWindows = (e: any) => {
-      if (ref.current !== e.target && e.target !== valueRef.current) {
-        setIsOpen(false);
-      }
-    };
-    window.addEventListener('click', clickOnWindows);
+  // useEffect(() => {
+  //   const clickOnWindows = (e: any) => {
+  //     if (ref.current !== e.target && e.target !== valueRef.current) {
+  //       setIsOpen(false);
+  //     }
+  //   };
+  //   window.addEventListener('click', clickOnWindows);
 
-    return () => window.removeEventListener('click', clickOnWindows);
-  }, []);
+  //   return () => window.removeEventListener('click', clickOnWindows);
+  // }, []);
 
   return (
     <Container style={props.style} fullWidth={props.fullWidth}>
