@@ -28,7 +28,7 @@ import {
 } from '../../components/StyledComponents';
 import Typography from '../../components/Typography';
 import { ROUTES } from '../../constant/route';
-import { Transaction, TransactionStatus } from '../../types/api';
+import { TransactionStatus } from '../../types/api';
 import Preview from './Preview';
 
 const menus = [
@@ -174,15 +174,15 @@ const Transactions: NextPage = () => {
                       <tr>
                         <TableHeaderCell>Fena ID</TableHeaderCell>
                         <TableHeaderCell>Amount</TableHeaderCell>
+                        <TableHeaderCell>Fee</TableHeaderCell>
                         <TableHeaderCell>Status</TableHeaderCell>
-                        <TableHeaderCell>Payment Type</TableHeaderCell>
+                        <TableHeaderCell>Merchant</TableHeaderCell>
                         <TableHeaderCell>Date Completed</TableHeaderCell>
-                        <TableHeaderCell>Notes</TableHeaderCell>
                         <TableHeaderCell></TableHeaderCell>
                       </tr>
                     </TableHeader>
                     <tbody>
-                      {transactions.map((item: Transaction) => (
+                      {transactions.map((item: any) => (
                         <TableBodyRow
                           key={item._id}
                           onClick={() => {
@@ -192,26 +192,17 @@ const Transactions: NextPage = () => {
                         >
                           <TableBodyCell>{item._id}</TableBodyCell>
                           <AmmountCell>£{item.amount}</AmmountCell>
+                          <AmmountCell>{item.fee}</AmmountCell>
                           <TableBodyCell>
                             <StatusWrapper status={item.status}>
                               {item.status}
                             </StatusWrapper>
                           </TableBodyCell>
-                          <TableBodyCell>{item.paymentType}</TableBodyCell>
+                          <TableBodyCell>{item.merchantName}</TableBodyCell>
                           <TableBodyCell>
                             {item.completedOn
                               ? moment(item.completedOn).format('MM/DD/YYYY')
                               : 'None'}
-                          </TableBodyCell>
-                          <TableBodyCell>
-                            <Hypertext
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setIsModalOpen(true);
-                              }}
-                            >
-                              {item.notes ? 'View' : 'Add Note'}
-                            </Hypertext>
                           </TableBodyCell>
                           <TableBodyCell>
                             <ContextMenu

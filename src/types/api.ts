@@ -149,6 +149,17 @@ export interface Transaction {
   notes?: Array<string>;
 }
 
+export enum MerchantStatus {
+  ACTIVE = 'active',
+  INACTIVE = 'inactive',
+  DISABLED = 'disabled',
+}
+
+export interface Merchant {
+  _id: string;
+  [key: string]: any;
+}
+
 export enum PaymentTypes {
   LINK = 'link',
   QR = 'qr',
