@@ -12,34 +12,47 @@ const CheckBoxWrapper = styled.div`
 `;
 
 const DropdownItems = () => {
+  const [isOpen, setIsOpen] = useState(false);
   const [displayValue, setValue] = useState('');
+  console.log(displayValue);
+
+  const handleExpand = () => setIsOpen(!isOpen);
+  console.log(isOpen);
 
   return (
-    <SelectDropDown value={displayValue} fullWidth>
+    <SelectDropDown
+      handleExpand={handleExpand}
+      isOpen={isOpen}
+      value={displayValue}
+      fullWidth
+    >
       <CheckBoxWrapper>
         <CheckBox
+          onClick={handleExpand}
           onChange={(e) => {
-            e.target.checked && setValue('7');
+            e.target.checked && setValue('Last 7 days');
           }}
-          checked={displayValue === '7'}
+          checked={displayValue === 'Last 7 days'}
           label="Last 7 days"
         />
       </CheckBoxWrapper>
       <CheckBoxWrapper>
         <CheckBox
+          onClick={handleExpand}
           onChange={(e) => {
-            e.target.checked && setValue('28');
+            e.target.checked && setValue('Last 28 days');
           }}
-          checked={displayValue === '28'}
+          checked={displayValue === 'Last 28 days'}
           label="Last 28 days"
         />
       </CheckBoxWrapper>
       <CheckBoxWrapper>
         <CheckBox
+          onClick={handleExpand}
           onChange={(e) => {
-            e.target.checked && setValue('year');
+            e.target.checked && setValue('Last year');
           }}
-          checked={displayValue === 'year'}
+          checked={displayValue === 'Last year'}
           label="Last year"
         />
       </CheckBoxWrapper>

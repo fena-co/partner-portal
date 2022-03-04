@@ -41,6 +41,7 @@ interface ICheckBox {
   checked?: boolean;
   label?: string;
   onChange?: (event?: any) => void;
+  onClick: () => void;
 }
 
 const CheckBox: FC<ICheckBox> = ({ checked, label, ...rest }) => {

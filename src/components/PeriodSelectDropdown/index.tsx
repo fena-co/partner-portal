@@ -107,14 +107,17 @@ interface ISelectDropdown {
   placeholder?: string;
   label?: string;
   required?: boolean;
+  isOpen: boolean;
+  handleExpand: () => void;
 }
 
 const SelectDropDown: FC<ISelectDropdown> = (props) => {
-  const [isOpen, setIsOpen] = useState(false);
+  // const [isOpen, setIsOpen] = useState(false);
   const ref = useRef(null);
   const valueRef = useRef(null);
 
-  const handleExpand = () => setIsOpen(!isOpen);
+  // const handleExpand = () => setIsOpen(!isOpen);
+  // console.log(isOpen);
 
   // useEffect(() => {
   //   const clickOnWindows = (e: any) => {
@@ -137,8 +140,8 @@ const SelectDropDown: FC<ISelectDropdown> = (props) => {
       )}
       <DropDownHeader
         error={props.error}
-        isOpen={isOpen}
-        onClick={handleExpand}
+        isOpen={props.isOpen}
+        onClick={props.handleExpand}
         ref={ref}
       >
         {props.leftIcon && (
@@ -153,15 +156,17 @@ const SelectDropDown: FC<ISelectDropdown> = (props) => {
         >
           {props.value ? props.value : props.placeholder}
         </ValueSelect>
-        {isOpen ? <ArrowUp /> : <ArrowDown />}
+        {props.isOpen ? <ArrowUp /> : <ArrowDown />}
       </DropDownHeader>
-      {isOpen && (
+      {props.isOpen && (
         <DropDownListContainer>
           <DropDownList>{props.children}</DropDownList>
         </DropDownListContainer>
       )}
       {props.error && (
-        <ErrorMessage style={{ visibility: isOpen ? 'hidden' : 'visible' }}>
+        <ErrorMessage
+          style={{ visibility: props.isOpen ? 'hidden' : 'visible' }}
+        >
           {props.error}
         </ErrorMessage>
       )}
