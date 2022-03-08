@@ -1,62 +1,61 @@
-import { ChangeEvent } from 'react';
+import { useState } from 'react';
 import styled from 'styled-components';
 import SelectDropDown from '.';
+import CheckBox from '../Checkbox';
 
-
-const DropdownItemLabel = styled.label`
+const CheckBoxWrapper = styled.div`
   padding: 1rem;
-  cursor: pointer;
-  transition: 300ms;
+  transition: 500ms;
   &:hover {
     background-color: #f4f7f9;
   }
 `;
 
+const DropdownItems = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [displayValue, setValue] = useState('');
+  console.log(displayValue);
 
-const StyledInput = styled.input``;
+  const handleExpand = () => setIsOpen(!isOpen);
+  console.log(isOpen);
 
-interface DropdownItemsContent {
-  onItemChangeHandler: (e: ChangeEvent<HTMLInputElement>) => void;
-}
-
-const DropdownItems = ({ onItemChangeHandler }: DropdownItemsContent) => {
   return (
-    <SelectDropDown fullWidth>
-      <DropdownItemLabel>
-        <StyledInput
-          onChange={(e) => onItemChangeHandler(e)}
-          type="checkbox"
-          value="Last 7 days"
+    <SelectDropDown
+      handleExpand={handleExpand}
+      isOpen={isOpen}
+      value={displayValue}
+      fullWidth
+    >
+      <CheckBoxWrapper>
+        <CheckBox
+          onClick={handleExpand}
+          onChange={(e) => {
+            e.target.checked && setValue('Last 7 days');
+          }}
+          checked={displayValue === 'Last 7 days'}
+          label="Last 7 days"
         />
-        Last 7 days
-      </DropdownItemLabel>
-      <DropdownItemLabel>
-        <StyledInput
-          onChange={(e) => onItemChangeHandler(e)}
-          type="checkbox"
-          value="Last 28 days"
-          name="2"
+      </CheckBoxWrapper>
+      <CheckBoxWrapper>
+        <CheckBox
+          onClick={handleExpand}
+          onChange={(e) => {
+            e.target.checked && setValue('Last 28 days');
+          }}
+          checked={displayValue === 'Last 28 days'}
+          label="Last 28 days"
         />
-        Last 28 days
-      </DropdownItemLabel>
-      <DropdownItemLabel>
-        <StyledInput
-          onChange={(e) => onItemChangeHandler(e)}
-          type="checkbox"
-          value="Last year"
-          name="2"
+      </CheckBoxWrapper>
+      <CheckBoxWrapper>
+        <CheckBox
+          onClick={handleExpand}
+          onChange={(e) => {
+            e.target.checked && setValue('Last year');
+          }}
+          checked={displayValue === 'Last year'}
+          label="Last year"
         />
-        Last year
-      </DropdownItemLabel>
-      <DropdownItemLabel>
-        <StyledInput
-          onChange={(e) => onItemChangeHandler(e)}
-          type="checkbox"
-          value="All time"
-          name="2"
-        />
-        All time
-      </DropdownItemLabel>
+      </CheckBoxWrapper>
     </SelectDropDown>
   );
 };

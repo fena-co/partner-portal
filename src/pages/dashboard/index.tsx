@@ -12,6 +12,7 @@ import TextFieldComponent from '../../components/Textfield';
 import TransactionsTable from '../../components/TransactionsTable';
 import Typography from '../../components/Typography';
 import { ROUTES } from '../../constant/route';
+import SearchBox from '../../components/SearchBox';
 
 const PageHeader = styled.div`
   display: flex;
@@ -62,8 +63,8 @@ const ViewportHeader = styled.div`
 const FilterDropdown = styled.div`
   display: flex;
   align-items: center;
-  height: 2rem;
   width: 25%;
+  max-height: 2rem;
 `;
 
 const Period = styled(Typography)`
@@ -245,13 +246,7 @@ const Dashboard: NextPage = () => {
     >
       <PageHeader>
         <H3 variant="h3">Dashboard</H3>
-        <TextFieldComponent
-          fullWidth
-          inputProps={{
-            placeholder: 'Search',
-            type: 'text',
-          }}
-        />
+        <SearchBox />
       </PageHeader>
       <FirstViewport>
         <ViewportHeader>
@@ -264,7 +259,7 @@ const Dashboard: NextPage = () => {
           </ViewportHeaderContent>
           <FilterDropdown>
             <Period variant="body4">Period:</Period>
-            <DropdownItems onItemChangeHandler={onItemChangeHandler} />
+            <DropdownItems />
           </FilterDropdown>
         </ViewportHeader>
         <Cards>
@@ -292,16 +287,11 @@ const Dashboard: NextPage = () => {
             <Body1 variant="body1">
               Please filter by merchant(s) and timeframe
             </Body1>
-            <TextFieldComponent
-              inputProps={{
-                placeholder: 'Search merchant',
-                type: 'text',
-              }}
-            />
+            <SearchBox />
           </ViewportHeaderContent>
           <FilterDropdown>
             <Period variant="body4">Period:</Period>
-            <DropdownItems onItemChangeHandler={onItemChangeHandler} />
+            <DropdownItems />
           </FilterDropdown>
         </ViewportHeader>
         <TableWrapper>
@@ -327,7 +317,7 @@ const Dashboard: NextPage = () => {
           </ViewportHeaderContent>
           <FilterDropdown>
             <Period variant="body4">Period:</Period>
-            <DropdownItems onItemChangeHandler={onItemChangeHandler} />
+            <DropdownItems />
           </FilterDropdown>
         </ViewportHeader>
 
@@ -371,7 +361,7 @@ const Dashboard: NextPage = () => {
           </ViewportHeaderContent>
           <FilterDropdown>
             <Period variant="body4">Period:</Period>
-            <DropdownItems onItemChangeHandler={onItemChangeHandler} />
+            <DropdownItems />
           </FilterDropdown>
         </ViewportHeader>
         <Chart>
@@ -407,7 +397,7 @@ const Dashboard: NextPage = () => {
           </ViewportHeaderContent>
           <FilterDropdown>
             <Period variant="body4">Period:</Period>
-            <DropdownItems onItemChangeHandler={onItemChangeHandler} />
+            <DropdownItems />
           </FilterDropdown>
         </ViewportHeader>
         <FeeCards>
