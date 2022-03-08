@@ -12,7 +12,6 @@ const DropdownItemLabel = styled.label`
   }
 `;
 
-
 const StyledInput = styled.input``;
 
 interface DropdownItemsContent {
