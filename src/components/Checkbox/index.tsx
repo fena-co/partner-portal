@@ -5,7 +5,8 @@ import Typography from '../Typography';
 import CheckIcon from 'image/icon/check.svg';
 
 const CheckedStyle = css`
-  background: #13273f;
+  // background: #13273f;
+  background: #2cd19e;
 `;
 
 const UncheckedStyle = css`
@@ -19,10 +20,10 @@ const StyledCheckbox = styled.div<{ checked?: boolean }>`
   display: flex;
   align-items: center;
   justify-content: center;
+  border-radius: 5px;
 
   ${({ checked }) => (checked ? CheckedStyle : UncheckedStyle)}
   box-sizing: border-box;
-  border-radius: 2px;
   margin-right: 13px;
 `;
 
@@ -40,6 +41,7 @@ interface ICheckBox {
   checked?: boolean;
   label?: string;
   onChange?: (event?: any) => void;
+  onClick: () => void;
 }
 
 const CheckBox: FC<ICheckBox> = ({ checked, label, ...rest }) => {
