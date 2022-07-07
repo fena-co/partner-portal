@@ -126,7 +126,7 @@ function ContextMenu(props: ContextMenuProps) {
           setIsOpen(!isOpen);
         }}
       >
-        <a href="#">
+        <a>
           <ThreeDots />
         </a>
 

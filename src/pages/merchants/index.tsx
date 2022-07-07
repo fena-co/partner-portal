@@ -11,30 +11,42 @@ import { LoadingBlock } from '../../components/LoadingBlock';
 import Paginator from '../../components/Paginator';
 import SearchBox from '../../components/SearchBox';
 import {
-  AmmountCell, BodyWrapper, ButtonCreation, Container, HeaderButtons, HeaderLeft, HeaderWrapper, InvoiceBody, Plus, StatusWrapper, Table, TableBodyCell, TableBodyRow, TableHeader,
-  TableHeaderCell, WrapperIcon
+  AmmountCell,
+  BodyWrapper,
+  ButtonCreation,
+  Container,
+  HeaderButtons,
+  HeaderLeft,
+  HeaderWrapper,
+  InvoiceBody,
+  Plus,
+  StatusWrapper,
+  Table,
+  TableBodyCell,
+  TableBodyRow,
+  TableHeader,
+  TableHeaderCell,
+  WrapperIcon,
 } from '../../components/StyledComponents';
 import Typography from '../../components/Typography';
 import { ROUTES } from '../../constant/route';
-import {
-  MerchantStatus
-} from '../../types/api';
+import { MerchantStatus } from '../../types/api';
 
 const menus = [
   {
-    name: 'All Merchants',
+    name: 'Live merchants',
     value: undefined,
   },
   {
-    name: 'Active Merchants',
+    name: 'Pending merchants',
     value: MerchantStatus.ACTIVE,
   },
   {
-    name: 'Inactive Merchants',
+    name: 'Inactive merchants',
     value: MerchantStatus.INACTIVE,
   },
   {
-    name: 'Disabled Merchants',
+    name: 'Disabled merchants',
     value: MerchantStatus.DISABLED,
   },
 ];
@@ -44,7 +56,15 @@ const Merchants: NextPage = () => {
   const [isOpenPreview, setIsOpenPreview] = useState(false);
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [merchants, setMerchants] = useState<any>([]);
+  const [merchants, setMerchants] = useState<any>([
+    {
+      name: 'Allies Computing Ltd',
+      contact: 'Frank Gallagher',
+      phoneNumber: '+44 897 66 55',
+      website: 'alliescomputing.com',
+      status: 'pending',
+    },
+  ]);
   const [limit, setLimit] = useState(25);
   const [total, setTotal] = useState(0);
   const [selectedMerchantId, setSelectedMerchantId] = useState<
@@ -178,6 +198,14 @@ const Merchants: NextPage = () => {
                                 },
                               },
                               {
+                                label: 'Analytics',
+                                onClick: () => {
+                                  setSelectedMerchantId(item._id);
+                                  router.push('/merchants/analytics/id')
+                                },
+                              },
+                              {
+                                color: '#EF6355',
                                 label: 'Delete',
                                 onClick: () => {
                                   console.log('delete');
