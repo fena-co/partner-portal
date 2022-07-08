@@ -31,6 +31,7 @@ import {
 import Typography from '../../components/Typography';
 import { ROUTES } from '../../constant/route';
 import { MerchantStatus } from '../../types/api';
+import Details from './details';
 
 const menus = [
   {
@@ -126,114 +127,118 @@ const Merchants: NextPage = () => {
         },
       ]}
     >
-      <>
-        <Container>
-          <HeaderWrapper>
-            <HeaderLeft>
-              <Typography variant="subtitle4">Merchants</Typography>
-              <SearchBox />
-            </HeaderLeft>
-            <HeaderButtons>
-              <Filter />
-              <ButtonCreation
-                variant="contained"
-                onClick={() => {
-                  router.push(ROUTES.MERCHANT_CREATE);
-                }}
-              >
-                <Plus />
-                Add a Merchant
-              </ButtonCreation>
-            </HeaderButtons>
-          </HeaderWrapper>
-          <LinkMenu menus={menus} clickHandler={setFilterRule} />
-          <BodyWrapper>
-            <LoadingBlock loading={loading}>
-              {merchants?.length ? (
-                <Table>
-                  <TableHeader>
-                    <tr>
-                      <TableHeaderCell>Merchant Name</TableHeaderCell>
-                      <TableHeaderCell>Contact</TableHeaderCell>
-                      <TableHeaderCell>phone number</TableHeaderCell>
-                      <TableHeaderCell>Website</TableHeaderCell>
-                      <TableHeaderCell>STATUS</TableHeaderCell>
-                      <TableHeaderCell>Last activity</TableHeaderCell>
-                      <TableHeaderCell>Fena ID</TableHeaderCell>
-                      <TableHeaderCell></TableHeaderCell>
-                    </tr>
-                  </TableHeader>
-                  <tbody>
-                    {merchants.map((item: any) => (
-                      <TableBodyRow
-                        key={item._id}
-                        onClick={() => {
-                          setSelectedMerchantId(item._id);
-                          setIsOpenPreview(true);
-                        }}
-                      >
-                        <TableBodyCell>{item.name}</TableBodyCell>
-                        <AmmountCell>{item.contact}</AmmountCell>
-                        <TableBodyCell>{item.phoneNumber}</TableBodyCell>
-                        <TableBodyCell>{item.website}</TableBodyCell>
-                        <TableBodyCell>
-                          <StatusWrapper status={item.status}>
-                            {item.status}
-                          </StatusWrapper>
-                        </TableBodyCell>
-                        <TableBodyCell>
-                          {item.lastActivity
-                            ? moment(item.lastActivity).format('MM/DD/YYYY')
-                            : 'None'}
-                        </TableBodyCell>
-                        <TableBodyCell>{item._id}</TableBodyCell>
-                        <TableBodyCell>
-                          <ContextMenu
-                            actions={[
-                              {
-                                label: 'Details',
-                                onClick: () => {
-                                  setSelectedMerchantId(item._id);
-                                  setIsOpenPreview(true);
+      {isOpenPreview ? (
+        <Details handleClose={() => setIsOpenPreview(false)} />
+      ) : (
+        <>
+          <Container>
+            <HeaderWrapper>
+              <HeaderLeft>
+                <Typography variant="subtitle4">Merchants</Typography>
+                <SearchBox />
+              </HeaderLeft>
+              <HeaderButtons>
+                <Filter />
+                <ButtonCreation
+                  variant="contained"
+                  onClick={() => {
+                    router.push(ROUTES.MERCHANT_CREATE);
+                  }}
+                >
+                  <Plus />
+                  Add a Merchant
+                </ButtonCreation>
+              </HeaderButtons>
+            </HeaderWrapper>
+            <LinkMenu menus={menus} clickHandler={setFilterRule} />
+            <BodyWrapper>
+              <LoadingBlock loading={loading}>
+                {merchants?.length ? (
+                  <Table>
+                    <TableHeader>
+                      <tr>
+                        <TableHeaderCell>Merchant Name</TableHeaderCell>
+                        <TableHeaderCell>Contact</TableHeaderCell>
+                        <TableHeaderCell>phone number</TableHeaderCell>
+                        <TableHeaderCell>Website</TableHeaderCell>
+                        <TableHeaderCell>STATUS</TableHeaderCell>
+                        <TableHeaderCell>Last activity</TableHeaderCell>
+                        <TableHeaderCell>Fena ID</TableHeaderCell>
+                        <TableHeaderCell></TableHeaderCell>
+                      </tr>
+                    </TableHeader>
+                    <tbody>
+                      {merchants.map((item: any) => (
+                        <TableBodyRow
+                          key={item._id}
+                          onClick={() => {
+                            setSelectedMerchantId(item._id);
+                            setIsOpenPreview(true);
+                          }}
+                        >
+                          <TableBodyCell>{item.name}</TableBodyCell>
+                          <AmmountCell>{item.contact}</AmmountCell>
+                          <TableBodyCell>{item.phoneNumber}</TableBodyCell>
+                          <TableBodyCell>{item.website}</TableBodyCell>
+                          <TableBodyCell>
+                            <StatusWrapper status={item.status}>
+                              {item.status}
+                            </StatusWrapper>
+                          </TableBodyCell>
+                          <TableBodyCell>
+                            {item.lastActivity
+                              ? moment(item.lastActivity).format('MM/DD/YYYY')
+                              : 'None'}
+                          </TableBodyCell>
+                          <TableBodyCell>{item._id}</TableBodyCell>
+                          <TableBodyCell>
+                            <ContextMenu
+                              actions={[
+                                {
+                                  label: 'Details',
+                                  onClick: () => {
+                                    setSelectedMerchantId(item._id);
+                                    setIsOpenPreview(true);
+                                  },
                                 },
-                              },
-                              {
-                                label: 'Analytics',
-                                onClick: () => {
-                                  setSelectedMerchantId(item._id);
-                                  router.push('/merchants/analytics/id')
+                                {
+                                  label: 'Analytics',
+                                  onClick: () => {
+                                    setSelectedMerchantId(item._id);
+                                    router.push('/merchants/analytics/id');
+                                  },
                                 },
-                              },
-                              {
-                                color: '#EF6355',
-                                label: 'Delete',
-                                onClick: () => {
-                                  console.log('delete');
+                                {
+                                  color: '#EF6355',
+                                  label: 'Delete',
+                                  onClick: () => {
+                                    console.log('delete');
+                                  },
                                 },
-                              },
-                            ]}
-                          />
-                        </TableBodyCell>
-                      </TableBodyRow>
-                    ))}
-                  </tbody>
-                </Table>
-              ) : (
-                renderEmpty()
-              )}
-            </LoadingBlock>
-          </BodyWrapper>
-          {!!merchants?.length && (
-            <Paginator
-              total={total}
-              currentPage={currentPage}
-              perPage={limit}
-              onPageChange={setCurrentPage}
-              onPerPageChange={setLimit}
-            />
-          )}
-        </Container>
-      </>
+                              ]}
+                            />
+                          </TableBodyCell>
+                        </TableBodyRow>
+                      ))}
+                    </tbody>
+                  </Table>
+                ) : (
+                  renderEmpty()
+                )}
+              </LoadingBlock>
+            </BodyWrapper>
+            {!!merchants?.length && (
+              <Paginator
+                total={total}
+                currentPage={currentPage}
+                perPage={limit}
+                onPageChange={setCurrentPage}
+                onPerPageChange={setLimit}
+              />
+            )}
+          </Container>
+        </>
+      )}
     </Layout>
   );
 };
