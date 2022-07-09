@@ -3,14 +3,8 @@ import ArrowLeftIcon from 'image/icon/arrow-back.svg';
 import Typography from '../../components/Typography';
 import { useState } from 'react';
 import { Transaction } from '../../types/api';
-import moment from 'moment';
-
-const Content = styled.section``;
-
-const PageHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-`;
+import BankAccountCard from '../../components/BankAccountCard';
+import CopyInput from '../../components/CopyInput';
 
 const BackButton = styled.div`
   display: flex;
@@ -43,30 +37,6 @@ const DetailsWrapper = styled.div`
   padding-bottom: 150px;
 `;
 
-const DetailsTable = styled.table`
-  text-align: left;
-
-  & > tr:nth-child(even) {
-    background-color: #f4f7f9;
-  }
-`;
-
-const DetailsHeader = styled.th`
-  font-family: Montserrat;
-  font-style: normal;
-  font-weight: normal;
-  font-size: 12px;
-  line-height: 36px;
-`;
-
-const DetailsCell = styled.td`
-  font-family: Montserrat;
-  font-style: normal;
-  font-weight: 500;
-  font-size: 12px;
-  line-height: 36px;
-`;
-
 const HeaderMenu = styled.div`
   display: flex;
   justify-content: flex-start;
@@ -97,6 +67,61 @@ const Title = styled(Typography)`
   margin-bottom: 10px;
 `;
 
+const BankAccountCardWrapper = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  border-top: 1px solid #dbe3eb;
+  padding: 50px 0;
+`;
+
+const VerificationContainer = styled.div`
+  display: flex;
+  flex-basis: 100%;
+`;
+
+const StatusWrapper = styled.div`
+  display: flex;
+`;
+
+const Status = styled.div<{ status: string }>`
+  border-radius: 5px;
+  padding: 5px 15px;
+  background-color: ${(props) =>
+    props.status === 'verified' ? '#E4F9F2' : '#fce4e2'};
+  color: ${(props) => (props.status === 'verified' ? '#2CD19E' : '#EF6355')};
+`;
+
+const TableWrapper = styled.div`
+  display: flex;
+  flex-basis: 35%;
+`;
+
+const Table = styled.table`
+  margin-right: 50px;
+`;
+
+const ChecksCell = styled.td`
+  padding-right: 50px;
+`;
+
+const Checks = styled(Typography)``;
+
+const StatusCell = styled.td``;
+
+const Th = styled.th`
+  text-align: start;
+`;
+
+const ShareSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex-basis: 40%;
+`;
+
+const CopyInputWrapper = styled.div`
+margin-top: 15px;
+`;
+
 interface DetailsProps {
   handleClose: () => void;
 }
@@ -125,10 +150,85 @@ const company = {
     addressLine1: '1High Street, Weybridje - 45 Address KT13',
   },
 };
+
+const accounts = [
+  {
+    attachmentUrl:
+      'https://s3.eu-west-2.amazonaws.com/fena-stage/2022-06-07T09%3A19%3A05.348Zimage%20%283%29.png',
+    createdAt: '2022-06-07T09:19:05.161Z',
+    deletedAt: null,
+    externalAccountId: '13827551',
+    identification: '070246',
+    identificationType: 'SORT_CODE_ACCOUNT_NUMBER',
+    name: 'Nationwide',
+    owner: '62863cb44b34d4e4ebe23483',
+    ownerType: 'Company',
+    provider: {
+      countryId: 'GB',
+      deletedAt: null,
+      enabled: true,
+      externalId: 'ob-nationwide',
+      logo: 'https://fena-assets.s3.eu-west-2.amazonaws.com/banks/nationwide.png',
+      name: 'Nationwide',
+      __v: 0,
+      _id: '62339d64ce1712d21eb055ef',
+    },
+    status: 'verified',
+    __v: 0,
+    _id: '629f1809de0f2c70d177d3d6',
+  },
+  {
+    attachmentUrl:
+      'https://s3.eu-west-2.amazonaws.com/fena-stage/2022-06-07T09%3A19%3A05.348Zimage%20%283%29.png',
+    createdAt: '2022-06-07T09:19:05.161Z',
+    deletedAt: null,
+    externalAccountId: '13827551',
+    identification: '070246',
+    identificationType: 'SORT_CODE_ACCOUNT_NUMBER',
+    name: 'Nationwide',
+    owner: '62863cb44b34d4e4ebe23483',
+    ownerType: 'Company',
+    _id: '62339d64ce1712d21eb055ef',
+    status: 'verified',
+    provider: {
+      countryId: 'GB',
+      deletedAt: null,
+      enabled: true,
+      externalId: 'ob-nationwide',
+      logo: 'https://fena-assets.s3.eu-west-2.amazonaws.com/banks/nationwide.png',
+      name: 'Nationwide',
+      __v: 0,
+      _id: '62339d64ce1712d21eb055ef',
+    },
+  },
+  {
+    attachmentUrl:
+      'https://s3.eu-west-2.amazonaws.com/fena-stage/2022-06-07T09%3A19%3A05.348Zimage%20%283%29.png',
+    createdAt: '2022-06-07T09:19:05.161Z',
+    deletedAt: null,
+    externalAccountId: '13827551',
+    identification: '070246',
+    identificationType: 'SORT_CODE_ACCOUNT_NUMBER',
+    name: 'Nationwide',
+    owner: '62863cb44b34d4e4ebe23483',
+    ownerType: 'Company',
+    _id: '62339d64ce1712d21eb055ef',
+    status: 'verified',
+    provider: {
+      countryId: 'GB',
+      deletedAt: null,
+      enabled: true,
+      externalId: 'ob-nationwide',
+      logo: 'https://fena-assets.s3.eu-west-2.amazonaws.com/banks/nationwide.png',
+      name: 'Nationwide',
+      __v: 0,
+      _id: '62339d64ce1712d21eb055ef',
+    },
+  },
+];
+
 const Details: React.FunctionComponent<DetailsProps> = ({ handleClose }) => {
-  const [transactionData, setTransactionData] = useState<Transaction | null>(
-    null
-  );
+
   const [activePage, setActivePage] = useState<string>('company');
   return (
     <>
@@ -164,8 +264,7 @@ const Details: React.FunctionComponent<DetailsProps> = ({ handleClose }) => {
               Verification
             </HeaderMenuItem>
           </HeaderMenu>
-          {/* Hiding the button for now */}
-          {/* <ButtonCreation variant="contained">Download Receipt</ButtonCreation> */}
+          
         </ContentHeader>
         {activePage === 'company' && (
           <DetailsWrapper>
@@ -233,30 +332,81 @@ const Details: React.FunctionComponent<DetailsProps> = ({ handleClose }) => {
           </DetailsWrapper>
         )}
 
-        {activePage === 'delivery' && (
+        {activePage === 'bankAccounts' && (
+          <BankAccountCardWrapper>
+            {accounts.map((acc) => {
+              return (
+                <BankAccountCard
+                  key={acc._id}
+                  account={{
+                    accountName: acc.name,
+                    accountNumber: acc.externalAccountId,
+                    bankImg: acc.provider.logo,
+                    sortCode: acc.identification,
+                    title: acc.provider.name,
+                    status: acc.status,
+                    accId: acc._id,
+                  }}
+                  getBankAccounts={() => {}}
+                />
+              );
+            })}
+          </BankAccountCardWrapper>
+        )}
+
+        {activePage === 'verification' && (
           <DetailsWrapper>
-            <DetailsTable>
-              <tr>
-                <DetailsHeader>Address Line 1: </DetailsHeader>
-                <DetailsCell>{'None'}</DetailsCell>
-              </tr>
-              <tr>
-                <DetailsHeader>Address Line 2: </DetailsHeader>
-                <DetailsCell>{'None'}</DetailsCell>
-              </tr>
-              <tr>
-                <DetailsHeader>City: </DetailsHeader>
-                <DetailsCell>{'-'}</DetailsCell>
-              </tr>
-              <tr>
-                <DetailsHeader>Post Code: </DetailsHeader>
-                <DetailsCell>{'None'}</DetailsCell>
-              </tr>
-              <tr>
-                <DetailsHeader>Country: </DetailsHeader>
-                <DetailsCell>{'None'}</DetailsCell>
-              </tr>
-            </DetailsTable>
+            <VerificationContainer>
+              <TableWrapper>
+                <Table>
+                  <thead>
+                    <tr>
+                      <Th></Th>
+                      <Th>
+                        <Typography variant="body5">STATUS</Typography>
+                      </Th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    <tr>
+                      <ChecksCell>
+                        <Checks variant="body5">AML checks</Checks>
+                      </ChecksCell>
+                      <StatusCell>
+                        <StatusWrapper>
+                          <Status status="verified">Verified</Status>
+                        </StatusWrapper>
+                      </StatusCell>
+                    </tr>
+                    <tr>
+                      <ChecksCell>
+                        <Checks variant="body5">Identity checks</Checks>
+                      </ChecksCell>
+                      <StatusCell>
+                        <StatusWrapper>
+                          <Status status="unverified">Unverified</Status>
+                        </StatusWrapper>
+                      </StatusCell>
+                    </tr>
+                  </tbody>
+                </Table>
+              </TableWrapper>
+
+              <ShareSection>
+                <Title variant="subtitle5">
+                  Share verification link
+                </Title>
+                <Typography variant="lightBody">
+                  Share the verification link with your merchants to enable them
+                  to complete ID verification. Just copy the link and share via
+                  email, SMS, whatsapp or any other messaging service
+                </Typography>
+                <CopyInputWrapper>
+                  <CopyInput value="https://app.fena.com/r/mw0" />
+                </CopyInputWrapper>
+              </ShareSection>
+            </VerificationContainer>
           </DetailsWrapper>
         )}
       </Container>
