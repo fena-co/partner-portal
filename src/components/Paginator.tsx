@@ -26,7 +26,6 @@ const Meta = styled.div`
 
 const MetaText = styled.div`
   margin-right: 10px;
-  padding-top: 20px;
 `;
 
 const Pages = styled.div`
@@ -62,7 +61,6 @@ export const PaginationButton = styled.button<{ disabled?: boolean }>`
   color: #9898ad;
   padding: 4px 17px;
   margin: 0 4px;
-  margin-top: 20px;
   cursor: pointer;
 
   :hover {

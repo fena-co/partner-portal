@@ -13,6 +13,7 @@ import TransactionsTable from '../../components/TransactionsTable';
 import Typography from '../../components/Typography';
 import { ROUTES } from '../../constant/route';
 import SearchBox from '../../components/SearchBox';
+import CustomHeader from '../../components/ViewportHeader';
 
 const PageHeader = styled.div`
   display: flex;
@@ -32,7 +33,6 @@ const H3 = styled(Typography)`
 `;
 
 const Subtitle4 = styled(Typography)`
-  font-weight: bold;
   margin-bottom: 1rem;
 `;
 
@@ -105,6 +105,7 @@ const FifthViewport = styled(FirstViewport)`
   background-color: #f4f7f9;
   border-radius: 10px;
 `;
+
 
 const Dashboard: NextPage = () => {
   const overviewCards = [
@@ -249,19 +250,11 @@ const Dashboard: NextPage = () => {
         <SearchBox />
       </PageHeader>
       <FirstViewport>
-        <ViewportHeader>
-          <ViewportHeaderContent>
-            <Subtitle4 variant="subtitle4">Overview</Subtitle4>
-            <Body1 variant="body1">
-              Headline figures for all merchants. Shows selected timeframe and
-              all time
-            </Body1>
-          </ViewportHeaderContent>
-          <FilterDropdown>
-            <Period variant="body4">Period:</Period>
-            <DropdownItems />
-          </FilterDropdown>
-        </ViewportHeader>
+        <CustomHeader
+          title="Overview"
+          description="Headline figures for all merchants. Shows selected timeframe and all
+          time"
+        />
         <Cards>
           {overviewCards.map((el) => {
             return (
@@ -281,19 +274,8 @@ const Dashboard: NextPage = () => {
       </FirstViewport>
 
       <SecondViewport>
-        <ViewportHeader>
-          <ViewportHeaderContent>
-            <Subtitle4 variant="subtitle4">Transactions by size</Subtitle4>
-            <Body1 variant="body1">
-              Please filter by merchant(s) and timeframe
-            </Body1>
-            <SearchBox />
-          </ViewportHeaderContent>
-          <FilterDropdown>
-            <Period variant="body4">Period:</Period>
-            <DropdownItems />
-          </FilterDropdown>
-        </ViewportHeader>
+        <CustomHeader title='Transactions by size' description=' Please filter by merchant(s) and timeframe'/>
+        <SearchBox />
         <TableWrapper>
           <TransactionsTable />
         </TableWrapper>
@@ -386,20 +368,11 @@ const Dashboard: NextPage = () => {
       </FourthViewport>
 
       <FifthViewport>
-        <ViewportHeader>
-          <ViewportHeaderContent>
-            <Subtitle4 variant="subtitle4">Fees</Subtitle4>
-            <Body1 variant="body1">Fees charged by fena</Body1>
-            <Body1 variant="body1">
+      <CustomHeader title='Fees' description='Fees charged by fena' />
+          <Body1 variant="body1">
               £0.22 per transaction (average of between 1001 and 5000
               transactions per month)
             </Body1>
-          </ViewportHeaderContent>
-          <FilterDropdown>
-            <Period variant="body4">Period:</Period>
-            <DropdownItems />
-          </FilterDropdown>
-        </ViewportHeader>
         <FeeCards>
           {feeCards.map((el) => {
             return (

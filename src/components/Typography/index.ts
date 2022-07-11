@@ -74,6 +74,12 @@ const Body5 = css`
   line-height: 20px;
 `;
 
+const LightBody = css`
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+`;
+
 const variants = {
   h1: H1,
   h2: H2,
@@ -88,6 +94,7 @@ const variants = {
   body3: Body3,
   body4: Body4,
   body5: Body5,
+  lightBody: LightBody,
 };
 
 const Typography = styled.p<{
