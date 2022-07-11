@@ -1,10 +1,11 @@
 import ArrowDown from 'image/icon/arrow-down.svg';
 import ArrowUp from 'image/icon/arrow-up.svg';
 import { ChangeEvent, FC, useEffect, useRef, useState } from 'react';
-import { FlagIcon } from 'react-flag-kit';
 import styled, { css } from 'styled-components';
-import { COUNTRY_CODES } from '../../constant/countries';
 import MenuItem from '../MenuItem';
+import Typography from '../Typography';
+import ArrowDownAccordion from 'image/icon/arrow-down-1.svg';
+import { industries as INDUSTRY_LIST } from '../../constant/industries';
 
 const FullWidth = css`
   width: 100%;
@@ -34,7 +35,8 @@ const DropDownHeader = styled.div<{
   justify-content: space-between;
   border: 1px solid;
   border-radius: 5px;
-  padding: 14px;
+  padding: 15px;
+  min-height: 18px;
   position: relative;
   ${({ error, isOpen }) => (error && !isOpen ? BorderError : DefaultBorder)}
   ${({ isOpen }) =>
@@ -78,7 +80,7 @@ const DropDownList = styled.ul`
   margin-top: 8px;
   background: #fff;
   height: 300px;
-  overflow: scroll;
+  overflow-y: scroll;
 `;
 
 const ErrorMessage = styled.span`
@@ -105,16 +107,6 @@ const FieldLabel = styled.div`
   line-height: 17px;
 `;
 
-const FlagContainer = styled.div`
-  margin-right: 10px;
-  display: flex;
-  align-items: center;
-`;
-
-const StyledFlagIcon = styled(FlagIcon)`
-  height: 50%;
-`;
-
 const SearchInput = styled.input`
   border: none;
   padding: 15px;
@@ -131,6 +123,26 @@ const SearchInput = styled.input`
   }
 `;
 
+const Category = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 15px;
+  cursor: pointer;
+`;
+
+const CategoryTitle = styled(Typography)``;
+
+const StyledArrowDown = styled(ArrowDownAccordion)`
+  transform: ${(props) =>
+    props[`aria-expanded`] ? `rotate(180deg)` : `rotateZ(0deg)`};
+`;
+
+const StyledMenuItem = styled(MenuItem)`
+  font-size: 14px;
+  padding: 5px 30px;
+`;
+
 interface ISelectDropdown {
   variant?: string;
   leftIcon?: any;
@@ -144,10 +156,14 @@ interface ISelectDropdown {
   required?: boolean;
 }
 
-const CountrySelectionDropdown: FC<ISelectDropdown> = (props) => {
+const IndustrySelectionDropdown: FC<ISelectDropdown> = (props) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchString, setSearchString] = useState<string | undefined>();
-  const [countriesList, setCountriesList] = useState(COUNTRY_CODES);
+  const [industries, setIndustries] = useState(INDUSTRY_LIST);
+  const [industriesExpanded, setIndustriesExpanded] = useState({
+    value: 0,
+    isExpanded: false,
+  });
   const ref = useRef(null);
   const valueRef = useRef(null);
   const searchRef = useRef<HTMLInputElement>(null);
@@ -161,12 +177,28 @@ const CountrySelectionDropdown: FC<ISelectDropdown> = (props) => {
     }
   };
 
+  const handlerCategoryExpand = (val: number) => {
+    setIndustriesExpanded({
+      ...industriesExpanded,
+      value: val,
+      isExpanded: !industriesExpanded.isExpanded,
+    });
+  };
+
   const handleSearch = (event: ChangeEvent<HTMLInputElement>) => {
     setSearchString(event.target.value);
-    setCountriesList(
-      COUNTRY_CODES.filter((c) =>
-        c.countryName.toLowerCase().includes(event.target.value.toLowerCase())
-      )
+    setIndustries(
+      INDUSTRY_LIST.filter((industry) => {
+        return (
+          industry.category
+            .toLowerCase()
+            .includes(event.target.value.toLowerCase()) ||
+          industry.specifics
+            .toString()
+            .toLowerCase()
+            .includes(event.target.value.toLowerCase())
+        );
+      })
     );
   };
 
@@ -209,48 +241,62 @@ const CountrySelectionDropdown: FC<ISelectDropdown> = (props) => {
           leftIcon={props.leftIcon}
           isPlaceholder={!props.value && !!props.placeholder}
         >
-          {props.value ? (
-            <>
-              <FlagContainer>
-                <StyledFlagIcon
-                  code={
-                    COUNTRY_CODES.find((c) => c.countryName === props.value)!
-                      .country
-                  }
-                />
-              </FlagContainer>
-              {props.value}
-            </>
-          ) : (
-            props.placeholder
-          )}
+          {props.value ? props.value : props.placeholder}
         </ValueSelect>
         {isOpen ? <ArrowUp /> : <ArrowDown />}
       </DropDownHeader>
       {isOpen && (
-        <DropDownListContainer>
-          <DropDownList>
-            <SearchInput
-              ref={searchRef}
-              value={searchString}
-              onChange={handleSearch}
-              placeholder="Search..."
-            />
-            {countriesList.map((country) => {
-              return (
-                <MenuItem
-                  onClick={() => props.onChange(country)}
-                  key={country.country}
-                >
-                  <FlagContainer>
-                    <StyledFlagIcon code={country.country} />
-                  </FlagContainer>
-                  {country.countryName}
-                </MenuItem>
-              );
-            })}
-          </DropDownList>
-        </DropDownListContainer>
+        <div>
+          {/* added stopPropahation to prevent dropdown close */}
+          <DropDownListContainer onClick={(e) => e.stopPropagation()}>
+            {' '}
+            <DropDownList>
+              <SearchInput
+                ref={searchRef}
+                value={searchString}
+                onChange={handleSearch}
+                placeholder="Search..."
+              />
+              {industries?.map((el, index) => {
+                return (
+                  <div key={el.category}>
+                    <Category
+                      onClick={() => {
+                        handlerCategoryExpand(index);
+                      }}
+                    >
+                      <CategoryTitle variant="body1">
+                        {el.category}
+                      </CategoryTitle>
+                      <StyledArrowDown
+                        aria-expanded={
+                          industriesExpanded.value === index &&
+                          industriesExpanded.isExpanded
+                        }
+                      />
+                    </Category>
+                    {el.specifics.map((item) => {
+                      return (
+                        industriesExpanded.value === index &&
+                        industriesExpanded.isExpanded && (
+                          <StyledMenuItem
+                            onClick={() => {
+                              props.onChange(item);
+                              setIsOpen(!isOpen);
+                            }}
+                            key={item}
+                          >
+                            {item}
+                          </StyledMenuItem>
+                        )
+                      );
+                    })}
+                  </div>
+                );
+              })}
+            </DropDownList>
+          </DropDownListContainer>
+        </div>
       )}
       {props.error && (
         <ErrorMessage style={{ visibility: isOpen ? 'hidden' : 'visible' }}>
@@ -261,4 +307,4 @@ const CountrySelectionDropdown: FC<ISelectDropdown> = (props) => {
   );
 };
 
-export default CountrySelectionDropdown;
+export default IndustrySelectionDropdown;

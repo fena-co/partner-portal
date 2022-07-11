@@ -1,10 +1,11 @@
 import ArrowDown from 'image/icon/arrow-down.svg';
 import ArrowUp from 'image/icon/arrow-up.svg';
 import { ChangeEvent, FC, useEffect, useRef, useState } from 'react';
-import { FlagIcon } from 'react-flag-kit';
+import { FlagIcon, FlagIconCode } from 'react-flag-kit';
 import styled, { css } from 'styled-components';
 import { COUNTRY_CODES } from '../../constant/countries';
 import MenuItem from '../MenuItem';
+import InputMask, { Props } from 'react-input-mask';
 
 const FullWidth = css`
   width: 100%;
@@ -27,6 +28,7 @@ const DefaultBorder = css`
 const DropDownHeader = styled.div<{
   error?: string;
   isOpen?: boolean;
+  disabled?: boolean;
 }>`
   cursor: pointer;
   display: flex;
@@ -34,7 +36,7 @@ const DropDownHeader = styled.div<{
   justify-content: space-between;
   border: 1px solid;
   border-radius: 5px;
-  padding: 14px;
+  padding: 0 14px;
   position: relative;
   ${({ error, isOpen }) => (error && !isOpen ? BorderError : DefaultBorder)}
   ${({ isOpen }) =>
@@ -43,6 +45,7 @@ const DropDownHeader = styled.div<{
           border: 1px solid #027aff;
         `
       : ''}
+  background-color:  ${({ disabled }) => (disabled ? '#f4f7f9db' : 'initial')};
 `;
 
 const ValueSelect = styled.span<{
@@ -58,6 +61,7 @@ const ValueSelect = styled.span<{
   display: flex;
   align-items: center;
   color: ${({ isPlaceholder }) => (isPlaceholder ? '#9898AD' : '#13273f')};
+  z-index: -1;
 `;
 
 const DropDownListContainer = styled.div<{
@@ -78,7 +82,7 @@ const DropDownList = styled.ul`
   margin-top: 8px;
   background: #fff;
   height: 300px;
-  overflow: scroll;
+  overflow-y: scroll;
 `;
 
 const ErrorMessage = styled.span`
@@ -87,13 +91,8 @@ const ErrorMessage = styled.span`
   font-weight: 500;
   font-size: 12px;
   line-height: 15px;
-  color: #38b6ff;
+  color: #ef6355;
   margin-top: 5px;
-`;
-
-const IconWrapper = styled.span`
-  display: flex;
-  align-items: center;
 `;
 
 const FieldLabel = styled.div`
@@ -106,13 +105,41 @@ const FieldLabel = styled.div`
 `;
 
 const FlagContainer = styled.div`
-  margin-right: 10px;
+  padding: 14px 10px 14px 0;
   display: flex;
   align-items: center;
+  border-right: 1px solid #dbe3eb;
 `;
 
-const StyledFlagIcon = styled(FlagIcon)`
-  height: 50%;
+const TextField = styled(InputMask)<Props>`
+  ::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  ::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  border: none;
+  width: 100%;
+  padding-left: 10px;
+
+  outline: none;
+
+  font-family: Montserrat;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 15px;
+  line-height: 18px;
+  color: #0e233e;
+
+  &:disabled {
+    background: #f4f7f9db;
+  }
+
+  ::placeholder {
+    color: #9898ad;
+  }
 `;
 
 const SearchInput = styled.input`
@@ -131,10 +158,22 @@ const SearchInput = styled.input`
   }
 `;
 
+const ArrowWrapper = styled.div`
+  display: flex;
+  margin-left: 5px;
+`;
+
+const StyledFlagIcon = styled(FlagIcon)`
+  margin-right: 5px;
+  height: 50%;
+`;
+
 interface ISelectDropdown {
+  disabled?: boolean;
   variant?: string;
   leftIcon?: any;
-  value?: any;
+  phoneValue?: any;
+  code?: FlagIconCode;
   error?: string;
   style?: any;
   fullWidth?: boolean;
@@ -144,21 +183,20 @@ interface ISelectDropdown {
   required?: boolean;
 }
 
-const CountrySelectionDropdown: FC<ISelectDropdown> = (props) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [searchString, setSearchString] = useState<string | undefined>();
+const PhoneInput: FC<ISelectDropdown> = (props) => {
+  const [codeDropdownOpen, setCodeDropdownOpen] = useState(false);
+  const [codeValue, setCodeValue] = useState<FlagIconCode>(props.code || 'GB');
+  const [phoneInputValue, setPhoneInputValue] = useState(
+    props.phoneValue || ''
+  );
   const [countriesList, setCountriesList] = useState(COUNTRY_CODES);
+  const [searchString, setSearchString] = useState<string | undefined>();
   const ref = useRef(null);
   const valueRef = useRef(null);
   const searchRef = useRef<HTMLInputElement>(null);
 
   const handleExpand = () => {
-    setIsOpen(!isOpen);
-    if (!isOpen) {
-      setTimeout(() => {
-        searchRef.current?.focus();
-      }, 100);
-    }
+    !props.disabled && setCodeDropdownOpen(!codeDropdownOpen);
   };
 
   const handleSearch = (event: ChangeEvent<HTMLInputElement>) => {
@@ -170,14 +208,16 @@ const CountrySelectionDropdown: FC<ISelectDropdown> = (props) => {
     );
   };
 
+  const handlePhoneChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const code = COUNTRY_CODES.find((c) => c.country === codeValue)?.country;
+    setPhoneInputValue(event.target.value);
+    props.onChange?.({ target: { value: code + ' ' + event.target.value } });
+  };
+
   useEffect(() => {
     const clickOnWindows = (e: any) => {
-      if (
-        ref.current !== e.target &&
-        e.target !== valueRef.current &&
-        e.target !== searchRef.current
-      ) {
-        setIsOpen(false);
+      if (ref.current !== e.target && e.target !== valueRef.current) {
+        setCodeDropdownOpen(false);
       }
     };
     window.addEventListener('click', clickOnWindows);
@@ -194,41 +234,34 @@ const CountrySelectionDropdown: FC<ISelectDropdown> = (props) => {
         </FieldLabel>
       )}
       <DropDownHeader
+        disabled={props.disabled}
         error={props.error}
-        isOpen={isOpen}
-        onClick={handleExpand}
-        ref={ref}
+        isOpen={codeDropdownOpen}
       >
-        {props.leftIcon && (
-          <IconWrapper>
-            <props.leftIcon />
-          </IconWrapper>
-        )}
-        <ValueSelect
-          ref={valueRef}
-          leftIcon={props.leftIcon}
-          isPlaceholder={!props.value && !!props.placeholder}
-        >
-          {props.value ? (
-            <>
-              <FlagContainer>
-                <StyledFlagIcon
-                  code={
-                    COUNTRY_CODES.find((c) => c.countryName === props.value)!
-                      .country
-                  }
-                />
-              </FlagContainer>
-              {props.value}
-            </>
-          ) : (
-            props.placeholder
-          )}
-        </ValueSelect>
-        {isOpen ? <ArrowUp /> : <ArrowDown />}
+        <FlagContainer onClick={handleExpand} ref={ref}>
+          <ValueSelect>
+            <StyledFlagIcon ref={valueRef} code={codeValue} />
+            &nbsp;
+            {COUNTRY_CODES.find((c) => c.country === codeValue)?.code}
+            <ArrowWrapper>
+              {codeDropdownOpen ? <ArrowUp /> : <ArrowDown />}
+            </ArrowWrapper>
+          </ValueSelect>
+        </FlagContainer>
+        <TextField
+          placeholder={props.placeholder}
+          disabled={props.disabled}
+          mask={''}
+          value={props.phoneValue}
+          onChange={handlePhoneChange}
+        />
       </DropDownHeader>
-      {isOpen && (
-        <DropDownListContainer>
+      {codeDropdownOpen && (
+        <DropDownListContainer
+          onClick={(e) => {
+            e.stopPropagation();
+          }}
+        >
           <DropDownList>
             <SearchInput
               ref={searchRef}
@@ -236,24 +269,28 @@ const CountrySelectionDropdown: FC<ISelectDropdown> = (props) => {
               onChange={handleSearch}
               placeholder="Search..."
             />
-            {countriesList.map((country) => {
+            {countriesList?.map((country, index) => {
               return (
-                <MenuItem
-                  onClick={() => props.onChange(country)}
-                  key={country.country}
-                >
-                  <FlagContainer>
+                <div key={index}>
+                  <MenuItem
+                    onClick={() => {
+                      setCodeValue(country.country);
+                      setCodeDropdownOpen(false);
+                    }}
+                  >
                     <StyledFlagIcon code={country.country} />
-                  </FlagContainer>
-                  {country.countryName}
-                </MenuItem>
+                    &nbsp;{country.code} {country.countryName}
+                  </MenuItem>
+                </div>
               );
             })}
           </DropDownList>
         </DropDownListContainer>
       )}
       {props.error && (
-        <ErrorMessage style={{ visibility: isOpen ? 'hidden' : 'visible' }}>
+        <ErrorMessage
+          style={{ visibility: codeDropdownOpen ? 'hidden' : 'visible' }}
+        >
           {props.error}
         </ErrorMessage>
       )}
@@ -261,4 +298,4 @@ const CountrySelectionDropdown: FC<ISelectDropdown> = (props) => {
   );
 };
 
-export default CountrySelectionDropdown;
+export default PhoneInput;

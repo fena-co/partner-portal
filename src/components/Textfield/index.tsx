@@ -68,6 +68,7 @@ const Container = styled.div<{ fullWidth?: boolean }>`
   ${({ fullWidth }) => (fullWidth ? FullWidth : '')}
   display: flex;
   flex-direction: column;
+  padding-top: 20px;
 `;
 
 const WrapperTextField = styled.div<{
@@ -153,7 +154,7 @@ const TextFieldComponent: FC<ITextFieldComponent> = (props) => {
       >
         {props.leftIcon && (
           <IconWrapper>
-            <props.leftIcon />
+            <props.leftIcon style={{ marginRight: '5px' }} />
           </IconWrapper>
         )}
         <TextField
