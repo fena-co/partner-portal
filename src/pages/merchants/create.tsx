@@ -19,6 +19,7 @@ import router from 'next/router';
 import ProviderSelectionDropdown from '../../components/ProviderSelectionDropdown';
 import ShareVerificationLink from '../../components/ShareVerificationLink';
 import ButtonWithChildren from '../../components/Button';
+import CheckBox from '../../components/Checkbox';
 
 const crnValidation = yup.object().shape({
   crn: yup
@@ -64,8 +65,6 @@ const company: any = {
   industry: '',
 };
 
-const Wrapper = styled.section``;
-
 const Header = styled.div`
   display: flex;
   align-items: center;
@@ -105,6 +104,10 @@ const WrapperTextField = styled.div`
   }
 `;
 
+const WrapperCheckBox = styled.div`
+  margin-top: 30px;
+`;
+
 const MenuItem = styled.li`
   list-style: none;
   font-family: Montserrat;
@@ -121,10 +124,6 @@ const MenuItem = styled.li`
   :hover {
     background: #f4f7f9;
   }
-`;
-
-const RadioWrapper = styled.div`
-  margin-top: 20px;
 `;
 
 const ConnectBankAccount = styled.div``;
@@ -191,7 +190,19 @@ const Create: NextPage = () => {
   const [limitedFormData, setLimitedFormData] = useState({
     crn: company.identifier || '',
     registeredName: company.name || '',
+    registeredAddress: company.address || '',
     industry: company.industry || '',
+    tradingName: company.tradingName || '',
+    tradingAddress: company.tradingAddress || '',
+    registrationNumber: company.registrationNumber || '',
+    businessName: company.businessName || '',
+    businessAddress: company.businessAddress || '',
+    contactName: company.contactName || '',
+    email: company.email || '',
+    phoneNumber: company.phoneNumber || '',
+    directorName: company.directorName || '',
+    directorEmail: company.directorEmail || '',
+    directorePhoneNumber: company.directorPhoneNumber || '',
   });
 
   const [soleTraderFormData, setSoleTraderFormData] = useState({
@@ -206,34 +217,6 @@ const Create: NextPage = () => {
     taxpayerId: company.taxpayerId || '',
   });
 
-  const [address, setAddress] = useState(
-    company.type
-      ? {
-          addressLine1:
-            company.type === CompanyTypes.COMPANY
-              ? company.address?.addressLine1 || ''
-              : company.tradingAddress?.addressLine1 || '',
-          addressLine2:
-            company.type === CompanyTypes.COMPANY
-              ? company.address?.addressLine2 || ''
-              : company.tradingAddress?.addressLine2 || '',
-          zipCode:
-            company.type === CompanyTypes.COMPANY
-              ? company.address?.zipCode || ''
-              : company.tradingAddress?.zipCode || '',
-          city:
-            company.type === CompanyTypes.COMPANY
-              ? company.address?.city || ''
-              : company.tradingAddress?.city || '',
-        }
-      : {
-          addressLine1: '',
-          addressLine2: '',
-          zipCode: '',
-          city: '',
-        }
-  );
-
   const [bankDetailsType, setBankDetailsType] = useState('manually');
 
   const [connectBankAccFormData, setConnectBankAccFormData] = useState({
@@ -247,6 +230,8 @@ const Create: NextPage = () => {
     Array<{ name: string; value: string }>
   >([]);
 
+  const [isDirector, setIsDirector] = useState(false);
+
   // const getProviders = async () => {
   //   const results = await Api.getProviders();
   //   const mapped = results.map((result: any) => ({
@@ -258,10 +243,6 @@ const Create: NextPage = () => {
 
   const onBusinessTypeChange = (type: keyof typeof businessTypes) => () => {
     setBusinessType(type);
-  };
-
-  const findCompaniesHouseData = (crn: string) => {
-    return Api.getCompaniesHouseData(crn);
   };
 
   const onChange =
@@ -281,20 +262,6 @@ const Create: NextPage = () => {
           country.country === 'GB' &&
           event.target.value.length >= 8
         ) {
-          console.log('should get ch result');
-          const chResult = await findCompaniesHouseData(event.target.value);
-          console.log(chResult);
-          setLimitedFormData((data) => ({
-            ...data,
-            registeredName: chResult.company_name,
-          }));
-          const officeAddress = chResult.registered_office_address;
-          setAddress({
-            addressLine1: officeAddress.address_line_1,
-            addressLine2: officeAddress.address_line_2,
-            city: officeAddress.locality,
-            zipCode: officeAddress.postal_code,
-          });
         }
       } else {
         const newValues = {
@@ -321,18 +288,6 @@ const Create: NextPage = () => {
   const onProviderChange = (provider: string) => {
     setConnectBankAccFormData({ ...connectBankAccFormData, provider });
   };
-
-  // const onBankFormChange =
-  //   (key: string) => (event: ChangeEvent<HTMLInputElement>) => {
-  //     const newFormData = {
-  //       ...connectBankAccFormData,
-  //       [key]: event.target.value,
-  //     };
-  //     setConnectBankAccFormData(newFormData);
-  //     runValidation(yupSchema2, newFormData).then((err) => {
-  //       setFormErrors(err);
-  //     });
-  //   };
 
   return (
     <Layout>
@@ -381,7 +336,6 @@ const Create: NextPage = () => {
                 inputProps={{
                   required: country.country !== 'GB' && true,
                   value: soleTraderFormData.utr,
-                  name: 'utr',
                   onChange: onChange('utr'),
                 }}
               />
@@ -484,6 +438,227 @@ const Create: NextPage = () => {
                   };
                   setSoleTraderFormData(newSoleTraderFormData);
                   runValidation(phoneValidation, newSoleTraderFormData).then(
+                    (err) => {
+                      setFormErrors(err);
+                    }
+                  );
+                }}
+              />
+            </WrapperTextField>
+          </>
+        )}
+        {businessType === 'limited' && country.country && (
+          <>
+            {' '}
+            <WrapperTextField>
+              <TextFieldComponent
+                error={formErrors?.crn?.[0]}
+                fullWidth
+                label={
+                  country.country !== 'GB'
+                    ? 'Registration number'
+                    : 'Company registration number'
+                }
+                inputProps={{
+                  required: true,
+                  value: limitedFormData.crn,
+                  name: 'company_number',
+                  placeholder:
+                    country.country !== 'GB'
+                      ? 'Registration Number *'
+                      : 'Company Registration Number (CRN) *',
+                  onChange: onChange('crn'),
+                }}
+              />
+            </WrapperTextField>
+            <WrapperTextField>
+              <TextFieldComponent
+                fullWidth
+                label={
+                  country.country !== 'GB' ? 'Business name' : 'Registered name'
+                }
+                inputProps={{
+                  required: true,
+                  value: limitedFormData.registeredName,
+                  name: 'registered_name',
+                  placeholder:
+                    country.country !== 'GB'
+                      ? 'Business name'
+                      : 'Registered name',
+                  onChange: onChange('registeredName'),
+                }}
+              />
+            </WrapperTextField>
+            <WrapperTextField>
+              <TextFieldComponent
+                fullWidth
+                label={
+                  country.country !== 'GB'
+                    ? 'Business address'
+                    : 'Registered address'
+                }
+                inputProps={{
+                  required: true,
+                  value: limitedFormData.registeredAddress,
+                  name: 'registered_name',
+                  placeholder:
+                    country.country !== 'GB'
+                      ? 'Business address'
+                      : 'Registered address',
+                  onChange: onChange('registeredName'),
+                }}
+              />
+            </WrapperTextField>
+            <WrapperTextField>
+              <IndustrySelectionDropdown
+                value={limitedFormData.industry}
+                placeholder="Choose industry"
+                label="Industry"
+                onChange={onChangeIndustry}
+              />
+            </WrapperTextField>
+            <WrapperTextField>
+              <TextFieldComponent
+                label="Trading name"
+                inputProps={{
+                  required: true,
+                  value: limitedFormData.tradingName,
+                  name: 'trading_name',
+                  onChange: onChange('tradingName'),
+                }}
+              />
+            </WrapperTextField>
+            <WrapperTextField>
+              <TextFieldComponent
+                leftIcon={SearchIcon}
+                label="Trading address"
+                inputProps={{
+                  required: true,
+                  value: limitedFormData.tradingAddress,
+                  name: 'trading_address',
+                  onChange: onChange('tradingAddress'),
+                }}
+              />
+            </WrapperTextField>
+            <WrapperTextField>
+              <TextFieldComponent
+                fullWidth
+                label="Registration number"
+                inputProps={{
+                  required: true,
+                  value: limitedFormData.registrationNumber,
+                  name: 'company_number',
+                  onChange: onChange('registrationNumber'),
+                }}
+              />
+            </WrapperTextField>
+            <WrapperTextField>
+              <TextFieldComponent
+                label="Business name"
+                inputProps={{
+                  required: true,
+                  value: limitedFormData.businessName,
+                  name: 'business_name',
+                  onChange: onChange('businessName'),
+                }}
+              />
+            </WrapperTextField>
+            <WrapperTextField>
+              <TextFieldComponent
+                leftIcon={SearchIcon}
+                label="Business address"
+                inputProps={{
+                  required: true,
+                  value: limitedFormData.businessAddress,
+                  name: 'business_address',
+                  onChange: onChange('businessAddress'),
+                }}
+              />
+            </WrapperTextField>
+            <WrapperTextField>
+              <TextFieldComponent
+                label="Primary contact name"
+                inputProps={{
+                  required: true,
+                  value: limitedFormData.contactName,
+                  name: 'contact_name',
+                  onChange: onChange('contactName'),
+                }}
+              />
+            </WrapperTextField>
+            <WrapperTextField>
+              <TextFieldComponent
+                label="Email"
+                inputProps={{
+                  required: true,
+                  value: limitedFormData.email,
+                  name: 'trading_name',
+                  onChange: onChange('email'),
+                }}
+              />
+            </WrapperTextField>
+            <WrapperTextField>
+              <PhoneInput
+                error={formErrors?.phoneNumber?.[0]}
+                required
+                label="Phone number"
+                onChange={(e) => {
+                  const newLimitedFormData = {
+                    ...limitedFormData,
+                    phoneNumber: e.target.value,
+                  };
+                  setLimitedFormData(newLimitedFormData);
+                  runValidation(phoneValidation, newLimitedFormData).then(
+                    (err) => {
+                      setFormErrors(err);
+                    }
+                  );
+                }}
+              />
+            </WrapperTextField>
+            <WrapperCheckBox>
+              <CheckBox
+                label="This is a director"
+                onClick={() => {
+                  setIsDirector(!isDirector);
+                }}
+                checked={isDirector}
+              />
+            </WrapperCheckBox>
+            <WrapperTextField>
+              <TextFieldComponent
+                label="Director's contact name"
+                inputProps={{
+                  required: true,
+                  value: limitedFormData.directorName,
+                  name: 'director_contact_name',
+                  onChange: onChange('directorName'),
+                }}
+              />
+            </WrapperTextField>
+            <WrapperTextField>
+              <TextFieldComponent
+                label="Director's email"
+                inputProps={{
+                  required: true,
+                  value: limitedFormData.directorEmail,
+                  name: 'director_email',
+                  onChange: onChange('directorEmail'),
+                }}
+              />
+            </WrapperTextField>
+            <WrapperTextField>
+              <PhoneInput
+                error={formErrors?.phoneNumber?.[0]}
+                required
+                label="Director's phone number"
+                onChange={(e) => {
+                  const newLimitedFormData = {
+                    ...limitedFormData,
+                    directorPhoneNumber: e.target.value,
+                  };
+                  setLimitedFormData(newLimitedFormData);
+                  runValidation(phoneValidation, newLimitedFormData).then(
                     (err) => {
                       setFormErrors(err);
                     }
