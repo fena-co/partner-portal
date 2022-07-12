@@ -76,8 +76,8 @@ const AddNewMerchantForm: NextPage = () => {
       <Title variant="subtitle4">Add new merchant</Title>
       <WrapperTextField>
         <CountrySelectionDropdown
-          value={countryData.countryName}
           required
+          value={countryData.countryName}
           label="Registration country"
           onChange={setCountry}
           placeholder="Select your country..."

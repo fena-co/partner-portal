@@ -277,509 +277,124 @@ const AddBankAccountForm: NextPage = () => {
   };
 
   return (
-    <Content>
-      <Title variant="subtitle4">Add new merchant</Title>
-      <WrapperTextField>
-        <CountrySelectionDropdown
-          value={country ? country.countryName : null}
-          required
-          label="Registration country"
-          onChange={setCountry}
-          placeholder="Select your country..."
+    <>
+      <Title variant="subtitle4">Add bank account</Title>
+      <RadioInput>
+        <RadioButton
+          type="radio"
+          checked={bankDetailsType === 'manually'}
+          onChange={() => setBankDetailsType('manually')}
         />
-      </WrapperTextField>
-      <WrapperTextField>
-        <SelectDropDown
-          label="Business structure"
-          required
-          value={businessType ? businessTypes[businessType] : null}
-          placeholder="Choose your business structure"
-          fullWidth
-        >
-          <MenuItem onClick={onBusinessTypeChange('limited')}>
-            Limited Company
-          </MenuItem>
-          <MenuItem onClick={onBusinessTypeChange('individual')}>
-            Sole Trader / Individual
-          </MenuItem>
-        </SelectDropDown>
-      </WrapperTextField>
-
-      {businessType === 'individual' && country.country && (
-        <>
-          <WrapperTextField>
-            <TextFieldComponent
-              error={formErrors?.utr?.[0]}
-              label={
-                country.country !== 'GB'
-                  ? 'Taxpayer identification number'
-                  : 'Unique Taxpayer Reference (UTR)'
-              }
-              inputProps={{
-                required: country.country !== 'GB' && true,
-                value: soleTraderFormData.utr,
-                onChange: onChange('utr'),
-              }}
-            />
-          </WrapperTextField>
-          <WrapperTextField>
-            <TextFieldComponent
-              label="Trading name"
-              inputProps={{
-                required: true,
-                value: soleTraderFormData.tradingName,
-                name: 'trading_name',
-                onChange: onChange('tradingName'),
-              }}
-            />
-          </WrapperTextField>
-          <WrapperTextField>
-            <TextFieldComponent
-              leftIcon={SearchIcon}
-              label="Trading address"
-              inputProps={{
-                required: true,
-                value: soleTraderFormData.tradingAddress,
-                name: 'trading_address',
-                onChange: onChange('tradingAddress'),
-              }}
-            />
-          </WrapperTextField>
-          <WrapperTextField>
-            <IndustrySelectionDropdown
-              value={soleTraderFormData.industry}
-              placeholder="Choose industry"
-              label="Industry"
-              onChange={onChangeIndustry}
-            />
-          </WrapperTextField>
-          <WrapperTextField>
-            <TextFieldComponent
-              label="Taxpayer identification number"
-              inputProps={{
-                value: soleTraderFormData.taxpayerId,
-                name: 'utr',
-                onChange: onChange('taxpayerId'),
-              }}
-            />
-          </WrapperTextField>
-          <WrapperTextField>
-            <TextFieldComponent
-              label="Business name"
-              inputProps={{
-                required: true,
-                value: soleTraderFormData.businessName,
-                name: 'business_name',
-                onChange: onChange('businessName'),
-              }}
-            />
-          </WrapperTextField>
-          <WrapperTextField>
-            <TextFieldComponent
-              label="Business address"
-              leftIcon={SearchIcon}
-              inputProps={{
-                required: true,
-                value: soleTraderFormData.businessAddress,
-                name: 'business_address',
-                onChange: onChange('businessAddress'),
-              }}
-            />
-          </WrapperTextField>
-          <WrapperTextField>
-            <TextFieldComponent
-              label="Contact name"
-              inputProps={{
-                required: true,
-                value: soleTraderFormData.contactName,
-                name: 'contact_name',
-                onChange: onChange('contactName'),
-              }}
-            />
-          </WrapperTextField>
-          <WrapperTextField>
-            <TextFieldComponent
-              label="Email"
-              inputProps={{
-                required: true,
-                value: soleTraderFormData.email,
-                name: 'email',
-                onChange: onChange('email'),
-              }}
-            />
-          </WrapperTextField>
-          <WrapperTextField>
-            <PhoneInput
-              error={formErrors?.phoneNumber?.[0]}
-              required
-              label="Phone number"
-              onChange={(e) => {
-                const newSoleTraderFormData = {
-                  ...soleTraderFormData,
-                  phoneNumber: e.target.value,
-                };
-                setSoleTraderFormData(newSoleTraderFormData);
-                runValidation(addNewMerchantSchema, newSoleTraderFormData).then(
-                  (err) => {
-                    setFormErrors(err);
+        <Typography variant="lightBody">Add the details manually</Typography>
+      </RadioInput>
+      <RadioInput>
+        <RadioButton
+          type="radio"
+          checked={bankDetailsType === 'ask'}
+          onChange={() => setBankDetailsType('ask')}
+        />
+        <Typography variant="lightBody">
+          Ask merchant to add their bank account using online banking
+        </Typography>
+      </RadioInput>
+      <ConnectBankAccount>
+        {bankDetailsType === 'manually' ? (
+          <>
+            <WrapperTextField>
+              <ProviderSelectionDropdown
+                value={
+                  connectBankAccFormData.provider
+                    ? providers.find(
+                        (p) => p.value === connectBankAccFormData.provider
+                      )?.name
+                    : null
+                }
+                label="Account provider"
+                placeholder="Choose your account provider"
+                providers={providers.sort(function (a, b) {
+                  if (a.name < b.name) {
+                    return -1;
                   }
-                );
-              }}
-            />
-          </WrapperTextField>
-        </>
-      )}
-      {businessType === 'limited' && country.country && (
-        <>
-          {' '}
-          <WrapperTextField>
-            <TextFieldComponent
-              error={formErrors?.crn?.[0]}
-              fullWidth
-              label={
-                country.country !== 'GB'
-                  ? 'Registration number'
-                  : 'Company registration number'
-              }
-              inputProps={{
-                required: true,
-                value: limitedFormData.crn,
-                name: 'company_number',
-                placeholder:
-                  country.country !== 'GB'
-                    ? 'Registration Number *'
-                    : 'Company Registration Number (CRN) *',
-                onChange: onChange('crn'),
-              }}
-            />
-          </WrapperTextField>
-          <WrapperTextField>
-            <TextFieldComponent
-              fullWidth
-              label={
-                country.country !== 'GB' ? 'Business name' : 'Registered name'
-              }
-              inputProps={{
-                required: true,
-                value: limitedFormData.registeredName,
-                name: 'registered_name',
-                placeholder:
-                  country.country !== 'GB'
-                    ? 'Business name'
-                    : 'Registered name',
-                onChange: onChange('registeredName'),
-              }}
-            />
-          </WrapperTextField>
-          <WrapperTextField>
-            <TextFieldComponent
-              fullWidth
-              label={
-                country.country !== 'GB'
-                  ? 'Business address'
-                  : 'Registered address'
-              }
-              inputProps={{
-                required: true,
-                value: limitedFormData.registeredAddress,
-                name: 'registered_name',
-                placeholder:
-                  country.country !== 'GB'
-                    ? 'Business address'
-                    : 'Registered address',
-                onChange: onChange('registeredName'),
-              }}
-            />
-          </WrapperTextField>
-          <WrapperTextField>
-            <IndustrySelectionDropdown
-              value={limitedFormData.industry}
-              placeholder="Choose industry"
-              label="Industry"
-              onChange={onChangeIndustry}
-            />
-          </WrapperTextField>
-          <WrapperTextField>
-            <TextFieldComponent
-              label="Trading name"
-              inputProps={{
-                required: true,
-                value: limitedFormData.tradingName,
-                name: 'trading_name',
-                onChange: onChange('tradingName'),
-              }}
-            />
-          </WrapperTextField>
-          <WrapperTextField>
-            <TextFieldComponent
-              leftIcon={SearchIcon}
-              label="Trading address"
-              inputProps={{
-                required: true,
-                value: limitedFormData.tradingAddress,
-                name: 'trading_address',
-                onChange: onChange('tradingAddress'),
-              }}
-            />
-          </WrapperTextField>
-          <WrapperTextField>
-            <TextFieldComponent
-              fullWidth
-              label="Registration number"
-              inputProps={{
-                required: true,
-                value: limitedFormData.registrationNumber,
-                name: 'company_number',
-                onChange: onChange('registrationNumber'),
-              }}
-            />
-          </WrapperTextField>
-          <WrapperTextField>
-            <TextFieldComponent
-              label="Business name"
-              inputProps={{
-                required: true,
-                value: limitedFormData.businessName,
-                name: 'business_name',
-                onChange: onChange('businessName'),
-              }}
-            />
-          </WrapperTextField>
-          <WrapperTextField>
-            <TextFieldComponent
-              leftIcon={SearchIcon}
-              label="Business address"
-              inputProps={{
-                required: true,
-                value: limitedFormData.businessAddress,
-                name: 'business_address',
-                onChange: onChange('businessAddress'),
-              }}
-            />
-          </WrapperTextField>
-          <WrapperTextField>
-            <TextFieldComponent
-              label="Primary contact name"
-              inputProps={{
-                required: true,
-                value: limitedFormData.contactName,
-                name: 'contact_name',
-                onChange: onChange('contactName'),
-              }}
-            />
-          </WrapperTextField>
-          <WrapperTextField>
-            <TextFieldComponent
-              label="Email"
-              inputProps={{
-                required: true,
-                value: limitedFormData.email,
-                name: 'trading_name',
-                onChange: onChange('email'),
-              }}
-            />
-          </WrapperTextField>
-          <WrapperTextField>
-            <PhoneInput
-              error={formErrors?.phoneNumber?.[0]}
-              required
-              label="Phone number"
-              onChange={(e) => {
-                const newLimitedFormData = {
-                  ...limitedFormData,
-                  phoneNumber: e.target.value,
-                };
-                setLimitedFormData(newLimitedFormData);
-                runValidation(addNewMerchantSchema, newLimitedFormData).then(
-                  (err) => {
-                    setFormErrors(err);
+                  if (a.name > b.name) {
+                    return 1;
                   }
-                );
-              }}
-            />
-          </WrapperTextField>
-          <WrapperCheckBox>
-            <CheckBox
-              label="This is a director"
-              onClick={() => {
-                setIsDirector(!isDirector);
-              }}
-              checked={isDirector}
-            />
-          </WrapperCheckBox>
-          <WrapperTextField>
-            <TextFieldComponent
-              label="Director's contact name"
-              inputProps={{
-                required: true,
-                value: limitedFormData.directorName,
-                name: 'director_contact_name',
-                onChange: onChange('directorName'),
-              }}
-            />
-          </WrapperTextField>
-          <WrapperTextField>
-            <TextFieldComponent
-              label="Director's email"
-              inputProps={{
-                required: true,
-                value: limitedFormData.directorEmail,
-                name: 'director_email',
-                onChange: onChange('directorEmail'),
-              }}
-            />
-          </WrapperTextField>
-          <WrapperTextField>
-            <PhoneInput
-              error={formErrors?.phoneNumber?.[0]}
-              required
-              label="Director's phone number"
-              onChange={(e) => {
-                const newLimitedFormData = {
-                  ...limitedFormData,
-                  directorPhoneNumber: e.target.value,
-                };
-                setLimitedFormData(newLimitedFormData);
-                runValidation(addNewMerchantSchema, newLimitedFormData).then(
-                  (err) => {
-                    setFormErrors(err);
-                  }
-                );
-              }}
-            />
-          </WrapperTextField>
-        </>
-      )}
-      {businessType && country.country && (
-        <>
-          <Title variant="subtitle4">Add bank account</Title>
-          <RadioInput>
-            <RadioButton
-              type="radio"
-              checked={bankDetailsType === 'manually'}
-              onChange={() => setBankDetailsType('manually')}
-            />
-            <Typography variant="lightBody">
-              Add the details manually
+                  return 0;
+                })}
+                onProviderChange={onProviderChange}
+              />
+            </WrapperTextField>
+            <WrapperTextField>
+              <TextFieldComponent
+                label="Account name"
+                inputProps={{
+                  value: connectBankAccFormData.name,
+                  name: 'accountName',
+                  onChange: (e) => {
+                    setConnectBankAccFormData({
+                      ...connectBankAccFormData,
+                      name: e.target.value,
+                    });
+                  },
+                }}
+              />
+            </WrapperTextField>
+            <WrapperTextField>
+              <TextFieldComponent
+                label="Sort Code"
+                error={formErrors?.identification?.[0]}
+                inputProps={{
+                  mask: '99-99-99',
+                  name: 'sortCode',
+                  value: connectBankAccFormData.identification,
+                  onChange: (e) => {
+                    const newFormData = {
+                      ...connectBankAccFormData,
+                      identification: e.target.value.replace(/-/g, ''),
+                    };
+                    setConnectBankAccFormData(newFormData);
+                    runValidation(sortCodeSchema, newFormData).then((err) => {
+                      setFormErrors(err);
+                    });
+                  },
+                }}
+              />
+            </WrapperTextField>
+            <WrapperTextField>
+              <TextFieldComponent
+                label="Sort code"
+                error={formErrors?.externalAccountId?.[0]}
+                inputProps={{
+                  mask: '99999999',
+                  name: 'accountNumber',
+                  value: connectBankAccFormData.externalAccountId,
+                  onChange: (e) => {
+                    const newFormData = {
+                      ...connectBankAccFormData,
+                      externalAccountId: e.target.value,
+                    };
+                    setConnectBankAccFormData(newFormData);
+                    runValidation(accNumberSchema, newFormData).then((err) => {
+                      setFormErrors(err);
+                    });
+                  },
+                }}
+              />
+            </WrapperTextField>
+          </>
+        ) : (
+          <Banner>
+            <Typography variant="body4">
+              We will send a link to add a bank account to the email address
+              <Email>{` `}isaac@gmai.com</Email>
             </Typography>
-          </RadioInput>
-          <RadioInput>
-            <RadioButton
-              type="radio"
-              checked={bankDetailsType === 'ask'}
-              onChange={() => setBankDetailsType('ask')}
-            />
-            <Typography variant="lightBody">
-              Ask merchant to add their bank account using online banking
-            </Typography>
-          </RadioInput>
-          <ConnectBankAccount>
-            {bankDetailsType === 'manually' ? (
-              <>
-                <WrapperTextField>
-                  <ProviderSelectionDropdown
-                    value={
-                      connectBankAccFormData.provider
-                        ? providers.find(
-                            (p) => p.value === connectBankAccFormData.provider
-                          )?.name
-                        : null
-                    }
-                    label="Account provider"
-                    placeholder="Choose your account provider"
-                    providers={providers.sort(function (a, b) {
-                      if (a.name < b.name) {
-                        return -1;
-                      }
-                      if (a.name > b.name) {
-                        return 1;
-                      }
-                      return 0;
-                    })}
-                    onProviderChange={onProviderChange}
-                  />
-                </WrapperTextField>
-                <WrapperTextField>
-                  <TextFieldComponent
-                    label="Account name"
-                    inputProps={{
-                      value: connectBankAccFormData.name,
-                      name: 'accountName',
-                      onChange: (e) => {
-                        setConnectBankAccFormData({
-                          ...connectBankAccFormData,
-                          name: e.target.value,
-                        });
-                      },
-                    }}
-                  />
-                </WrapperTextField>
-                <WrapperTextField>
-                  <TextFieldComponent
-                    label="Sort Code"
-                    error={formErrors?.identification?.[0]}
-                    inputProps={{
-                      mask: '99-99-99',
-                      name: 'sortCode',
-                      value: connectBankAccFormData.identification,
-                      onChange: (e) => {
-                        const newFormData = {
-                          ...connectBankAccFormData,
-                          identification: e.target.value.replace(/-/g, ''),
-                        };
-                        setConnectBankAccFormData(newFormData);
-                        runValidation(sortCodeSchema, newFormData).then(
-                          (err) => {
-                            setFormErrors(err);
-                          }
-                        );
-                      },
-                    }}
-                  />
-                </WrapperTextField>
-                <WrapperTextField>
-                  <TextFieldComponent
-                    label="Sort code"
-                    error={formErrors?.externalAccountId?.[0]}
-                    inputProps={{
-                      mask: '99999999',
-                      name: 'accountNumber',
-                      value: connectBankAccFormData.externalAccountId,
-                      onChange: (e) => {
-                        const newFormData = {
-                          ...connectBankAccFormData,
-                          externalAccountId: e.target.value,
-                        };
-                        setConnectBankAccFormData(newFormData);
-                        runValidation(accNumberSchema, newFormData).then(
-                          (err) => {
-                            setFormErrors(err);
-                          }
-                        );
-                      },
-                    }}
-                  />
-                </WrapperTextField>
-              </>
-            ) : (
-              <Banner>
-                <Typography variant="body4">
-                  We will send a link to add a bank account to the email address
-                  <Email>{` `}isaac@gmai.com</Email>
-                </Typography>
-              </Banner>
-            )}
+          </Banner>
+        )}
 
-            <ShareWrapper>
-              <ShareVerificationLink />
-            </ShareWrapper>
-          </ConnectBankAccount>
-        </>
-      )}
-      <ButtonWrapper>
-        <ButtonWithChildren variant="contained">ADD</ButtonWithChildren>
-      </ButtonWrapper>
-    </Content>
+        <ShareWrapper>
+          <ShareVerificationLink />
+        </ShareWrapper>
+      </ConnectBankAccount>
+    </>
   );
 };
 

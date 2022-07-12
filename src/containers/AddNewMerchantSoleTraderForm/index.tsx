@@ -1,13 +1,8 @@
 import React, { ChangeEvent, useState } from 'react';
 import styled from 'styled-components';
-import TextFieldComponent from '../../components/Textfield';
 import * as yup from 'yup';
-import { runValidation } from '../../util/formValidation';
-import IndustrySelectionDropdown from '../../components/IndustrySelectionDropdown';
-import SearchIcon from 'image/icon/search-blue.svg';
-import PhoneInput from '../../components/PhoneInput';
-import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
+import Form from '../../components/Form';
+import TextFormField from '../../components/TextFormField';
 
 const soleTraderSchema = yup.object().shape({
   utr: yup
@@ -35,13 +30,7 @@ const company: any = {
   industry: '',
 };
 
-const Content = styled.section`
-  display: flex;
-  flex-direction: column;
-  padding: 30px calc((100vw - 380px) / 2);
-`;
-
-const WrapperTextField = styled.div`
+const StyledTextField = styled(TextFormField)`
   margin-top: 10px;
   &:first-child {
     margin-top: 0px;
@@ -56,28 +45,17 @@ interface AddNewMerchantSoleTraderFormProps {
 }
 
 const AddNewMerchantSoleTraderForm: React.FunctionComponent<AddNewMerchantSoleTraderFormProps> = ({ countryData: { country }}) => {
-  // cool code starts here
-  const {
-    register,
-    formState: { errors },
-    handleSubmit,
-    watch
-  } = useForm({
-    resolver: yupResolver(soleTraderSchema),
-  });
-  // cool code ends here
-
-  const [soleTraderFormData, setSoleTraderFormData] = useState({
-    utr: company.identifier || '',
-    tradingName: company.tradingName || '',
-    tradingAddress: company.tradingAddress || '',
-    businessName: company.businessName || '',
-    businessAddress: company.businessAddress || '',
-    contactName: company.contactName || '',
-    email: company.email || '',
-    industry: company.industry || '',
-    taxpayerId: company.taxpayerId || '',
-  });
+  const defaultValues = {
+    utr: '',
+    tradingName: '',
+    tradingAddress: '',
+    businessName: '',
+    businessAddress: '',
+    contactName: '',
+    email: '',
+    industry: '',
+    taxpayerId: '',
+  };
 
   const onChange =
     (key: string) => async (event: ChangeEvent<HTMLInputElement>) => {
@@ -118,96 +96,58 @@ const AddNewMerchantSoleTraderForm: React.FunctionComponent<AddNewMerchantSoleTr
     // }
   };
 
-  const onSubmit = (data: any) => console.log(data, errors);
-
-  console.log(watch('utr'));
+  const onSubmit = (data: any) => console.log(data);
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <WrapperTextField>
-        <TextFieldComponent
-          error={errors.utr?.[0]}
-          label={
-            country !== 'GB'
-              ? 'Taxpayer identification number'
-              : 'Unique Taxpayer Reference (UTR)'
-          }
-          inputProps={{
-            ...register('utr'),
-            required: country !== 'GB' && true,
-          }}
-        />
-      </WrapperTextField>
-      <WrapperTextField>
-        <TextFieldComponent
-          {...register('tradingName')}
-          label="Trading name"
-          inputProps={{
-            required: true,
-          }}
-        />
-      </WrapperTextField>
-      <WrapperTextField>
-        <TextFieldComponent
-          {...register('tradingAddress')}
-          leftIcon={SearchIcon}
-          label="Trading address"
-          inputProps={{
-            required: true,
-          }}
-        />
-      </WrapperTextField>
-      <WrapperTextField>
+    <Form onSubmit={onSubmit} defaultValues={defaultValues} validationSchema={soleTraderSchema}>
+      <StyledTextField
+        name='utr'
+        required={country !== 'GB' && true}
+        label={
+          country !== 'GB'
+            ? 'Taxpayer identification number'
+            : 'Unique Taxpayer Reference (UTR)'
+        }
+      />
+      <StyledTextField
+        name='tradingName'
+        required
+        label="Trading name"
+      />
+      <StyledTextField
+        name='tradingAddress'
+        required
+        label="Trading address"
+      />
+      <StyledTextField
+        name='taxpayerId'
+        required
+        label="Taxpayer identification number"
+      />
+      {/* <WrapperTextField>
         <IndustrySelectionDropdown
           value={soleTraderFormData.industry}
           placeholder="Choose industry"
           label="Industry"
           onChange={onChangeIndustry}
         />
-      </WrapperTextField>
-      <WrapperTextField>
-        <TextFieldComponent
-          {...register('taxpayerId')}
-          label="Taxpayer identification number"
-        />
-      </WrapperTextField>
-      <WrapperTextField>
-        <TextFieldComponent
-          {...register('businessName')}
-          label="Business name"
-          inputProps={{
-            required: true,
-          }}
-        />
-      </WrapperTextField>
-      <WrapperTextField>
-        <TextFieldComponent
-          {...register('businessName')}
-          label="Business address"
-          leftIcon={SearchIcon}
-          inputProps={{
-            required: true,
-          }}
-        />
-      </WrapperTextField>
-      <WrapperTextField>
-        <TextFieldComponent
-          {...register('contactName')}
-          label="Contact name"
-          inputProps={{
-            required: true,
-          }}
-        />
-      </WrapperTextField>
-      <WrapperTextField>
-        <TextFieldComponent
-          {...register('contactName')}
-          label="Email"
-          inputProps={{
-            required: true,
-          }}
-        />
-      </WrapperTextField>
+      </WrapperTextField> */}
+      <StyledTextField
+        name='businessName'
+        required
+        label="Business name"
+      />
+      <StyledTextField
+        name='contactName'
+        required
+        label="Contact name"
+      />
+      <StyledTextField
+        name='email'
+        required
+        label="Email"
+      />
+
       {/* <WrapperTextField>
         <PhoneInput
           error={errors?.phoneNumber?.[0]}
@@ -227,8 +167,7 @@ const AddNewMerchantSoleTraderForm: React.FunctionComponent<AddNewMerchantSoleTr
           }}
         />
       </WrapperTextField> */}
-      <button type='submit'>Submit</button>
-    </form>
+    </Form>
   );
 };
 

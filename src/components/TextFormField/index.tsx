@@ -1,5 +1,5 @@
 import React from 'react';
-import { UseFormRegister } from 'react-hook-form';
+import { Controller, Control } from 'react-hook-form';
 import styled from 'styled-components';
 import TextInput from '../TextInput';
 
@@ -29,9 +29,9 @@ const InputError = styled.div`
   padding-top: 5px;
 `;
 
-interface TextFormFieldProps extends HTMLInputElement {
+interface TextFormFieldProps extends Partial<HTMLInputElement> {
   name: string;
-  register: UseFormRegister<any>,
+  control?: Control;
   rightIcon?: () => JSX.Element;
   leftIcon?: () => JSX.Element;
   label?: string | JSX.Element;
@@ -41,30 +41,38 @@ interface TextFormFieldProps extends HTMLInputElement {
 const TextFormField: React.FunctionComponent<TextFormFieldProps> = ({
   label,
   name,
-  register,
+  control,
   rightIcon,
   leftIcon,
   disabled,
   error,
   ...inputProps
-}) => {
-  return (
+}) =>
+  (
     <Container>
-      {label && (
-        <FieldLabel>
-          {label}{' '}
-          {inputProps?.required && <span style={{ color: 'red' }}>*</span>}
-        </FieldLabel>
-      )}
-      <TextInput
-        disabled={disabled}
-        variant={error ? 'error' : 'default'}
-        {...register(name)}
-        {...inputProps}
+      <Controller
+        name={name}
+        control={control}
+        render={({ field }) => 
+          <>
+            {label && (
+              <FieldLabel>
+                {label}{' '}
+                {inputProps?.required && (
+                  <span style={{ color: 'red' }}>*</span>
+                )}
+              </FieldLabel>
+            )}
+            <TextInput
+              disabled={disabled}
+              variant={error ? 'error' : 'default'}
+              {...field}
+            />
+            {error && <InputError>{error.message}</InputError>}
+          </>
+        }
       />
-      {error && <InputError>{error}</InputError>}
     </Container>
   );
-};
 
 export default TextFormField;
