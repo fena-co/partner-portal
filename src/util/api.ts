@@ -60,6 +60,17 @@ class Api {
     const data = await result.json();
     return data.data;
   }
+
+  // async getProviders(): Promise<Array<ProviderApiType>> {
+  //   const url = new URL(`${this.mainUrl}providers/list`);
+
+  //   const result = await this.fetcher(url.toString(), {
+  //     method: 'GET',
+  //     headers: this.defaultHeaders,
+  //   });
+  //   const data = await result.json();
+  //   return data.data;
+  // }
 }
 
 export default new Api(apiUrl);

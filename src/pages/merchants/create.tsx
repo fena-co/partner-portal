@@ -12,7 +12,13 @@ import { runValidation } from '../../util/formValidation';
 import Api from '../../util/api';
 import IndustrySelectionDropdown from '../../components/IndustrySelectionDropdown';
 import SearchIcon from 'image/icon/search-blue.svg';
+import CloseIcon from 'image/icon/close.svg';
 import PhoneInput from '../../components/PhoneInput';
+import Layout from '../../components/Layout';
+import router from 'next/router';
+import ProviderSelectionDropdown from '../../components/ProviderSelectionDropdown';
+import ShareVerificationLink from '../../components/ShareVerificationLink';
+import ButtonWithChildren from '../../components/Button';
 
 const crnValidation = yup.object().shape({
   crn: yup
@@ -36,6 +42,13 @@ const phoneValidation = yup.object().shape({
     .matches(/\w{2} 0?\d{0,10}$/, 'Phone number length exceeded'),
 });
 
+const sortCodeSchema = yup.object().shape({
+  identification: yup.string().min(6, 'Sort code must be 6 digits'),
+});
+const accNumberSchema = yup.object().shape({
+  externalAccountId: yup.string().min(8, 'Account number must be 8 digits'),
+});
+
 const businessTypes = {
   individual: 'Sole Trader / Individual',
   limited: 'Limited Company',
@@ -55,8 +68,20 @@ const Wrapper = styled.section``;
 
 const Header = styled.div`
   display: flex;
+  align-items: center;
   border-bottom: 1px solid #dbe3eb;
-  padding: 20px;
+  padding: 20px 50px;
+`;
+
+const Close = styled(CloseIcon)`
+  fill: #13273f;
+  padding-right: 10px;
+  border-right: 1px solid #b5b8ba;
+  cursor: pointer;
+`;
+
+const HeaderText = styled(Typography)`
+  padding-left: 10px;
 `;
 
 const Content = styled.section`
@@ -67,6 +92,10 @@ const Content = styled.section`
 
 const Title = styled(Typography)`
   text-align: center;
+  &:last-of-type {
+    padding-top: 30px;
+    margin-bottom: 10px;
+  }
 `;
 
 const WrapperTextField = styled.div`
@@ -92,6 +121,45 @@ const MenuItem = styled.li`
   :hover {
     background: #f4f7f9;
   }
+`;
+
+const RadioWrapper = styled.div`
+  margin-top: 20px;
+`;
+
+const ConnectBankAccount = styled.div``;
+
+const ShareWrapper = styled.div`
+  margin-top: 30px;
+`;
+
+const Banner = styled.div`
+  padding: 15px;
+  margin-top: 30px;
+  background-color: rgba(44, 209, 158, 0.05);
+  border-radius: 5px;
+  border: 1px solid rgba(44, 209, 158, 0.4);
+`;
+
+const Email = styled.a`
+  color: #38b6ff;
+`;
+
+const ButtonWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
+`;
+
+const RadioInput = styled.div`
+  display: flex;
+  align-items: flex-start;
+  margin-top: 10px;
+`;
+
+const RadioButton = styled.input`
+  accent-color: black;
+  margin-right: 10px;
 `;
 
 const Create: NextPage = () => {
@@ -166,6 +234,28 @@ const Create: NextPage = () => {
         }
   );
 
+  const [bankDetailsType, setBankDetailsType] = useState('manually');
+
+  const [connectBankAccFormData, setConnectBankAccFormData] = useState({
+    name: '',
+    identification: '',
+    externalAccountId: '',
+    provider: '',
+  });
+
+  const [providers, setProviders] = useState<
+    Array<{ name: string; value: string }>
+  >([]);
+
+  // const getProviders = async () => {
+  //   const results = await Api.getProviders();
+  //   const mapped = results.map((result: any) => ({
+  //     name: result.name,
+  //     value: result._id,
+  //   }));
+  //   setProviders(mapped);
+  // };
+
   const onBusinessTypeChange = (type: keyof typeof businessTypes) => () => {
     setBusinessType(type);
   };
@@ -228,10 +318,27 @@ const Create: NextPage = () => {
     }
   };
 
+  const onProviderChange = (provider: string) => {
+    setConnectBankAccFormData({ ...connectBankAccFormData, provider });
+  };
+
+  // const onBankFormChange =
+  //   (key: string) => (event: ChangeEvent<HTMLInputElement>) => {
+  //     const newFormData = {
+  //       ...connectBankAccFormData,
+  //       [key]: event.target.value,
+  //     };
+  //     setConnectBankAccFormData(newFormData);
+  //     runValidation(yupSchema2, newFormData).then((err) => {
+  //       setFormErrors(err);
+  //     });
+  //   };
+
   return (
-    <Wrapper>
+    <Layout>
       <Header>
-        <Typography>Add new merchant</Typography>
+        <Close onClick={() => router.back()} />
+        <HeaderText>Add new merchant</HeaderText>
       </Header>
       <Content>
         <Title variant="subtitle4">Add new merchant</Title>
@@ -305,7 +412,7 @@ const Create: NextPage = () => {
             <WrapperTextField>
               <IndustrySelectionDropdown
                 value={soleTraderFormData.industry}
-                placeholder='Choose industry'
+                placeholder="Choose industry"
                 label="Industry"
                 onChange={onChangeIndustry}
               />
@@ -386,8 +493,138 @@ const Create: NextPage = () => {
             </WrapperTextField>
           </>
         )}
+        {businessType && country.country && (
+          <>
+            <Title variant="subtitle4">Add bank account</Title>
+            <RadioInput>
+              <RadioButton
+                type="radio"
+                checked={bankDetailsType === 'manually'}
+                onChange={() => setBankDetailsType('manually')}
+              />
+              <Typography variant="lightBody">
+                Add the details manually
+              </Typography>
+            </RadioInput>
+            <RadioInput>
+              <RadioButton
+                type="radio"
+                checked={bankDetailsType === 'ask'}
+                onChange={() => setBankDetailsType('ask')}
+              />
+              <Typography variant="lightBody">
+                Ask merchant to add their bank account using online banking
+              </Typography>
+            </RadioInput>
+            <ConnectBankAccount>
+              {bankDetailsType === 'manually' ? (
+                <>
+                  <WrapperTextField>
+                    <ProviderSelectionDropdown
+                      value={
+                        connectBankAccFormData.provider
+                          ? providers.find(
+                              (p) => p.value === connectBankAccFormData.provider
+                            )?.name
+                          : null
+                      }
+                      label="Account provider"
+                      placeholder="Choose your account provider"
+                      providers={providers.sort(function (a, b) {
+                        if (a.name < b.name) {
+                          return -1;
+                        }
+                        if (a.name > b.name) {
+                          return 1;
+                        }
+                        return 0;
+                      })}
+                      onProviderChange={onProviderChange}
+                    />
+                  </WrapperTextField>
+                  <WrapperTextField>
+                    <TextFieldComponent
+                      label="Account name"
+                      inputProps={{
+                        value: connectBankAccFormData.name,
+                        name: 'accountName',
+                        onChange: (e) => {
+                          setConnectBankAccFormData({
+                            ...connectBankAccFormData,
+                            name: e.target.value,
+                          });
+                        },
+                      }}
+                    />
+                  </WrapperTextField>
+                  <WrapperTextField>
+                    <TextFieldComponent
+                      label="Sort Code"
+                      error={formErrors?.identification?.[0]}
+                      inputProps={{
+                        mask: '99-99-99',
+                        name: 'sortCode',
+                        value: connectBankAccFormData.identification,
+                        onChange: (e) => {
+                          const newFormData = {
+                            ...connectBankAccFormData,
+                            identification: e.target.value.replace(/-/g, ''),
+                          };
+                          setConnectBankAccFormData(newFormData);
+                          runValidation(sortCodeSchema, newFormData).then(
+                            (err) => {
+                              setFormErrors(err);
+                            }
+                          );
+                        },
+                      }}
+                    />
+                  </WrapperTextField>
+                  <WrapperTextField>
+                    <TextFieldComponent
+                      label="Sort code"
+                      error={formErrors?.externalAccountId?.[0]}
+                      inputProps={{
+                        mask: '99999999',
+                        name: 'accountNumber',
+                        value: connectBankAccFormData.externalAccountId,
+                        onChange: (e) => {
+                          const newFormData = {
+                            ...connectBankAccFormData,
+                            externalAccountId: e.target.value,
+                          };
+                          setConnectBankAccFormData(newFormData);
+                          runValidation(accNumberSchema, newFormData).then(
+                            (err) => {
+                              setFormErrors(err);
+                            }
+                          );
+                        },
+                      }}
+                    />
+                  </WrapperTextField>
+                </>
+              ) : (
+                <Banner>
+                  <Typography variant="body4">
+                    We will send a link to add a bank account to the email
+                    address
+                    <Email>{` `}isaac@gmai.com</Email>
+                  </Typography>
+                </Banner>
+              )}
+
+              <ShareWrapper>
+                <ShareVerificationLink />
+              </ShareWrapper>
+            </ConnectBankAccount>
+          </>
+        )}
+        <ButtonWrapper>
+          <ButtonWithChildren variant="contained">ADD</ButtonWithChildren>
+        </ButtonWrapper>
       </Content>
-    </Wrapper>
+    </Layout>
   );
 };
 
