@@ -4,7 +4,7 @@ import Typography from '../../components/Typography';
 import CloseIcon from 'image/icon/close.svg';
 import Layout from '../../components/Layout';
 import router from 'next/router';
-import AddNewMerchantForm from '../../containers/AddNewMerchantLimitedCompanyForm';
+import AddNewMerchantForm from '../../containers/AddNewMerchantForm';
 
 const Header = styled.div`
   display: flex;

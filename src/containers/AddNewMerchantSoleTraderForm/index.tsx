@@ -1,4 +1,3 @@
-import { NextPage } from 'next';
 import React, { ChangeEvent, useState } from 'react';
 import styled from 'styled-components';
 import TextFieldComponent from '../../components/Textfield';
@@ -62,6 +61,7 @@ const AddNewMerchantSoleTraderForm: React.FunctionComponent<AddNewMerchantSoleTr
     register,
     formState: { errors },
     handleSubmit,
+    watch
   } = useForm({
     resolver: yupResolver(soleTraderSchema),
   });
@@ -120,11 +120,12 @@ const AddNewMerchantSoleTraderForm: React.FunctionComponent<AddNewMerchantSoleTr
 
   const onSubmit = (data: any) => console.log(data, errors);
 
+  console.log(watch('utr'));
+
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <WrapperTextField>
         <TextFieldComponent
-          {...register('utr')}
           error={errors.utr?.[0]}
           label={
             country !== 'GB'
@@ -132,31 +133,27 @@ const AddNewMerchantSoleTraderForm: React.FunctionComponent<AddNewMerchantSoleTr
               : 'Unique Taxpayer Reference (UTR)'
           }
           inputProps={{
+            ...register('utr'),
             required: country !== 'GB' && true,
-            value: soleTraderFormData.utr,
           }}
         />
       </WrapperTextField>
       <WrapperTextField>
         <TextFieldComponent
+          {...register('tradingName')}
           label="Trading name"
           inputProps={{
             required: true,
-            value: soleTraderFormData.tradingName,
-            name: 'trading_name',
-            onChange: onChange('tradingName'),
           }}
         />
       </WrapperTextField>
       <WrapperTextField>
         <TextFieldComponent
+          {...register('tradingAddress')}
           leftIcon={SearchIcon}
           label="Trading address"
           inputProps={{
             required: true,
-            value: soleTraderFormData.tradingAddress,
-            name: 'trading_address',
-            onChange: onChange('tradingAddress'),
           }}
         />
       </WrapperTextField>
@@ -170,62 +167,50 @@ const AddNewMerchantSoleTraderForm: React.FunctionComponent<AddNewMerchantSoleTr
       </WrapperTextField>
       <WrapperTextField>
         <TextFieldComponent
+          {...register('taxpayerId')}
           label="Taxpayer identification number"
-          inputProps={{
-            value: soleTraderFormData.taxpayerId,
-            name: 'utr',
-            onChange: onChange('taxpayerId'),
-          }}
         />
       </WrapperTextField>
       <WrapperTextField>
         <TextFieldComponent
+          {...register('businessName')}
           label="Business name"
           inputProps={{
             required: true,
-            value: soleTraderFormData.businessName,
-            name: 'business_name',
-            onChange: onChange('businessName'),
           }}
         />
       </WrapperTextField>
       <WrapperTextField>
         <TextFieldComponent
+          {...register('businessName')}
           label="Business address"
           leftIcon={SearchIcon}
           inputProps={{
             required: true,
-            value: soleTraderFormData.businessAddress,
-            name: 'business_address',
-            onChange: onChange('businessAddress'),
           }}
         />
       </WrapperTextField>
       <WrapperTextField>
         <TextFieldComponent
+          {...register('contactName')}
           label="Contact name"
           inputProps={{
             required: true,
-            value: soleTraderFormData.contactName,
-            name: 'contact_name',
-            onChange: onChange('contactName'),
           }}
         />
       </WrapperTextField>
       <WrapperTextField>
         <TextFieldComponent
+          {...register('contactName')}
           label="Email"
           inputProps={{
             required: true,
-            value: soleTraderFormData.email,
-            name: 'email',
-            onChange: onChange('email'),
           }}
         />
       </WrapperTextField>
-      <WrapperTextField>
+      {/* <WrapperTextField>
         <PhoneInput
-          error={formErrors?.phoneNumber?.[0]}
+          error={errors?.phoneNumber?.[0]}
           required
           label="Phone number"
           onChange={(e) => {
@@ -234,15 +219,16 @@ const AddNewMerchantSoleTraderForm: React.FunctionComponent<AddNewMerchantSoleTr
               phoneNumber: e.target.value,
             };
             setSoleTraderFormData(newSoleTraderFormData);
-            runValidation(addNewMerchantSchema, newSoleTraderFormData).then(
+            runValidation(soleTraderSchema, newSoleTraderFormData).then(
               (err) => {
                 setFormErrors(err);
               }
             );
           }}
         />
-      </WrapperTextField>
-    </Content>
+      </WrapperTextField> */}
+      <button type='submit'>Submit</button>
+    </form>
   );
 };
 

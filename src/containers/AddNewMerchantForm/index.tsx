@@ -63,7 +63,7 @@ const AddNewMerchantForm: NextPage = () => {
   const [countryData, setCountry] = useState<{
     country?: string;
     countryName?: string;
-  }>();
+  }>({});
 
   const [businessType, setBusinessType] =
     useState<keyof typeof businessTypes>();
@@ -76,7 +76,7 @@ const AddNewMerchantForm: NextPage = () => {
       <Title variant="subtitle4">Add new merchant</Title>
       <WrapperTextField>
         <CountrySelectionDropdown
-          value={countryData}
+          value={countryData.countryName}
           required
           label="Registration country"
           onChange={setCountry}
@@ -100,10 +100,10 @@ const AddNewMerchantForm: NextPage = () => {
         </SelectDropDown>
       </WrapperTextField>
 
-      {businessType === 'individual' && (
+      {businessType === 'individual' && countryData?.country && (
         <AddNewMerchantSoleTraderForm countryData={countryData} />
       )}
-      {businessType === 'limited' && <AddNewMerchantLimitedCompanyForm />}
+      {/* {businessType === 'limited' && <AddNewMerchantLimitedCompanyForm />} */}
       {businessType && <AddBankAccountForm />}
       <ButtonWrapper>
         <ButtonWithChildren variant="contained">ADD</ButtonWithChildren>
