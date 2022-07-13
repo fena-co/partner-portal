@@ -3,7 +3,8 @@ import Bell from 'image/icon/bell.svg';
 import Cog from 'image/icon/cog.svg';
 import Person from 'image/icon/person.svg';
 import Business from 'image/icon/settings/business.svg';
-import ManageBank from 'image/icon/settings/manageBank.svg';
+import ApiKeyIcon from 'image/icon/settings/api-key.svg';
+import BusinessIcon from 'image/icon/settings/business.svg';
 import ManageIntegrations from 'image/icon/settings/manageIntegrations.svg';
 import Terminal from 'image/icon/settings/terminal.svg';
 import { useRouter } from 'next/router';
@@ -159,6 +160,16 @@ const ContextMenuItem = styled.div`
   }
 `;
 
+const ContextMenuOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  cursor: default;
+`;
+
 // const menus = [
 //   {
 //     name: 'Transactions',
@@ -187,25 +198,36 @@ const homeMenus = [
 
 const settingsItems = [
   {
-    title: 'Business details',
-    icon: <Business />,
-    route: ROUTES.BUSINESS_DETAILS,
+    title: 'Business Details',
+    icon: <BusinessIcon />,
+    route: '',
   },
   {
-    title: 'Manage integrations',
-    icon: <ManageIntegrations />,
-    route: ROUTES.MANAGE_INTEGRATIONS,
+    title: 'API Keys',
+    icon: <ApiKeyIcon />,
+    route: ROUTES.API_KEYS,
   },
-  {
-    title: 'Manage bank accounts',
-    icon: <ManageBank />,
-    route: ROUTES.MANAGE_BANK_ACCOUNT,
-  },
-  {
-    title: 'Terminal management',
-    icon: <Terminal />,
-    route: ROUTES.TERMINAL_SETTINGS,
-  },
+
+  // {
+  //   title: 'Business details',
+  //   icon: <Business />,
+  //   route: ROUTES.BUSINESS_DETAILS,
+  // },
+  // {
+  //   title: 'Manage integrations',
+  //   icon: <ManageIntegrations />,
+  //   route: ROUTES.MANAGE_INTEGRATIONS,
+  // },
+  // {
+  //   title: 'Manage bank accounts',
+  //   icon: <ManageBank />,
+  //   route: ROUTES.MANAGE_BANK_ACCOUNT,
+  // },
+  // {
+  //   title: 'Terminal management',
+  //   icon: <Terminal />,
+  //   route: ROUTES.TERMINAL_SETTINGS,
+  // },
 ];
 
 const Header = ({ variant }: { variant: 'home' | 'dashboard' }) => {
@@ -271,25 +293,32 @@ const Header = ({ variant }: { variant: 'home' | 'dashboard' }) => {
           >
             <Cog />
             {settingOpen && (
-              <ContextMenuContainer width={665}>
-                <ContextMenuHeader>Settings</ContextMenuHeader>
-                <SettingsMenuItemContainer>
-                  {settingsItems.map((item) => {
-                    return (
-                      <ContextMenuItem
-                        key={item.title}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          item.route && router.push(item.route);
-                        }}
-                      >
-                        <SettingsItemIcon>{item.icon}</SettingsItemIcon>
-                        <SettingsItemText>{item.title}</SettingsItemText>
-                      </ContextMenuItem>
-                    );
-                  })}
-                </SettingsMenuItemContainer>
-              </ContextMenuContainer>
+              <ContextMenuOverlay
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setSettingOpen(false);
+                }}
+              >
+                <ContextMenuContainer width={665}>
+                  <ContextMenuHeader>Settings</ContextMenuHeader>
+                  <SettingsMenuItemContainer>
+                    {settingsItems.map((item) => {
+                      return (
+                        <ContextMenuItem
+                          key={item.title}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            item.route && router.push(item.route);
+                          }}
+                        >
+                          <SettingsItemIcon>{item.icon}</SettingsItemIcon>
+                          <SettingsItemText>{item.title}</SettingsItemText>
+                        </ContextMenuItem>
+                      );
+                    })}
+                  </SettingsMenuItemContainer>
+                </ContextMenuContainer>
+              </ContextMenuOverlay>
             )}
           </HeaderButton>
           <HeaderButton
@@ -300,17 +329,24 @@ const Header = ({ variant }: { variant: 'home' | 'dashboard' }) => {
           >
             <Person />
             {profileOpen && (
-              <ContextMenuContainer width={300}>
-                <ContextMenuHeader>Profile</ContextMenuHeader>
-                <SettingsMenuItemContainer>
-                  <ContextMenuItem onClick={handleLogOut}>
-                    <SettingsItemIcon>
-                      <Business />
-                    </SettingsItemIcon>
-                    <SettingsItemText>Log out</SettingsItemText>
-                  </ContextMenuItem>
-                </SettingsMenuItemContainer>
-              </ContextMenuContainer>
+              <ContextMenuOverlay
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setProfileOpen(false);
+                }}
+              >
+                <ContextMenuContainer width={300}>
+                  <ContextMenuHeader>Profile</ContextMenuHeader>
+                  <SettingsMenuItemContainer>
+                    <ContextMenuItem onClick={handleLogOut}>
+                      <SettingsItemIcon>
+                        <Business />
+                      </SettingsItemIcon>
+                      <SettingsItemText>Log out</SettingsItemText>
+                    </ContextMenuItem>
+                  </SettingsMenuItemContainer>
+                </ContextMenuContainer>
+              </ContextMenuOverlay>
             )}
           </HeaderButton>
         </HeaderButtonContainer>
