@@ -46,6 +46,7 @@ const TextFormField: React.FunctionComponent<TextFormFieldProps> = ({
   leftIcon,
   disabled,
   error,
+  required,
   ...inputProps
 }) =>
   (
@@ -58,7 +59,7 @@ const TextFormField: React.FunctionComponent<TextFormFieldProps> = ({
             {label && (
               <FieldLabel>
                 {label}{' '}
-                {inputProps?.required && (
+                {required && (
                   <span style={{ color: 'red' }}>*</span>
                 )}
               </FieldLabel>
@@ -66,6 +67,7 @@ const TextFormField: React.FunctionComponent<TextFormFieldProps> = ({
             <TextInput
               disabled={disabled}
               variant={error ? 'error' : 'default'}
+              {...inputProps}
               {...field}
             />
             {error && <InputError>{error.message}</InputError>}

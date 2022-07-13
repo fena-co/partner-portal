@@ -1,7 +1,6 @@
-import React, { ChangeEvent, useState } from 'react';
-import styled from 'styled-components';
+import React, { ChangeEvent } from 'react';
 import * as yup from 'yup';
-import Dropdown from '../../components/Dropdown';
+import DropdownFormField from '../../components/DropdownFormField';
 import Form from '../../components/Form';
 import TextFormField from '../../components/TextFormField';
 import { industries } from '../../constant/industries';
@@ -31,13 +30,6 @@ const company: any = {
   tradingAddress: '',
   industry: '',
 };
-
-const StyledTextField = styled(TextFormField)`
-  margin-top: 10px;
-  &:first-child {
-    margin-top: 0px;
-  }
-`;
 
 interface AddNewMerchantSoleTraderFormProps {
   countryData: {
@@ -116,29 +108,30 @@ const AddNewMerchantSoleTraderForm: React.FunctionComponent<
       defaultValues={defaultValues}
       validationSchema={soleTraderSchema}
     >
-      <StyledTextField
+      <TextFormField
         name="utr"
         required={country !== 'GB'}
         label={country !== 'GB'
         ? 'Taxpayer identification number'
         : 'Unique Taxpayer Reference (UTR)'}
       />
-      <StyledTextField name="tradingName" required label="Trading name" />
-      <StyledTextField name="tradingAddress" required label="Trading address" />
-      <StyledTextField
+      <TextFormField name="tradingName" required label="Trading name" />
+      <TextFormField name="tradingAddress" required label="Trading address" />
+      <TextFormField
         name="taxpayerId"
         required
         label="Taxpayer identification number"
       />
-      <Dropdown
+      <DropdownFormField
+        required
+        name='industry'
         placeholder="Choose industry"
         label="Industry"
-        onChange={(data) => console.log(data)}
         items={industriesItems}
       />
-      <StyledTextField name="businessName" required label="Business name" />
-      <StyledTextField name="contactName" required label="Contact name" />
-      <StyledTextField name="email" required label="Email" />
+      <TextFormField name="businessName" required label="Business name" />
+      <TextFormField name="contactName" required label="Contact name" />
+      <TextFormField name="email" required label="Email" />
 
       {/* <WrapperTextField>
         <PhoneInput
@@ -159,6 +152,7 @@ const AddNewMerchantSoleTraderForm: React.FunctionComponent<
           }}
         />
       </WrapperTextField> */}
+      <button type="submit">done</button>
     </Form>
   );
 };

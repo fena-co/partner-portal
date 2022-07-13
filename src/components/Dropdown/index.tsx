@@ -6,9 +6,9 @@ import MenuItem from '../MenuItem';
 import Typography from '../Typography';
 import ArrowDownAccordion from 'image/icon/arrow-down-1.svg';
 
+
 const DropDownContainer = styled.div`
   position: relative;
-  padding-top: 20px;
 `;
 
 interface DropDownHeaderProps {
@@ -203,7 +203,7 @@ const Dropdown: FC<DropdownProps> = ({
       <DropDownHeader ref={ref} isOpen={isOpen} onClick={handleExpand}>
         {leftIcon && <IconWrapper>{leftIcon()}</IconWrapper>}
         <ValueSelect ref={valueRef} isPlaceholder={!value && !!placeholder}>
-          {value ? value : placeholder}
+          {value ? value.label : placeholder}
         </ValueSelect>
         {isOpen ? <ArrowUp /> : <ArrowDown />}
       </DropDownHeader>
