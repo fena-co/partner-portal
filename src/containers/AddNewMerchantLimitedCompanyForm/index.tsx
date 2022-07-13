@@ -9,7 +9,7 @@ import { COUNTRY_CODES } from '../../constant/countries';
 import { CompanyTypes } from '../../types/api';
 import * as yup from 'yup';
 import { runValidation } from '../../util/formValidation';
-import IndustrySelectionDropdown from '../../components/IndustrySelectionDropdown';
+import IndustrySelectionDropdown from '../../components/Dropdown';
 import SearchIcon from 'image/icon/search-blue.svg';
 import PhoneInput from '../../components/PhoneInput';
 import ProviderSelectionDropdown from '../../components/ProviderSelectionDropdown';

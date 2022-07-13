@@ -1,8 +1,10 @@
 import React, { ChangeEvent, useState } from 'react';
 import styled from 'styled-components';
 import * as yup from 'yup';
+import Dropdown from '../../components/Dropdown';
 import Form from '../../components/Form';
 import TextFormField from '../../components/TextFormField';
+import { industries } from '../../constant/industries';
 
 const soleTraderSchema = yup.object().shape({
   utr: yup
@@ -41,10 +43,12 @@ interface AddNewMerchantSoleTraderFormProps {
   countryData: {
     country?: string;
     countryName?: string;
-  }
+  };
 }
 
-const AddNewMerchantSoleTraderForm: React.FunctionComponent<AddNewMerchantSoleTraderFormProps> = ({ countryData: { country }}) => {
+const AddNewMerchantSoleTraderForm: React.FunctionComponent<
+  AddNewMerchantSoleTraderFormProps
+> = ({ countryData: { country } }) => {
   const defaultValues = {
     utr: '',
     tradingName: '',
@@ -98,55 +102,43 @@ const AddNewMerchantSoleTraderForm: React.FunctionComponent<AddNewMerchantSoleTr
 
   const onSubmit = (data: any) => console.log(data);
 
+  const industriesItems = industries.map(el => ({
+    label: el.category,
+    items: el.specifics.map(elem => ({
+      label: elem,
+      value: elem
+    }))
+  }));
+
   return (
-    <Form onSubmit={onSubmit} defaultValues={defaultValues} validationSchema={soleTraderSchema}>
+    <Form
+      onSubmit={onSubmit}
+      defaultValues={defaultValues}
+      validationSchema={soleTraderSchema}
+    >
       <StyledTextField
-        name='utr'
-        required={country !== 'GB' && true}
-        label={
-          country !== 'GB'
-            ? 'Taxpayer identification number'
-            : 'Unique Taxpayer Reference (UTR)'
-        }
+        name="utr"
+        required={country !== 'GB'}
+        label={country !== 'GB'
+        ? 'Taxpayer identification number'
+        : 'Unique Taxpayer Reference (UTR)'}
       />
+      <StyledTextField name="tradingName" required label="Trading name" />
+      <StyledTextField name="tradingAddress" required label="Trading address" />
       <StyledTextField
-        name='tradingName'
-        required
-        label="Trading name"
-      />
-      <StyledTextField
-        name='tradingAddress'
-        required
-        label="Trading address"
-      />
-      <StyledTextField
-        name='taxpayerId'
+        name="taxpayerId"
         required
         label="Taxpayer identification number"
       />
-      {/* <WrapperTextField>
-        <IndustrySelectionDropdown
-          value={soleTraderFormData.industry}
-          placeholder="Choose industry"
-          label="Industry"
-          onChange={onChangeIndustry}
-        />
-      </WrapperTextField> */}
-      <StyledTextField
-        name='businessName'
-        required
-        label="Business name"
+      <Dropdown
+        placeholder="Choose industry"
+        label="Industry"
+        onChange={(data) => console.log(data)}
+        items={industriesItems}
       />
-      <StyledTextField
-        name='contactName'
-        required
-        label="Contact name"
-      />
-      <StyledTextField
-        name='email'
-        required
-        label="Email"
-      />
+      <StyledTextField name="businessName" required label="Business name" />
+      <StyledTextField name="contactName" required label="Contact name" />
+      <StyledTextField name="email" required label="Email" />
 
       {/* <WrapperTextField>
         <PhoneInput

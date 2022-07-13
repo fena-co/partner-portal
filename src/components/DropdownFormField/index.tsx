@@ -5,7 +5,6 @@ import styled, { css } from 'styled-components';
 import MenuItem from '../MenuItem';
 import Typography from '../Typography';
 import ArrowDownAccordion from 'image/icon/arrow-down-1.svg';
-import { industries as INDUSTRY_LIST } from '../../constant/industries';
 
 const FullWidth = css`
   width: 100%;
@@ -25,10 +24,12 @@ const DefaultBorder = css`
   border-color: #dbe3eb;
 `;
 
-const DropDownHeader = styled.div<{
+interface DropDownHeaderProps {
   error?: string;
   isOpen?: boolean;
-}>`
+}
+
+const DropDownHeader = styled.div<DropDownHeaderProps>`
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -47,10 +48,12 @@ const DropDownHeader = styled.div<{
       : ''}
 `;
 
-const ValueSelect = styled.span<{
+interface ValueSelectProps {
   leftIcon?: boolean;
   isPlaceholder?: boolean;
-}>`
+}
+
+const ValueSelect = styled.span<ValueSelectProps>`
   font-family: Montserrat;
   font-style: normal;
   font-weight: normal;
@@ -62,9 +65,11 @@ const ValueSelect = styled.span<{
   color: ${({ isPlaceholder }) => (isPlaceholder ? '#9898AD' : '#13273f')};
 `;
 
-const DropDownListContainer = styled.div<{
+interface DropDownListContainerProps {
   isOpen?: boolean;
-}>`
+}
+
+const DropDownListContainer = styled.div<DropDownListContainerProps>`
   position: absolute;
   width: 100%;
   z-index: 99;
@@ -143,27 +148,34 @@ const StyledMenuItem = styled(MenuItem)`
   padding: 5px 30px;
 `;
 
-interface ISelectDropdown {
+interface Item {
+  label: string;
+  value: string;
+}
+
+interface DeepItem {
+  label: string;
+  items: (Item | DeepItem)[];
+}
+
+interface DropdownFormFieldProps {
+  items: (Item | DeepItem)[];
+
   variant?: string;
   leftIcon?: any;
   value?: any;
   error?: string;
   style?: any;
-  fullWidth?: boolean;
   placeholder?: string;
   onChange: (value: any) => void;
   label?: string;
   required?: boolean;
 }
 
-const IndustrySelectionDropdown: FC<ISelectDropdown> = (props) => {
+const DropdownFormField: FC<DropdownFormFieldProps> = ({ items, label, required }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchString, setSearchString] = useState<string | undefined>();
-  const [industries, setIndustries] = useState(INDUSTRY_LIST);
-  const [industriesExpanded, setIndustriesExpanded] = useState({
-    value: 0,
-    isExpanded: false,
-  });
+  const [expandedItemIndex, setExpandedItemIndex] = useState<number>();
   const ref = useRef(null);
   const valueRef = useRef(null);
   const searchRef = useRef<HTMLInputElement>(null);
@@ -177,29 +189,13 @@ const IndustrySelectionDropdown: FC<ISelectDropdown> = (props) => {
     }
   };
 
-  const handlerCategoryExpand = (val: number) => {
-    setIndustriesExpanded({
-      ...industriesExpanded,
-      value: val,
-      isExpanded: !industriesExpanded.isExpanded,
-    });
+  const handlerSubItemExpand = (val: number) => {
+    setExpandedItemIndex(val);
   };
 
   const handleSearch = (event: ChangeEvent<HTMLInputElement>) => {
-    setSearchString(event.target.value);
-    setIndustries(
-      INDUSTRY_LIST.filter((industry) => {
-        return (
-          industry.category
-            .toLowerCase()
-            .includes(event.target.value.toLowerCase()) ||
-          industry.specifics
-            .toString()
-            .toLowerCase()
-            .includes(event.target.value.toLowerCase())
-        );
-      })
-    );
+    const q = event.target.value;
+    setSearchString(q);
   };
 
   useEffect(() => {
@@ -217,12 +213,22 @@ const IndustrySelectionDropdown: FC<ISelectDropdown> = (props) => {
     return () => window.removeEventListener('click', clickOnWindows);
   }, []);
 
+  const filterItems = (item: any) => {
+    if (item.label.toLowerCase().includes(q.toLowerCase())) {
+      return true;
+    } else if (item.value) {
+      return item.value.toString().toLowerCase().includes(q.toLowerCase());
+    } else if (item.items) {
+      return item.items.filter(filterItems).length;
+    }
+  };
+
   return (
-    <DropDownContainer fullWidth={props.fullWidth}>
-      {props.label && (
+    <DropDownContainer>
+      {label && (
         <FieldLabel>
-          {props.label}{' '}
-          {props.required && <span style={{ color: 'red' }}>*</span>}
+          {label}{' '}
+          {required && <span style={{ color: 'red' }}>*</span>}
         </FieldLabel>
       )}
       <DropDownHeader
@@ -257,12 +263,12 @@ const IndustrySelectionDropdown: FC<ISelectDropdown> = (props) => {
                 onChange={handleSearch}
                 placeholder="Search..."
               />
-              {industries?.map((el, index) => {
+              {items.filter(filterItems)?.map((el, index) => {
                 return (
                   <div key={el.category}>
                     <Category
                       onClick={() => {
-                        handlerCategoryExpand(index);
+                        handlerSubItemExpand(index);
                       }}
                     >
                       <CategoryTitle variant="body1">
@@ -270,15 +276,13 @@ const IndustrySelectionDropdown: FC<ISelectDropdown> = (props) => {
                       </CategoryTitle>
                       <StyledArrowDown
                         aria-expanded={
-                          industriesExpanded.value === index &&
-                          industriesExpanded.isExpanded
+                          expandedItemIndex === index
                         }
                       />
                     </Category>
                     {el.specifics.map((item) => {
                       return (
-                        industriesExpanded.value === index &&
-                        industriesExpanded.isExpanded && (
+                        expandedItemIndex === index && (
                           <StyledMenuItem
                             onClick={() => {
                               props.onChange(item);
@@ -307,4 +311,4 @@ const IndustrySelectionDropdown: FC<ISelectDropdown> = (props) => {
   );
 };
 
-export default IndustrySelectionDropdown;
+export default DropdownFormField;
