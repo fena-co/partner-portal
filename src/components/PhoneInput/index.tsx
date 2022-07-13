@@ -172,7 +172,7 @@ interface ISelectDropdown {
   disabled?: boolean;
   variant?: string;
   leftIcon?: any;
-  phoneValue?: any;
+  value?: any;
   code?: FlagIconCode;
   error?: string;
   style?: any;
@@ -185,10 +185,7 @@ interface ISelectDropdown {
 
 const PhoneInput: FC<ISelectDropdown> = (props) => {
   const [codeDropdownOpen, setCodeDropdownOpen] = useState(false);
-  const [codeValue, setCodeValue] = useState<FlagIconCode>(props.code || 'GB');
-  const [phoneInputValue, setPhoneInputValue] = useState(
-    props.phoneValue || ''
-  );
+  const [codeValue, setCodeValue] = useState<FlagIconCode>(props.value?.code || 'GB');
   const [countriesList, setCountriesList] = useState(COUNTRY_CODES);
   const [searchString, setSearchString] = useState<string | undefined>();
   const ref = useRef(null);
@@ -209,9 +206,7 @@ const PhoneInput: FC<ISelectDropdown> = (props) => {
   };
 
   const handlePhoneChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const code = COUNTRY_CODES.find((c) => c.country === codeValue)?.country;
-    setPhoneInputValue(event.target.value);
-    props.onChange?.({ target: { value: code + ' ' + event.target.value } });
+    props.onChange?.({ code: codeValue, number: event.target.value });
   };
 
   useEffect(() => {
@@ -252,7 +247,7 @@ const PhoneInput: FC<ISelectDropdown> = (props) => {
           placeholder={props.placeholder}
           disabled={props.disabled}
           mask={''}
-          value={props.phoneValue}
+          value={props.value?.number}
           onChange={handlePhoneChange}
         />
       </DropDownHeader>

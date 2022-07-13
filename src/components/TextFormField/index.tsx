@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { InputHTMLAttributes } from 'react';
 import { Controller, Control } from 'react-hook-form';
 import styled from 'styled-components';
 import TextInput from '../TextInput';
@@ -29,7 +29,7 @@ const InputError = styled.div`
   padding-top: 5px;
 `;
 
-interface TextFormFieldProps extends Partial<HTMLInputElement> {
+interface TextFormFieldProps extends InputHTMLAttributes<HTMLInputElement> {
   name: string;
   control?: Control;
   rightIcon?: () => JSX.Element;

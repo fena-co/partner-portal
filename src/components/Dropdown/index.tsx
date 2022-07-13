@@ -128,7 +128,7 @@ interface DropdownProps {
   items: (Item | DeepItem)[];
   leftIcon?: () => JSX.Element;
   // variant?: 'error' | 'success' | 'active' | 'default';
-  value?: string;
+  value?: Item;
   placeholder?: string;
   onChange: (value: Item) => void;
 }

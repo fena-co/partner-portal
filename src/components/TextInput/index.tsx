@@ -1,3 +1,4 @@
+import { InputHTMLAttributes } from 'react';
 import styled, { css } from 'styled-components';
 
 const borderVariants = {
@@ -65,7 +66,7 @@ const IconWrapper = styled.span`
   align-items: center;
 `;
 
-interface TextInputProps extends Partial<HTMLInputElement> {
+interface TextInputProps extends InputHTMLAttributes<HTMLInputElement> {
   rightIcon?: () => JSX.Element;
   leftIcon?: () => JSX.Element;
   variant?: 'error' | 'success' | 'active' | 'default';
