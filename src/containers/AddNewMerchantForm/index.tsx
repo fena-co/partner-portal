@@ -1,6 +1,7 @@
 import { NextPage } from 'next';
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import * as yup from 'yup';
 import CountrySelectionDropdown from '../../components/CountrySelectionDropdown';
 import SelectDropDown from '../../components/SelectDropDown';
 import Typography from '../../components/Typography';
@@ -8,6 +9,7 @@ import ButtonWithChildren from '../../components/Button';
 import AddNewMerchantSoleTraderForm from '../AddNewMerchantSoleTraderForm';
 import AddNewMerchantLimitedCompanyForm from '../AddNewMerchantLimitedCompanyForm';
 import AddBankAccountForm from '../AddBankAccountForm';
+import Form from '../../components/Form';
 
 enum businessTypes {
   individual = 'Sole Trader / Individual',
@@ -59,7 +61,57 @@ const ButtonWrapper = styled.div`
   margin-top: 30px;
 `;
 
+const soleTraderSchema = yup.object({
+  utr: yup
+    .string()
+    .matches(/^[0-9]*$/, 'UTR cannot include letters')
+    .nullable()
+    .transform((o, c) => (o === '' ? null : c))
+    .min(10, 'Enter valid UTR')
+    .max(10, 'Enter valid UTR'),
+  tradingName: yup.string().required('This field is required'),
+  tradingAddress: yup.string().required('This field is required'),
+  industry: yup.object({
+    label: yup.string(),
+    value: yup.string(),
+  }),
+  taxpayerId: yup.string(),
+  businessName: yup.string().required('This field is required'),
+  businessAddress: yup.string().required('This field is required'),
+  contactName: yup.string().required('This field is required'),
+  email: yup
+    .string()
+    .required('This field is required')
+    .email('Email must be valid'),
+  phoneNumber: yup.object({
+    code: yup.string().required(),
+    number: yup
+      .string()
+      .required('This field is required')
+      .matches(/^[0-9]+$/, 'Phone number is not valid')
+      .matches(/^0?\d{0,10}$/, 'Phone number length exceeded'),
+  }),
+  // identification: yup.string().min(6, 'Sort code must be 6 digits'),
+  // externalAccountId: yup.string().min(8, 'Account number must be 8 digits'),
+});
+
 const AddNewMerchantForm: NextPage = () => {
+  const soleTraderDefaultValues = {
+    utr: '',
+    tradingName: '',
+    tradingAddress: '',
+    businessName: '',
+    businessAddress: '',
+    contactName: '',
+    email: '',
+    industry: { label: '', value: '' },
+    taxpayerId: '',
+    phoneNumber: {
+      code: 'GB',
+      number: '',
+    },
+  };
+
   const [countryData, setCountry] = useState<{
     country?: string;
     countryName?: string;
@@ -70,6 +122,10 @@ const AddNewMerchantForm: NextPage = () => {
 
   const onBusinessTypeChange = (type: keyof typeof businessTypes) => () =>
     setBusinessType(type);
+
+  const onSubmit = (data: any) => {
+    console.log(data);
+  };
 
   return (
     <Content>
@@ -99,15 +155,22 @@ const AddNewMerchantForm: NextPage = () => {
           </MenuItem>
         </SelectDropDown>
       </WrapperTextField>
-
-      {businessType === 'individual' && countryData?.country && (
-        <AddNewMerchantSoleTraderForm countryData={countryData} />
-      )}
-      {/* {businessType === 'limited' && <AddNewMerchantLimitedCompanyForm />} */}
-      {businessType && <AddBankAccountForm />}
-      <ButtonWrapper>
-        <ButtonWithChildren variant="contained">ADD</ButtonWithChildren>
-      </ButtonWrapper>
+      <Form
+        onSubmit={onSubmit}
+        defaultValues={soleTraderDefaultValues}
+        validationSchema={soleTraderSchema}
+      >
+        {businessType === 'individual' && countryData?.country && (
+          <AddNewMerchantSoleTraderForm countryData={countryData} />
+        )}
+        {/* {businessType === 'limited' && <AddNewMerchantLimitedCompanyForm />} */}
+        {/* {businessType && <AddBankAccountForm />} */}
+        {/* <ButtonWrapper>
+          <ButtonWithChildren type="submit" variant="contained">
+            ADD
+          </ButtonWithChildren>
+        </ButtonWrapper> */}
+      </Form>
     </Content>
   );
 };

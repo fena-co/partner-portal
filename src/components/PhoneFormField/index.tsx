@@ -20,6 +20,7 @@ const FieldLabel = styled.div`
   font-size: 14px;
   padding-bottom: 8px;
   line-height: 17px;
+  color: #13273f;
 `;
 
 interface PhoneFormFieldProps {
@@ -31,6 +32,7 @@ interface PhoneFormFieldProps {
   error?: any;
   disabled?: boolean;
   required?: boolean;
+  className?: string;
 }
 
 const PhoneFormField: FC<PhoneFormFieldProps> = ({
@@ -42,25 +44,30 @@ const PhoneFormField: FC<PhoneFormFieldProps> = ({
   disabled,
   error,
   required,
+  className,
   ...inputProps
 }) => (
   <Controller
     name={name}
     control={control}
     render={({ field }) => (
-      <>
+      <div className={className}>
         {label && (
           <FieldLabel>
             {label} {required && <span style={{ color: 'red' }}>*</span>}
           </FieldLabel>
         )}
-        <PhoneInput {...field} {...inputProps} />
+        <PhoneInput
+          variant={error ? 'error' : 'default'}
+          {...field}
+          {...inputProps}
+        />
         {error && (
           <ErrorMessage>
             {(error && error.number.message) || error.code.message}
           </ErrorMessage>
         )}
-      </>
+      </div>
     )}
   />
 );

@@ -36,6 +36,7 @@ interface TextFormFieldProps extends InputHTMLAttributes<HTMLInputElement> {
   leftIcon?: () => JSX.Element;
   label?: string | JSX.Element;
   error?: any;
+  mask?: string;
 }
 
 const TextFormField: React.FunctionComponent<TextFormFieldProps> = ({
@@ -48,33 +49,30 @@ const TextFormField: React.FunctionComponent<TextFormFieldProps> = ({
   error,
   required,
   ...inputProps
-}) =>
-  (
-    <Container>
-      <Controller
-        name={name}
-        control={control}
-        render={({ field }) => 
-          <>
-            {label && (
-              <FieldLabel>
-                {label}{' '}
-                {required && (
-                  <span style={{ color: 'red' }}>*</span>
-                )}
-              </FieldLabel>
-            )}
-            <TextInput
-              disabled={disabled}
-              variant={error ? 'error' : 'default'}
-              {...inputProps}
-              {...field}
-            />
-            {error && <InputError>{error.message}</InputError>}
-          </>
-        }
-      />
-    </Container>
-  );
+}) => (
+  <Container>
+    <Controller
+      name={name}
+      control={control}
+      render={({ field }) => (
+        <>
+          {label && (
+            <FieldLabel>
+              {label} {required && <span style={{ color: 'red' }}>*</span>}
+            </FieldLabel>
+          )}
+          <TextInput
+            disabled={disabled}
+            variant={error ? 'error' : 'default'}
+            leftIcon={leftIcon}
+            {...inputProps}
+            {...field}
+          />
+          {error && <InputError>{error.message}</InputError>}
+        </>
+      )}
+    />
+  </Container>
+);
 
 export default TextFormField;

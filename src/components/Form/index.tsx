@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form';
 import { AnyObjectSchema } from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import React from 'react';
+import React, { Fragment } from 'react';
 
 interface FormProps {
   validationSchema: AnyObjectSchema;
@@ -26,10 +26,16 @@ const Form: React.FunctionComponent<FormProps> = ({
     resolver: yupResolver(validationSchema),
   });
 
+  console.log(errors);
+
+  // @ts-ignore
+  const arr = children?.type === Fragment ? children.props.children : children;
+  console.log(children?.props?.children?.type);
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      {React.Children.map(children, (child: any) =>
-        child.props.name
+      {React.Children.map(arr, (child: any) => {
+        console.log(child);
+        return child?.props.name
           ? React.createElement(child.type, {
               ...{
                 ...child.props,
@@ -39,8 +45,8 @@ const Form: React.FunctionComponent<FormProps> = ({
                 error: errors[child.props.name],
               },
             })
-          : child
-      )}
+          : child;
+      })}
     </form>
   );
 };

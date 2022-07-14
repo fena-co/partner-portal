@@ -1,4 +1,5 @@
 import { InputHTMLAttributes } from 'react';
+import InputMask, { Props } from 'react-input-mask';
 import styled, { css } from 'styled-components';
 
 const borderVariants = {
@@ -64,12 +65,36 @@ const WrapperTextField = styled.div<WrapperTextField>`
 const IconWrapper = styled.span`
   display: flex;
   align-items: center;
+  margin-right: 5px;
+`;
+
+const StyledInputMask = styled(InputMask)<Props>`
+  border: none;
+  width: 100%;
+
+  outline: none;
+
+  font-family: Montserrat;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 15px;
+  line-height: 18px;
+  color: #0e233e;
+
+  &:disabled {
+    background: #f4f7f9;
+  }
+
+  ::placeholder {
+    color: #9898ad;
+  }
 `;
 
 interface TextInputProps extends InputHTMLAttributes<HTMLInputElement> {
   rightIcon?: () => JSX.Element;
   leftIcon?: () => JSX.Element;
   variant?: 'error' | 'success' | 'active' | 'default';
+  mask?: string;
 }
 
 const TextInput: React.FunctionComponent<TextInputProps> = ({
@@ -77,13 +102,18 @@ const TextInput: React.FunctionComponent<TextInputProps> = ({
   leftIcon,
   disabled,
   variant,
+  mask,
   ...rest
 }) => {
   return (
     <WrapperTextField variant={variant} disabled={disabled}>
       {leftIcon && <IconWrapper>{leftIcon()}</IconWrapper>}
       {/* @ts-ignore */}
-      <Input disabled={disabled} {...rest} />
+      {mask ? (
+        <StyledInputMask mask={mask} disabled={disabled} {...rest} />
+      ) : (
+        <Input disabled={disabled} {...rest} />
+      )}
       {rightIcon && <IconWrapper>{rightIcon()}</IconWrapper>}
     </WrapperTextField>
   );

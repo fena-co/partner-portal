@@ -9,7 +9,7 @@ const ErrorMessage = styled.span`
   font-weight: 500;
   font-size: 12px;
   line-height: 15px;
-  color: #38b6ff;
+  color: #ef6355;
   margin-top: 5px;
 `;
 
@@ -20,6 +20,7 @@ const FieldLabel = styled.div`
   font-size: 14px;
   padding-bottom: 8px;
   line-height: 17px;
+  color: #13273f;
 `;
 
 interface Item {
@@ -40,6 +41,7 @@ interface DropdownFormFieldProps {
   error?: any;
   required?: boolean;
   placeholder?: string;
+  className?: string;
 }
 
 const DropdownFormField: FC<DropdownFormFieldProps> = ({
@@ -50,6 +52,7 @@ const DropdownFormField: FC<DropdownFormFieldProps> = ({
   leftIcon,
   required,
   error,
+  className,
   ...inputProps
 }) => {
   return (
@@ -57,7 +60,7 @@ const DropdownFormField: FC<DropdownFormFieldProps> = ({
       name={name}
       control={control}
       render={({ field }) => (
-        <div>
+        <div className={className}>
           {label && (
             <FieldLabel>
               {label} {required && <span style={{ color: 'red' }}>*</span>}
@@ -69,7 +72,11 @@ const DropdownFormField: FC<DropdownFormFieldProps> = ({
             {...inputProps}
             {...field}
           />
-          {error && <ErrorMessage>{error}</ErrorMessage>}
+          {error && (
+            <ErrorMessage>
+              {(error && error.label.message) || error.value.message}
+            </ErrorMessage>
+          )}
         </div>
       )}
     />

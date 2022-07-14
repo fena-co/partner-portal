@@ -7,29 +7,33 @@ import { COUNTRY_CODES } from '../../constant/countries';
 import MenuItem from '../MenuItem';
 import InputMask, { Props } from 'react-input-mask';
 
-const FullWidth = css`
-  width: 100%;
-`;
+const borderVariants = {
+  error: css`
+    border-color: #ef6355;
+  `,
+  success: css`
+    border-color: #2cd19e;
+  `,
+  default: css`
+    border-color: #dbe3eb;
+  `,
+  active: css`
+    border-color: #027aff;
+  `,
+};
 
-const DropDownContainer = styled.div<{ fullWidth?: boolean }>`
-  ${({ fullWidth }) => (fullWidth ? FullWidth : '')}
+const DropDownContainer = styled.div`
   position: relative;
-  padding-top: 20px;
 `;
 
-const BorderError = css`
-  border-color: #38b6ff;
-`;
 
-const DefaultBorder = css`
-  border-color: #dbe3eb;
-`;
-
-const DropDownHeader = styled.div<{
-  error?: string;
-  isOpen?: boolean;
+interface WrapperTextField {
+  variant?: 'error' | 'success' | 'active' | 'default';
   disabled?: boolean;
-}>`
+  isOpen?: boolean;
+}
+
+const DropDownHeader = styled.div<WrapperTextField>`
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -38,7 +42,11 @@ const DropDownHeader = styled.div<{
   border-radius: 5px;
   padding: 0 14px;
   position: relative;
-  ${({ error, isOpen }) => (error && !isOpen ? BorderError : DefaultBorder)}
+  ${({ variant }) => borderVariants[variant || 'default']}
+  &:focus-within {
+    ${({ variant }) =>
+      variant === 'error' ? borderVariants[variant] : borderVariants['active']}
+  }
   ${({ isOpen }) =>
     isOpen
       ? css`
@@ -170,7 +178,6 @@ const StyledFlagIcon = styled(FlagIcon)`
 
 interface ISelectDropdown {
   disabled?: boolean;
-  variant?: string;
   leftIcon?: any;
   value?: any;
   code?: FlagIconCode;
@@ -181,11 +188,14 @@ interface ISelectDropdown {
   onChange: (value: any) => void;
   label?: string;
   required?: boolean;
+  variant?: 'error' | 'success' | 'active' | 'default';
 }
 
 const PhoneInput: FC<ISelectDropdown> = (props) => {
   const [codeDropdownOpen, setCodeDropdownOpen] = useState(false);
-  const [codeValue, setCodeValue] = useState<FlagIconCode>(props.value?.code || 'GB');
+  const [codeValue, setCodeValue] = useState<FlagIconCode>(
+    props.value?.code || 'GB'
+  );
   const [countriesList, setCountriesList] = useState(COUNTRY_CODES);
   const [searchString, setSearchString] = useState<string | undefined>();
   const ref = useRef(null);
@@ -221,7 +231,7 @@ const PhoneInput: FC<ISelectDropdown> = (props) => {
   }, []);
 
   return (
-    <DropDownContainer fullWidth={props.fullWidth}>
+    <DropDownContainer>
       {props.label && (
         <FieldLabel>
           {props.label}{' '}
@@ -229,8 +239,8 @@ const PhoneInput: FC<ISelectDropdown> = (props) => {
         </FieldLabel>
       )}
       <DropDownHeader
+        variant={props.variant}
         disabled={props.disabled}
-        error={props.error}
         isOpen={codeDropdownOpen}
       >
         <FlagContainer onClick={handleExpand} ref={ref}>
