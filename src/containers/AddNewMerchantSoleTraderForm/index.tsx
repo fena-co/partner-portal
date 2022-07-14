@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
+import { Control } from 'react-hook-form';
 import DropdownFormField from '../../components/DropdownFormField';
-import Form from '../../components/Form';
 import PhoneFormField from '../../components/PhoneFormField';
 import TextFormField from '../../components/TextFormField';
 import { industries } from '../../constant/industries';
@@ -20,11 +20,12 @@ interface AddNewMerchantSoleTraderFormProps {
     country?: string;
     countryName?: string;
   };
+  control: Control
 }
 
 const AddNewMerchantSoleTraderForm: React.FunctionComponent<
   AddNewMerchantSoleTraderFormProps
-> = ({ countryData: { country } }) => {
+> = ({ countryData: { country }, control }) => {
   const industriesItems = industries.map((el) => ({
     label: el.category,
     items: el.specifics.map((elem) => ({
@@ -37,6 +38,7 @@ const AddNewMerchantSoleTraderForm: React.FunctionComponent<
     <>
       <TextFormField
         name="utr"
+        control={control}
         required={country !== 'GB'}
         label={
           country !== 'GB'
@@ -44,33 +46,59 @@ const AddNewMerchantSoleTraderForm: React.FunctionComponent<
             : 'Unique Taxpayer Reference (UTR)'
         }
       />
-      <TextFormField name="tradingName" required label="Trading name" />
       <TextFormField
-        leftIcon={SearchIcon}
+        name="tradingName"
+        control={control}
+        required
+        label="Trading name"
+      />
+      <TextFormField
         name="tradingAddress"
+        control={control}
+        leftIcon={SearchIcon}
         required
         label="Trading address"
       />
       <StyledDropdownFormField
         name="industry"
+        control={control}
         placeholder="Choose industry"
         label="Industry"
         items={industriesItems}
       />
 
-      <TextFormField name="taxpayerId" label="Taxpayer identification number" />
-
-      <TextFormField name="businessName" required label="Business name" />
       <TextFormField
-        leftIcon={SearchIcon}
+        name="taxpayerId"
+        control={control}
+        label="Taxpayer identification number"
+      />
+
+      <TextFormField
+        name="businessName"
+        control={control}
+        required
+        label="Business name"
+      />
+      <TextFormField
         name="businessAddress"
+        control={control}
+        leftIcon={SearchIcon}
         required
         label="Business address"
       />
-      <TextFormField name="contactName" required label="Contact name" />
-      <TextFormField name="email" required label="Email" />
-      <StyledPhoneFormField required name="phoneNumber" label="Phone number" />
-      <button type="submit">done</button>
+      <TextFormField
+        name="contactName"
+        control={control}
+        required
+        label="Contact name"
+      />
+      <TextFormField name="email" control={control} required label="Email" />
+      <StyledPhoneFormField
+        required
+        name="phoneNumber"
+        control={control}
+        label="Phone number"
+      />
     </>
   );
 };

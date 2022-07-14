@@ -9,7 +9,8 @@ import ButtonWithChildren from '../../components/Button';
 import AddNewMerchantSoleTraderForm from '../AddNewMerchantSoleTraderForm';
 import AddNewMerchantLimitedCompanyForm from '../AddNewMerchantLimitedCompanyForm';
 import AddBankAccountForm from '../AddBankAccountForm';
-import Form from '../../components/Form';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
 
 enum businessTypes {
   individual = 'Sole Trader / Individual',
@@ -61,7 +62,13 @@ const ButtonWrapper = styled.div`
   margin-top: 30px;
 `;
 
+const addBankAccountSchema = {
+  accountProvider: yup.string(),
+  // coming
+};
+
 const soleTraderSchema = yup.object({
+  ...addBankAccountSchema,
   utr: yup
     .string()
     .matches(/^[0-9]*$/, 'UTR cannot include letters')
@@ -95,22 +102,61 @@ const soleTraderSchema = yup.object({
   // externalAccountId: yup.string().min(8, 'Account number must be 8 digits'),
 });
 
-const AddNewMerchantForm: NextPage = () => {
-  const soleTraderDefaultValues = {
-    utr: '',
-    tradingName: '',
-    tradingAddress: '',
-    businessName: '',
-    businessAddress: '',
-    contactName: '',
-    email: '',
-    industry: { label: '', value: '' },
-    taxpayerId: '',
-    phoneNumber: {
-      code: 'GB',
-      number: '',
-    },
+const limitedCompanySchema = yup.object({
+  ...addBankAccountSchema,
+});
+
+// const addMerchantSchema =
+
+interface BankAccountValues {}
+
+interface SoleTraderValues extends BankAccountValues {
+  utr: string;
+  tradingName: string;
+  tradingAddress: string;
+  businessName: string;
+  businessAddress: string;
+  contactName: string;
+  email: string;
+  industry: {
+    label: string;
+    value: string;
   };
+  taxpayerId: string;
+  phoneNumber: {
+    code: string;
+    number: string;
+  };
+}
+
+interface LimitedCompanyValues extends BankAccountValues {
+  // coming
+}
+
+type AddMerchantValues = SoleTraderValues | LimitedCompanyValues;
+
+const soleTraderDefaultValues = {
+  utr: '',
+  tradingName: '',
+  tradingAddress: '',
+  businessName: '',
+  businessAddress: '',
+  contactName: '',
+  email: '',
+  industry: { label: '', value: '' },
+  taxpayerId: '',
+  phoneNumber: {
+    code: 'GB',
+    number: '',
+  },
+};
+
+const AddNewMerchantForm: NextPage = () => {
+  const { handleSubmit, control } = useForm<AddMerchantValues>({
+    defaultValues: soleTraderDefaultValues,
+    mode: 'onChange',
+    resolver: yupResolver(soleTraderSchema),
+  });
 
   const [countryData, setCountry] = useState<{
     country?: string;
@@ -155,22 +201,21 @@ const AddNewMerchantForm: NextPage = () => {
           </MenuItem>
         </SelectDropDown>
       </WrapperTextField>
-      <Form
-        onSubmit={onSubmit}
-        defaultValues={soleTraderDefaultValues}
-        validationSchema={soleTraderSchema}
-      >
+      <form onSubmit={handleSubmit(onSubmit)}>
         {businessType === 'individual' && countryData?.country && (
-          <AddNewMerchantSoleTraderForm countryData={countryData} />
+          <AddNewMerchantSoleTraderForm
+            countryData={countryData}
+            control={control as any}
+          />
         )}
         {/* {businessType === 'limited' && <AddNewMerchantLimitedCompanyForm />} */}
-        {/* {businessType && <AddBankAccountForm />} */}
-        {/* <ButtonWrapper>
+        {businessType && <AddBankAccountForm />}
+        <ButtonWrapper>
           <ButtonWithChildren type="submit" variant="contained">
             ADD
           </ButtonWithChildren>
-        </ButtonWrapper> */}
-      </Form>
+        </ButtonWrapper>
+      </form>
     </Content>
   );
 };

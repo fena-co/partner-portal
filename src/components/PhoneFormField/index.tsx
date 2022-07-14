@@ -29,7 +29,6 @@ interface PhoneFormFieldProps {
   rightIcon?: () => JSX.Element;
   leftIcon?: () => JSX.Element;
   label?: string | JSX.Element;
-  error?: any;
   disabled?: boolean;
   required?: boolean;
   className?: string;
@@ -42,7 +41,6 @@ const PhoneFormField: FC<PhoneFormFieldProps> = ({
   rightIcon,
   leftIcon,
   disabled,
-  error,
   required,
   className,
   ...inputProps
@@ -50,7 +48,7 @@ const PhoneFormField: FC<PhoneFormFieldProps> = ({
   <Controller
     name={name}
     control={control}
-    render={({ field }) => (
+    render={({ field, fieldState: { error } }) => (
       <div className={className}>
         {label && (
           <FieldLabel>
@@ -64,7 +62,7 @@ const PhoneFormField: FC<PhoneFormFieldProps> = ({
         />
         {error && (
           <ErrorMessage>
-            {(error && error.number.message) || error.code.message}
+            {(error && (error as any).number.message) || (error as any).code.message}
           </ErrorMessage>
         )}
       </div>

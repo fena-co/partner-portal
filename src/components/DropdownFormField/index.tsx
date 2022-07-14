@@ -38,7 +38,6 @@ interface DropdownFormFieldProps {
   name: string;
   control?: Control;
   label?: string | JSX.Element;
-  error?: any;
   required?: boolean;
   placeholder?: string;
   className?: string;
@@ -51,7 +50,6 @@ const DropdownFormField: FC<DropdownFormFieldProps> = ({
   control,
   leftIcon,
   required,
-  error,
   className,
   ...inputProps
 }) => {
@@ -59,7 +57,7 @@ const DropdownFormField: FC<DropdownFormFieldProps> = ({
     <Controller
       name={name}
       control={control}
-      render={({ field }) => (
+      render={({ field, fieldState: { error }}) => (
         <div className={className}>
           {label && (
             <FieldLabel>
@@ -74,7 +72,7 @@ const DropdownFormField: FC<DropdownFormFieldProps> = ({
           />
           {error && (
             <ErrorMessage>
-              {(error && error.label.message) || error.value.message}
+              {(error && (error as any).label.message) || (error as any).value.message}
             </ErrorMessage>
           )}
         </div>

@@ -35,7 +35,6 @@ interface TextFormFieldProps extends InputHTMLAttributes<HTMLInputElement> {
   rightIcon?: () => JSX.Element;
   leftIcon?: () => JSX.Element;
   label?: string | JSX.Element;
-  error?: any;
   mask?: string;
 }
 
@@ -46,7 +45,6 @@ const TextFormField: React.FunctionComponent<TextFormFieldProps> = ({
   rightIcon,
   leftIcon,
   disabled,
-  error,
   required,
   ...inputProps
 }) => (
@@ -54,7 +52,7 @@ const TextFormField: React.FunctionComponent<TextFormFieldProps> = ({
     <Controller
       name={name}
       control={control}
-      render={({ field }) => (
+      render={({ field, fieldState: { error } }) => (
         <>
           {label && (
             <FieldLabel>
