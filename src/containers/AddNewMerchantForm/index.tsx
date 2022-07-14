@@ -11,11 +11,18 @@ import AddNewMerchantLimitedCompanyForm from '../AddNewMerchantLimitedCompanyFor
 import AddBankAccountForm from '../AddBankAccountForm';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
+import DropdownFormField from '../../components/DropdownFormField';
+import { COUNTRY_CODES } from '../../constant/countries';
 
 enum businessTypes {
-  individual = 'Sole Trader / Individual',
-  limited = 'Limited Company',
+  label = 'Sole Trader / Individual',
+  value = 'Limited Company',
 }
+
+const businessTypeItems = [
+  { label: 'Sole Trader / Individual', value: 'individual' },
+  { label: 'Limited Company', value: 'limited' },
+];
 
 const Content = styled.section`
   display: flex;
@@ -82,7 +89,6 @@ const soleTraderSchema = yup.object({
     label: yup.string(),
     value: yup.string(),
   }),
-  taxpayerId: yup.string(),
   businessName: yup.string().required('This field is required'),
   businessAddress: yup.string().required('This field is required'),
   contactName: yup.string().required('This field is required'),
@@ -107,6 +113,11 @@ const limitedCompanySchema = yup.object({
 });
 
 // const addMerchantSchema =
+
+interface BusinessInfoValus {
+  businessType: { label: string; value: string };
+  country: { label: string; value: string };
+}
 
 interface BankAccountValues {}
 
@@ -136,6 +147,8 @@ interface LimitedCompanyValues extends BankAccountValues {
 type AddMerchantValues = SoleTraderValues | LimitedCompanyValues;
 
 const soleTraderDefaultValues = {
+  country: { label: '', value: '' },
+  businessType: { label: '', value: '' },
   utr: '',
   tradingName: '',
   tradingAddress: '',
@@ -144,7 +157,6 @@ const soleTraderDefaultValues = {
   contactName: '',
   email: '',
   industry: { label: '', value: '' },
-  taxpayerId: '',
   phoneNumber: {
     code: 'GB',
     number: '',
@@ -152,22 +164,31 @@ const soleTraderDefaultValues = {
 };
 
 const AddNewMerchantForm: NextPage = () => {
-  const { handleSubmit, control } = useForm<AddMerchantValues>({
+  const { handleSubmit, control, watch } = useForm<AddMerchantValues>({
     defaultValues: soleTraderDefaultValues,
     mode: 'onChange',
     resolver: yupResolver(soleTraderSchema),
   });
 
-  const [countryData, setCountry] = useState<{
-    country?: string;
-    countryName?: string;
-  }>({});
+  const countryData = watch('country');
 
-  const [businessType, setBusinessType] =
-    useState<keyof typeof businessTypes>();
+  const businessType = watch('businessType');
 
-  const onBusinessTypeChange = (type: keyof typeof businessTypes) => () =>
-    setBusinessType(type);
+  console.log(countryData, businessType);
+
+  // console.log('getVals', getValues());
+
+  // const { businessType, country: countryData } = getValues();
+
+  // const [countryData, setCountry] = useState<{
+  //   country?: string;
+  //   countryName?: string;
+  // }>({});
+
+  const mappedCountryCodes = COUNTRY_CODES.map((el) => ({
+    label: el.countryName,
+    value: el.country,
+  }));
 
   const onSubmit = (data: any) => {
     console.log(data);
@@ -176,40 +197,62 @@ const AddNewMerchantForm: NextPage = () => {
   return (
     <Content>
       <Title variant="subtitle4">Add new merchant</Title>
-      <WrapperTextField>
-        <CountrySelectionDropdown
-          required
-          value={countryData.countryName}
-          label="Registration country"
-          onChange={setCountry}
-          placeholder="Select your country..."
-        />
-      </WrapperTextField>
-      <WrapperTextField>
-        <SelectDropDown
-          label="Business structure"
-          required
-          value={businessType ? businessTypes[businessType] : null}
-          placeholder="Choose your business structure"
-          fullWidth
-        >
-          <MenuItem onClick={onBusinessTypeChange('limited')}>
-            Limited Company
-          </MenuItem>
-          <MenuItem onClick={onBusinessTypeChange('individual')}>
-            Sole Trader / Individual
-          </MenuItem>
-        </SelectDropDown>
-      </WrapperTextField>
       <form onSubmit={handleSubmit(onSubmit)}>
-        {businessType === 'individual' && countryData?.country && (
+        <DropdownFormField
+          required
+          name="country"
+          control={control as any}
+          placeholder="Choose country"
+          label="Registration country"
+          items={mappedCountryCodes}
+        />
+        <DropdownFormField
+          required
+          name="businessType"
+          control={control as any}
+          placeholder="Choose industry"
+          label="Business structure"
+          items={businessTypeItems}
+        />
+        {/* <WrapperTextField>
+          <CountrySelectionDropdown
+            required
+            value={countryData.countryName}
+            label="Registration country"
+            onChange={setCountry}
+            placeholder="Select your country..."
+          />
+        </WrapperTextField>
+        <WrapperTextField>
+          <SelectDropDown
+            label="Business structure"
+            required
+            value={businessType ? businessTypes[businessType] : null}
+            placeholder="Choose your business structure"
+            fullWidth
+          >
+            <MenuItem onClick={onBusinessTypeChange('limited')}>
+              Limited Company
+            </MenuItem>
+            <MenuItem onClick={onBusinessTypeChange('individual')}>
+              Sole Trader / Individual
+            </MenuItem>
+          </SelectDropDown>
+        </WrapperTextField> */}
+
+        {businessType?.value === 'individual' && countryData?.value && (
           <AddNewMerchantSoleTraderForm
             countryData={countryData}
             control={control as any}
           />
         )}
-        {/* {businessType === 'limited' && <AddNewMerchantLimitedCompanyForm />} */}
-        {businessType && <AddBankAccountForm />}
+        {businessType?.value === 'limited' && countryData?.value && (
+          <AddNewMerchantLimitedCompanyForm
+            countryData={countryData}
+            control={control as any}
+          />
+        )}
+        {businessType && <AddBankAccountForm control={control as any} />}
         <ButtonWrapper>
           <ButtonWithChildren type="submit" variant="contained">
             ADD

@@ -1,9 +1,7 @@
 import { NextPage } from 'next';
 import React, { ChangeEvent, useState } from 'react';
 import styled from 'styled-components';
-import CountrySelectionDropdown from '../../components/CountrySelectionDropdown';
-import SelectDropDown from '../../components/SelectDropDown';
-import TextFieldComponent from '../../components/Textfield';
+
 import Typography from '../../components/Typography';
 import { COUNTRY_CODES } from '../../constant/countries';
 import { CompanyTypes } from '../../types/api';
@@ -16,7 +14,6 @@ import ProviderSelectionDropdown from '../../components/ProviderSelectionDropdow
 import ShareVerificationLink from '../../components/ShareVerificationLink';
 import ButtonWithChildren from '../../components/Button';
 import CheckBox from '../../components/Checkbox';
-import { useForm } from 'react-hook-form';
 
 const addNewMerchantSchema = yup.object().shape({
   phoneNumber: yup
@@ -142,82 +139,34 @@ const RadioButton = styled.input`
   margin-right: 10px;
 `;
 
-const AddBankAccountForm: NextPage = () => {
-  // cool code starts here
-  const {} = useForm({
-    validationSchema: addNewMerchantSchema,
-  });
-  // cool code ends here
+interface AddBankAccountProps {
+  control: Control;
+}
 
-  const [formErrors, setFormErrors] = useState<any>({});
-  const [country, setCountry] = useState<{
-    country?: string;
-    countryName?: string;
-  }>(
-    company.countryCode
-      ? {
-          country: company.countryCode,
-          countryName: COUNTRY_CODES.find(
-            (c) => c.country === company.countryCode
-          )!.countryName,
-        }
-      : {}
-  );
-
-  const [businessType, setBusinessType] = useState<
-    keyof typeof businessTypes | undefined
-  >(
-    company.type
-      ? company.type === CompanyTypes.COMPANY
-        ? 'limited'
-        : 'individual'
-      : undefined
-  );
-
-  const [limitedFormData, setLimitedFormData] = useState({
-    crn: company.identifier || '',
-    registeredName: company.name || '',
-    registeredAddress: company.address || '',
-    industry: company.industry || '',
-    tradingName: company.tradingName || '',
-    tradingAddress: company.tradingAddress || '',
-    registrationNumber: company.registrationNumber || '',
-    businessName: company.businessName || '',
-    businessAddress: company.businessAddress || '',
-    contactName: company.contactName || '',
-    email: company.email || '',
-    phoneNumber: company.phoneNumber || '',
-    directorName: company.directorName || '',
-    directorEmail: company.directorEmail || '',
-    directorePhoneNumber: company.directorPhoneNumber || '',
-  });
-
-  const [soleTraderFormData, setSoleTraderFormData] = useState({
-    utr: company.identifier || '',
-    tradingName: company.tradingName || '',
-    tradingAddress: company.tradingAddress || '',
-    businessName: company.businessName || '',
-    businessAddress: company.businessAddress || '',
-    contactName: company.contactName || '',
-    email: company.email || '',
-    industry: company.industry || '',
-    taxpayerId: company.taxpayerId || '',
-  });
-
+const AddBankAccountForm: NextPage<AddBankAccountProps> = ({ control }) => {
   const [bankDetailsType, setBankDetailsType] = useState('manually');
 
-  const [connectBankAccFormData, setConnectBankAccFormData] = useState({
-    name: '',
-    identification: '',
-    externalAccountId: '',
-    provider: '',
-  });
-
-  const [providers, setProviders] = useState<
-    Array<{ name: string; value: string }>
-  >([]);
-
   const [isDirector, setIsDirector] = useState(false);
+
+  const [providers, setProviders] = useState([
+    {
+      id: '62339d64ce1712d21eb055e4',
+      name: 'Bank of Scotland Business',
+      providerExternalId: 'ob-bos-business',
+      value: '62339d64ce1712d21eb055e4',
+    },
+    {
+      id: '62339d64ce1712d21eb055e6',
+      name: 'Barclays Business',
+      providerExternalId: 'ob-barclays-business',
+      value: '62339d64ce1712d21eb055e6',
+    },
+  ]);
+
+  const mappedProviders = providers.map((el) => ({
+    label: el.name,
+    value: el.value,
+  }));
 
   // const getProviders = async () => {
   //   const results = await Api.getProviders();
@@ -227,54 +176,6 @@ const AddBankAccountForm: NextPage = () => {
   //   }));
   //   setProviders(mapped);
   // };
-
-  const onBusinessTypeChange = (type: keyof typeof businessTypes) => () => {
-    setBusinessType(type);
-  };
-
-  const onChange =
-    (key: string) => async (event: ChangeEvent<HTMLInputElement>) => {
-      console.log(businessType);
-      if (businessType === 'limited') {
-        const newValues = { ...limitedFormData, [key]: event.target.value };
-        setLimitedFormData(newValues);
-        console.log(key, country, event.target.value);
-        if (key === 'crn' && country.country === 'GB') {
-          runValidation(addNewMerchantSchema, newValues).then((err) => {
-            setFormErrors(err);
-          });
-        }
-        if (
-          key === 'crn' &&
-          country.country === 'GB' &&
-          event.target.value.length >= 8
-        ) {
-        }
-      } else {
-        const newValues = {
-          ...soleTraderFormData,
-          [key]: event.target.value,
-        };
-        setSoleTraderFormData(newValues);
-        if (key === 'utr' && country.country === 'GB') {
-          runValidation(addNewMerchantSchema, newValues).then((err) => {
-            setFormErrors(err);
-          });
-        }
-      }
-    };
-
-  const onChangeIndustry = (name: string) => {
-    if (businessType === 'limited') {
-      setLimitedFormData({ ...limitedFormData, industry: name });
-    } else {
-      setSoleTraderFormData({ ...soleTraderFormData, industry: name });
-    }
-  };
-
-  const onProviderChange = (provider: string) => {
-    setConnectBankAccFormData({ ...connectBankAccFormData, provider });
-  };
 
   return (
     <>
@@ -300,86 +201,26 @@ const AddBankAccountForm: NextPage = () => {
       <ConnectBankAccount>
         {bankDetailsType === 'manually' ? (
           <>
-            <WrapperTextField>
-              <ProviderSelectionDropdown
-                value={
-                  connectBankAccFormData.provider
-                    ? providers.find(
-                        (p) => p.value === connectBankAccFormData.provider
-                      )?.name
-                    : null
-                }
-                label="Account provider"
-                placeholder="Choose your account provider"
-                providers={providers.sort(function (a, b) {
-                  if (a.name < b.name) {
-                    return -1;
-                  }
-                  if (a.name > b.name) {
-                    return 1;
-                  }
-                  return 0;
-                })}
-                onProviderChange={onProviderChange}
-              />
-            </WrapperTextField>
-            <WrapperTextField>
-              <TextFieldComponent
-                label="Account name"
-                inputProps={{
-                  value: connectBankAccFormData.name,
-                  name: 'accountName',
-                  onChange: (e) => {
-                    setConnectBankAccFormData({
-                      ...connectBankAccFormData,
-                      name: e.target.value,
-                    });
-                  },
-                }}
-              />
-            </WrapperTextField>
-            <WrapperTextField>
-              <TextFieldComponent
-                label="Sort Code"
-                error={formErrors?.identification?.[0]}
-                inputProps={{
-                  mask: '99-99-99',
-                  name: 'sortCode',
-                  value: connectBankAccFormData.identification,
-                  onChange: (e) => {
-                    const newFormData = {
-                      ...connectBankAccFormData,
-                      identification: e.target.value.replace(/-/g, ''),
-                    };
-                    setConnectBankAccFormData(newFormData);
-                    runValidation(sortCodeSchema, newFormData).then((err) => {
-                      setFormErrors(err);
-                    });
-                  },
-                }}
-              />
-            </WrapperTextField>
-            <WrapperTextField>
-              <TextFieldComponent
-                label="Sort code"
-                error={formErrors?.externalAccountId?.[0]}
-                inputProps={{
-                  mask: '99999999',
-                  name: 'accountNumber',
-                  value: connectBankAccFormData.externalAccountId,
-                  onChange: (e) => {
-                    const newFormData = {
-                      ...connectBankAccFormData,
-                      externalAccountId: e.target.value,
-                    };
-                    setConnectBankAccFormData(newFormData);
-                    runValidation(accNumberSchema, newFormData).then((err) => {
-                      setFormErrors(err);
-                    });
-                  },
-                }}
-              />
-            </WrapperTextField>
+            <DropdownFormField
+              name="provider"
+              control={control}
+              placeholder="Choose bank"
+              label="Industry"
+              items={mappedProviders}
+            />
+            <TextFormField name="name" control={control} label="Account name" />
+            <TextFormField
+              name="identification"
+              control={control}
+              label="Sort code"
+              mask="99-99-99"
+            />
+            <TextFormField
+              name="externalAccountId"
+              control={control}
+              label="Account number"
+              mask="99999999"
+            />
           </>
         ) : (
           <Banner>

@@ -20,7 +20,7 @@ interface AddNewMerchantSoleTraderFormProps {
     country?: string;
     countryName?: string;
   };
-  control: Control
+  control: Control;
 }
 
 const AddNewMerchantSoleTraderForm: React.FunctionComponent<
@@ -42,7 +42,7 @@ const AddNewMerchantSoleTraderForm: React.FunctionComponent<
         required={country !== 'GB'}
         label={
           country !== 'GB'
-            ? 'Taxpayer identification number'
+            ? 'Taxpayer identification number (TIN)'
             : 'Unique Taxpayer Reference (UTR)'
         }
       />
@@ -66,26 +66,23 @@ const AddNewMerchantSoleTraderForm: React.FunctionComponent<
         label="Industry"
         items={industriesItems}
       />
-
-      <TextFormField
-        name="taxpayerId"
-        control={control}
-        label="Taxpayer identification number"
-      />
-
-      <TextFormField
-        name="businessName"
-        control={control}
-        required
-        label="Business name"
-      />
-      <TextFormField
-        name="businessAddress"
-        control={control}
-        leftIcon={SearchIcon}
-        required
-        label="Business address"
-      />
+      {country === 'GB' && (
+        <>
+          <TextFormField
+            name="businessName"
+            control={control}
+            required
+            label="Business name"
+          />
+          <TextFormField
+            name="businessAddress"
+            control={control}
+            leftIcon={SearchIcon}
+            required
+            label="Business address"
+          />
+        </>
+      )}
       <TextFormField
         name="contactName"
         control={control}

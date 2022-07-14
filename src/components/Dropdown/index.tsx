@@ -186,7 +186,7 @@ const Dropdown: FC<DropdownProps> = ({
   };
 
   const filterItems = (item: any) => {
-    if (item.label.toLowerCase().includes(searchString.toLowerCase())) {
+    if (item.label?.toLowerCase().includes(searchString.toLowerCase())) {
       return true;
     } else if (item.value) {
       return item.value
