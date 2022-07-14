@@ -16,16 +16,17 @@ const StyledPhoneFormField = styled(PhoneFormField)`
 `;
 
 interface AddNewMerchantSoleTraderFormProps {
-  countryData: {
-    country?: string;
-    countryName?: string;
+  countryData?: {
+    label: string;
+    value: string;
   };
   control: Control;
 }
 
 const AddNewMerchantSoleTraderForm: React.FunctionComponent<
   AddNewMerchantSoleTraderFormProps
-> = ({ countryData: { country }, control }) => {
+> = ({ countryData, control }) => {
+  const { value: countryCode } = countryData || {};
   const industriesItems = industries.map((el) => ({
     label: el.category,
     items: el.specifics.map((elem) => ({
@@ -39,9 +40,9 @@ const AddNewMerchantSoleTraderForm: React.FunctionComponent<
       <TextFormField
         name="utr"
         control={control}
-        required={country !== 'GB'}
+        required={countryCode !== 'GB'}
         label={
-          country !== 'GB'
+          countryCode !== 'GB'
             ? 'Taxpayer identification number (TIN)'
             : 'Unique Taxpayer Reference (UTR)'
         }
@@ -66,7 +67,7 @@ const AddNewMerchantSoleTraderForm: React.FunctionComponent<
         label="Industry"
         items={industriesItems}
       />
-      {country === 'GB' && (
+      {countryCode === 'GB' && (
         <>
           <TextFormField
             name="businessName"

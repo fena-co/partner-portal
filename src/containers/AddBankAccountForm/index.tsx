@@ -3,17 +3,11 @@ import React, { ChangeEvent, useState } from 'react';
 import styled from 'styled-components';
 
 import Typography from '../../components/Typography';
-import { COUNTRY_CODES } from '../../constant/countries';
-import { CompanyTypes } from '../../types/api';
 import * as yup from 'yup';
-import { runValidation } from '../../util/formValidation';
-import IndustrySelectionDropdown from '../../components/Dropdown';
-import SearchIcon from 'image/icon/search-blue.svg';
-import PhoneInput from '../../components/PhoneInput';
-import ProviderSelectionDropdown from '../../components/ProviderSelectionDropdown';
 import ShareVerificationLink from '../../components/ShareVerificationLink';
-import ButtonWithChildren from '../../components/Button';
-import CheckBox from '../../components/Checkbox';
+import DropdownFormField from '../../components/DropdownFormField';
+import TextFormField from '../../components/TextFormField';
+import { Control } from 'react-hook-form';
 
 const addNewMerchantSchema = yup.object().shape({
   phoneNumber: yup

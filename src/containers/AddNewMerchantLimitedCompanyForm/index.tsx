@@ -16,16 +16,17 @@ const StyledPhoneFormField = styled(PhoneFormField)`
 `;
 
 interface AddNewMerchantSoleTraderFormProps {
-  countryData: {
-    country?: string;
-    countryName?: string;
+  countryData?: {
+    label: string;
+    value: string;
   };
   control: Control;
 }
 
 const AddNewMerchantLimitedCompanyForm: React.FunctionComponent<
   AddNewMerchantSoleTraderFormProps
-> = ({ countryData: { country }, control }) => {
+> = ({ countryData, control }) => {
+  const { value: countryCode } = countryData || {};
   const industriesItems = industries.map((el) => ({
     label: el.category,
     items: el.specifics.map((elem) => ({
@@ -40,7 +41,7 @@ const AddNewMerchantLimitedCompanyForm: React.FunctionComponent<
         name="crn"
         control={control}
         label={
-          country !== 'GB'
+          countryCode !== 'GB'
             ? 'Registration number'
             : 'Company registration number'
         }

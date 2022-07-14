@@ -1,9 +1,7 @@
 import { NextPage } from 'next';
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import * as yup from 'yup';
-import CountrySelectionDropdown from '../../components/CountrySelectionDropdown';
-import SelectDropDown from '../../components/SelectDropDown';
 import Typography from '../../components/Typography';
 import ButtonWithChildren from '../../components/Button';
 import AddNewMerchantSoleTraderForm from '../AddNewMerchantSoleTraderForm';
@@ -13,11 +11,6 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import DropdownFormField from '../../components/DropdownFormField';
 import { COUNTRY_CODES } from '../../constant/countries';
-
-enum businessTypes {
-  label = 'Sole Trader / Individual',
-  value = 'Limited Company',
-}
 
 const businessTypeItems = [
   { label: 'Sole Trader / Individual', value: 'individual' },
@@ -35,13 +28,6 @@ const Title = styled(Typography)`
   &:last-of-type {
     padding-top: 30px;
     margin-bottom: 10px;
-  }
-`;
-
-const WrapperTextField = styled.div`
-  margin-top: 10px;
-  &:first-child {
-    margin-top: 0px;
   }
 `;
 
@@ -114,12 +100,12 @@ const limitedCompanySchema = yup.object({
 
 // const addMerchantSchema =
 
-interface BusinessInfoValus {
+interface BusinessInfoValues {
   businessType: { label: string; value: string };
   country: { label: string; value: string };
 }
 
-interface BankAccountValues {}
+interface BankAccountValues extends BusinessInfoValues {}
 
 interface SoleTraderValues extends BankAccountValues {
   utr: string;
@@ -239,25 +225,28 @@ const AddNewMerchantForm: NextPage = () => {
             </MenuItem>
           </SelectDropDown>
         </WrapperTextField> */}
-
-        {businessType?.value === 'individual' && countryData?.value && (
-          <AddNewMerchantSoleTraderForm
-            countryData={countryData}
-            control={control as any}
-          />
+        {countryData?.value && businessType?.value && (
+          <>
+            {businessType.value === 'individual' && (
+              <AddNewMerchantSoleTraderForm
+                countryData={countryData}
+                control={control as any}
+              />
+            )}
+            {businessType.value === 'limited' && (
+              <AddNewMerchantLimitedCompanyForm
+                countryData={countryData}
+                control={control as any}
+              />
+            )}
+            <AddBankAccountForm control={control as any} />
+            <ButtonWrapper>
+              <ButtonWithChildren type="submit" variant="contained">
+                ADD
+              </ButtonWithChildren>
+            </ButtonWrapper>
+          </>
         )}
-        {businessType?.value === 'limited' && countryData?.value && (
-          <AddNewMerchantLimitedCompanyForm
-            countryData={countryData}
-            control={control as any}
-          />
-        )}
-        {businessType && <AddBankAccountForm control={control as any} />}
-        <ButtonWrapper>
-          <ButtonWithChildren type="submit" variant="contained">
-            ADD
-          </ButtonWithChildren>
-        </ButtonWrapper>
       </form>
     </Content>
   );
