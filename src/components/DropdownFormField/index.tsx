@@ -2,6 +2,7 @@ import { FC } from 'react';
 import styled from 'styled-components';
 import Dropdown from '../Dropdown';
 import { Control, Controller } from 'react-hook-form';
+import { FlagIcon, FlagIconCode } from 'react-flag-kit';
 
 const ErrorMessage = styled.span`
   font-family: Montserrat;
@@ -23,6 +24,16 @@ const FieldLabel = styled.div`
   color: #13273f;
 `;
 
+const FlagContainer = styled.div`
+  margin-right: 10px;
+  display: flex;
+  align-items: center;
+`;
+
+const StyledFlagIcon = styled(FlagIcon)`
+  height: 50%;
+`;
+
 interface Item {
   label: string;
   value: string;
@@ -41,7 +52,17 @@ interface DropdownFormFieldProps {
   required?: boolean;
   placeholder?: string;
   className?: string;
+  withCountryFlags?: boolean;
 }
+
+const CountryFlagIcon: React.FunctionComponent<{
+  code: FlagIconCode;
+}> = ({ code }) =>
+  code ? (
+    <FlagContainer>
+      <StyledFlagIcon code={code} />
+    </FlagContainer>
+  ) : null;
 
 const DropdownFormField: FC<DropdownFormFieldProps> = ({
   items,
@@ -51,13 +72,14 @@ const DropdownFormField: FC<DropdownFormFieldProps> = ({
   leftIcon,
   required,
   className,
+  withCountryFlags,
   ...inputProps
 }) => {
   return (
     <Controller
       name={name}
       control={control}
-      render={({ field, fieldState: { error }}) => (
+      render={({ field, fieldState: { error } }) => (
         <div className={className}>
           {label && (
             <FieldLabel>
@@ -66,13 +88,19 @@ const DropdownFormField: FC<DropdownFormFieldProps> = ({
           )}
           <Dropdown
             items={items}
-            leftIcon={leftIcon}
+            withCountryFlags={withCountryFlags}
+            leftIcon={
+              withCountryFlags
+                ? () => <CountryFlagIcon code={field.value.value} />
+                : leftIcon
+            }
             {...inputProps}
             {...field}
           />
           {error && (
             <ErrorMessage>
-              {(error && (error as any).label.message) || (error as any).value.message}
+              {(error && (error as any).label.message) ||
+                (error as any).value.message}
             </ErrorMessage>
           )}
         </div>

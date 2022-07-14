@@ -160,8 +160,6 @@ const AddNewMerchantForm: NextPage = () => {
 
   const businessType = watch('businessType');
 
-  console.log(countryData, businessType);
-
   // console.log('getVals', getValues());
 
   // const { businessType, country: countryData } = getValues();
@@ -186,6 +184,7 @@ const AddNewMerchantForm: NextPage = () => {
       <form onSubmit={handleSubmit(onSubmit)}>
         <DropdownFormField
           required
+          withCountryFlags
           name="country"
           control={control as any}
           placeholder="Choose country"

@@ -5,7 +5,7 @@ import styled, { css } from 'styled-components';
 import MenuItem from '../MenuItem';
 import Typography from '../Typography';
 import ArrowDownAccordion from 'image/icon/arrow-down-1.svg';
-
+import { FlagIcon, FlagIconCode } from 'react-flag-kit';
 
 const DropDownContainer = styled.div`
   position: relative;
@@ -102,6 +102,10 @@ const Category = styled.div`
   cursor: pointer;
 `;
 
+const CategoryTitleWrapper = styled.div`
+  display: flex;
+`;
+
 const CategoryTitle = styled(Typography)``;
 
 const StyledArrowDown = styled(ArrowDownAccordion)`
@@ -113,6 +117,24 @@ const StyledMenuItem = styled(MenuItem)`
   font-size: 14px;
   padding: 5px 30px;
 `;
+
+const FlagContainer = styled.div`
+  margin-right: 10px;
+  display: flex;
+  align-items: center;
+`;
+
+const StyledFlagIcon = styled(FlagIcon)`
+  height: 50%;
+`;
+
+const CountryFlagIcon: React.FunctionComponent<{
+  code: FlagIconCode;
+}> = ({ code }) => (
+  <FlagContainer>
+    <StyledFlagIcon code={code} />
+  </FlagContainer>
+);
 
 interface Item {
   label: string;
@@ -130,6 +152,7 @@ interface DropdownProps {
   // variant?: 'error' | 'success' | 'active' | 'default';
   value?: Item;
   placeholder?: string;
+  withCountryFlags?: boolean;
   onChange: (value: Item) => void;
 }
 
@@ -139,6 +162,7 @@ const Dropdown: FC<DropdownProps> = ({
   leftIcon,
   value,
   placeholder,
+  withCountryFlags,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchString, setSearchString] = useState<string>('');
@@ -201,8 +225,8 @@ const Dropdown: FC<DropdownProps> = ({
   return (
     <DropDownContainer>
       <DropDownHeader ref={ref} isOpen={isOpen} onClick={handleExpand}>
-        {leftIcon && <IconWrapper>{leftIcon()}</IconWrapper>}
         <ValueSelect ref={valueRef} isPlaceholder={!value && !!placeholder}>
+          {leftIcon && <IconWrapper>{leftIcon()}</IconWrapper>}
           {value ? value.label : placeholder}
         </ValueSelect>
         {isOpen ? <ArrowUp /> : <ArrowDown />}
@@ -233,7 +257,10 @@ const Dropdown: FC<DropdownProps> = ({
                           : handleItemClick(el as any)
                       }
                     >
-                      <CategoryTitle variant="body1">{el.label}</CategoryTitle>
+                      <CategoryTitleWrapper>
+                        {withCountryFlags && <CountryFlagIcon code={(el as any).value} />}
+                        <CategoryTitle variant="body1">{el.label}</CategoryTitle>
+                      </CategoryTitleWrapper>
                       {isDeepItem && (
                         <StyledArrowDown
                           aria-expanded={expandedItemIndex === index}
