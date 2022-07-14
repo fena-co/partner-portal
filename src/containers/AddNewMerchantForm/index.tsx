@@ -55,12 +55,24 @@ const ButtonWrapper = styled.div`
   margin-top: 30px;
 `;
 
+const businessInfoSchema = {
+  country: yup.object({
+    label: yup.string(),
+    value: yup.string(),
+  }),
+  businessType: yup.object({
+    label: yup.string(),
+    value: yup.string(),
+  }),
+};
+
 const addBankAccountSchema = {
   accountProvider: yup.string(),
   // coming
 };
 
 const soleTraderSchema = yup.object({
+  ...businessInfoSchema,
   ...addBankAccountSchema,
   utr: yup
     .string()
@@ -95,10 +107,19 @@ const soleTraderSchema = yup.object({
 });
 
 const limitedCompanySchema = yup.object({
+  ...businessInfoSchema,
   ...addBankAccountSchema,
 });
 
-// const addMerchantSchema =
+const addMerchantSchema = yup.lazy((values) => {
+  if (values.businessType.value === 'limited') {
+    return limitedCompanySchema;
+  } else if (values.businessType.value === 'individual') {
+    return soleTraderSchema
+  } else {
+    return yup.object()
+  }
+})
 
 interface BusinessInfoValues {
   businessType: { label: string; value: string };
@@ -153,7 +174,7 @@ const AddNewMerchantForm: NextPage = () => {
   const { handleSubmit, control, watch } = useForm<AddMerchantValues>({
     defaultValues: soleTraderDefaultValues,
     mode: 'onChange',
-    resolver: yupResolver(soleTraderSchema),
+    resolver: yupResolver(addMerchantSchema),
   });
 
   const countryData = watch('country');
