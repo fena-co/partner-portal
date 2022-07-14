@@ -7,6 +7,8 @@ import {
   HeaderButtons,
   HeaderLeft,
   HeaderWrapper,
+  Modal,
+  ModalContent,
   Table,
   TableBodyCell,
   TableBodyRow,
@@ -14,18 +16,44 @@ import {
   TableHeaderCell,
 } from '../../../components/StyledComponents';
 import KeyIcon from 'image/icon/key.svg';
+import Close from 'image/icon/close.svg';
 import Typography from '../../../components/Typography';
 import { ROUTES } from '../../../constant/route';
 import styled from 'styled-components';
 import ContextMenu from '../../../components/ContextMenu';
 import { useState } from 'react';
 import UrlWrapper from '../../../components/UrlWrapper';
+import Paginator from '../../../components/Paginator';
+import TextFieldComponent from '../../../components/Textfield';
+import ButtonWithChildren from '../../../components/Button';
 
 const Key = styled(KeyIcon)`
   margin-right: 10px;
 `;
 
 const Content = styled.section``;
+
+const StyledModalContent = styled(ModalContent)`
+  top: 20%;
+`;
+
+const ModalHeader = styled.div`
+  padding-bottom: 10px;
+  border-bottom: 1px solid #dbe3eb;
+`;
+
+const ModalWrapperContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  padding: 30px;
+  width: 400px;
+`;
+
+const CloseCircledButton = styled.div``;
+
+const CloseIcon = styled(Close)`
+  fill: #495b6c;
+`;
 
 const ApiKeysPage: NextPage = () => {
   const [apiKeys, setApiKeys] = useState([
@@ -35,6 +63,17 @@ const ApiKeysPage: NextPage = () => {
       createdOn: 'a few seconds ago',
     },
   ]);
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [limit, setLimit] = useState(25);
+  const [total, setTotal] = useState(0);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleRowsPerPageChange = async (val: number) => {
+    setLimit(val);
+    setCurrentPage(1);
+  };
 
   return (
     <Layout menuItems={[]}>
@@ -47,7 +86,7 @@ const ApiKeysPage: NextPage = () => {
           <ButtonCreation
             variant="contained"
             onClick={() => {
-              router.push(ROUTES.MERCHANT_CREATE);
+              setIsModalOpen(true);
             }}
           >
             <Key />
@@ -108,7 +147,31 @@ const ApiKeysPage: NextPage = () => {
             ))}
           </tbody>
         </Table>
+        <Paginator
+          total={total}
+          currentPage={currentPage}
+          perPage={limit}
+          onPageChange={setCurrentPage}
+          onPerPageChange={handleRowsPerPageChange}
+        />
       </Content>
+      <Modal show={isModalOpen}>
+        <StyledModalContent>
+          <ModalWrapperContent>
+            <ModalHeader>
+              <Typography variant="body1">New API Key</Typography>
+              <CloseCircledButton>
+                <CloseIcon />
+              </CloseCircledButton>
+            </ModalHeader>
+            <Typography>Name</Typography>
+            <TextFieldComponent />
+            <ButtonWithChildren variant="contained">
+              Create key
+            </ButtonWithChildren>
+          </ModalWrapperContent>
+        </StyledModalContent>
+      </Modal>
     </Layout>
   );
 };

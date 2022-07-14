@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components';
 import { FC } from 'react';
-import { Spinner } from '../index';
+import Spinner from '../Spinner';
 
 const ButtonContained = css`
   background-color: #13273f;
