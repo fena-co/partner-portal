@@ -1,64 +1,15 @@
 import { NextPage } from 'next';
 import React, { ChangeEvent, useState } from 'react';
 import styled from 'styled-components';
-
 import Typography from '../../components/Typography';
-import * as yup from 'yup';
 import ShareVerificationLink from '../../components/ShareVerificationLink';
 import DropdownFormField from '../../components/DropdownFormField';
 import TextFormField from '../../components/TextFormField';
 import { Control } from 'react-hook-form';
+import RadioButton from '../../components/RadioButton';
 
-const addNewMerchantSchema = yup.object().shape({
-  phoneNumber: yup
-    .string()
-    .matches(/[0-9]+/, 'Phone number is not valid')
-    .matches(/\w{2} 0?\d{0,10}$/, 'Phone number length exceeded'),
-  identification: yup.string().min(6, 'Sort code must be 6 digits'),
-  externalAccountId: yup.string().min(8, 'Account number must be 8 digits'),
-});
-
-const limitedCompanySchema = addNewMerchantSchema.concat(
-  yup.object().shape({
-    crn: yup
-      .string()
-      .min(8, 'Enter valid CRN')
-      .max(8, 'Enter valid CRN')
-      .matches(/[a-zA-Z]{2}[0-9]{6}|[0-9]{8}/, 'Enter valid CRN'),
-  })
-);
-
-const soleTraderSchema = addNewMerchantSchema.concat(
-  yup.object().shape({
-    utr: yup
-      .string()
-      .matches(/^[0-9]*$/, 'UTR cannot include letters')
-      .nullable()
-      .transform((o, c) => (o === '' ? null : c))
-      .min(10, 'Enter valid UTR')
-      .max(10, 'Enter valid UTR'),
-  })
-);
-
-const businessTypes = {
-  individual: 'Sole Trader / Individual',
-  limited: 'Limited Company',
-};
-
-const company: any = {
-  countryName: 'United Kingdom',
-  code: '+44',
-  country: 'GB',
-  identifier: '',
-  tradingName: '',
-  tradingAddress: '',
-  industry: '',
-};
-
-const Content = styled.section`
-  display: flex;
-  flex-direction: column;
-  padding: 30px calc((100vw - 380px) / 2);
+const StyledDropdownFormField = styled(DropdownFormField)`
+  padding-top: 20px;
 `;
 
 const Title = styled(Typography)`
@@ -66,35 +17,6 @@ const Title = styled(Typography)`
   &:last-of-type {
     padding-top: 30px;
     margin-bottom: 10px;
-  }
-`;
-
-const WrapperTextField = styled.div`
-  margin-top: 10px;
-  &:first-child {
-    margin-top: 0px;
-  }
-`;
-
-const WrapperCheckBox = styled.div`
-  margin-top: 30px;
-`;
-
-const MenuItem = styled.li`
-  list-style: none;
-  font-family: Montserrat;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 24px;
-  text-transform: capitalize;
-  color: #13273f;
-  padding: 12px 23px;
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-
-  :hover {
-    background: #f4f7f9;
   }
 `;
 
@@ -116,32 +38,19 @@ const Email = styled.a`
   color: #38b6ff;
 `;
 
-const ButtonWrapper = styled.div`
-  display: flex;
-  justify-content: center;
-  margin-top: 30px;
-`;
-
-const RadioInput = styled.div`
-  display: flex;
-  align-items: flex-start;
+const StyledRadioButton = styled(RadioButton)`
   margin-top: 10px;
-`;
-
-const RadioButton = styled.input`
-  accent-color: black;
-  margin-right: 10px;
 `;
 
 interface AddBankAccountProps {
   control: Control;
+  renderType: string;
 }
 
-const AddBankAccountForm: NextPage<AddBankAccountProps> = ({ control }) => {
-  const [bankDetailsType, setBankDetailsType] = useState('manually');
-
-  const [isDirector, setIsDirector] = useState(false);
-
+const AddBankAccountForm: NextPage<AddBankAccountProps> = ({
+  control,
+  renderType,
+}) => {
   const [providers, setProviders] = useState([
     {
       id: '62339d64ce1712d21eb055e4',
@@ -162,44 +71,30 @@ const AddBankAccountForm: NextPage<AddBankAccountProps> = ({ control }) => {
     value: el.value,
   }));
 
-  // const getProviders = async () => {
-  //   const results = await Api.getProviders();
-  //   const mapped = results.map((result: any) => ({
-  //     name: result.name,
-  //     value: result._id,
-  //   }));
-  //   setProviders(mapped);
-  // };
-
   return (
     <>
       <Title variant="subtitle4">Add bank account</Title>
-      <RadioInput>
-        <RadioButton
-          type="radio"
-          checked={bankDetailsType === 'manually'}
-          onChange={() => setBankDetailsType('manually')}
-        />
-        <Typography variant="lightBody">Add the details manually</Typography>
-      </RadioInput>
-      <RadioInput>
-        <RadioButton
-          type="radio"
-          checked={bankDetailsType === 'ask'}
-          onChange={() => setBankDetailsType('ask')}
-        />
-        <Typography variant="lightBody">
-          Ask merchant to add their bank account using online banking
-        </Typography>
-      </RadioInput>
+      <StyledRadioButton
+        name="bankDetailsType"
+        value="manual"
+        control={control}
+        label="Add the details manually"
+      />
+      <StyledRadioButton
+        name="bankDetailsType"
+        value="ask"
+        control={control}
+        label="Ask merchant to add their bank account using online banking"
+      />
+
       <ConnectBankAccount>
-        {bankDetailsType === 'manually' ? (
+        {renderType === 'manual' ? (
           <>
-            <DropdownFormField
+            <StyledDropdownFormField
               name="provider"
               control={control}
               placeholder="Choose bank"
-              label="Industry"
+              label="Select bank"
               items={mappedProviders}
             />
             <TextFormField name="name" control={control} label="Account name" />
@@ -213,7 +108,6 @@ const AddBankAccountForm: NextPage<AddBankAccountProps> = ({ control }) => {
               name="externalAccountId"
               control={control}
               label="Account number"
-              mask="99999999"
             />
           </>
         ) : (

@@ -1,7 +1,6 @@
 import { NextPage } from 'next';
 import React from 'react';
 import styled from 'styled-components';
-import * as yup from 'yup';
 import Typography from '../../components/Typography';
 import ButtonWithChildren from '../../components/Button';
 import AddNewMerchantSoleTraderForm from '../AddNewMerchantSoleTraderForm';
@@ -11,6 +10,7 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import DropdownFormField from '../../components/DropdownFormField';
 import { COUNTRY_CODES } from '../../constant/countries';
+import { addMerchantSchema } from './validation';
 
 const businessTypeItems = [
   { label: 'Sole Trader / Individual', value: 'individual' },
@@ -31,22 +31,8 @@ const Title = styled(Typography)`
   }
 `;
 
-const MenuItem = styled.li`
-  list-style: none;
-  font-family: Montserrat;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 24px;
-  text-transform: capitalize;
-  color: #13273f;
-  padding: 12px 23px;
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-
-  :hover {
-    background: #f4f7f9;
-  }
+const StyledDropdownFormField = styled(DropdownFormField)`
+  padding-top: 20px;
 `;
 
 const ButtonWrapper = styled.div`
@@ -55,124 +41,122 @@ const ButtonWrapper = styled.div`
   margin-top: 30px;
 `;
 
-const businessInfoSchema = {
-  country: yup.object({
-    label: yup.string(),
-    value: yup.string(),
-  }),
-  businessType: yup.object({
-    label: yup.string(),
-    value: yup.string(),
-  }),
-};
-
-const addBankAccountSchema = {
-  accountProvider: yup.string(),
-  // coming
-};
-
-const soleTraderSchema = yup.object({
-  ...businessInfoSchema,
-  ...addBankAccountSchema,
-  utr: yup
-    .string()
-    .matches(/^[0-9]*$/, 'UTR cannot include letters')
-    .nullable()
-    .transform((o, c) => (o === '' ? null : c))
-    .min(10, 'Enter valid UTR')
-    .max(10, 'Enter valid UTR'),
-  tradingName: yup.string().required('This field is required'),
-  tradingAddress: yup.string().required('This field is required'),
-  industry: yup.object({
-    label: yup.string(),
-    value: yup.string(),
-  }),
-  businessName: yup.string().required('This field is required'),
-  businessAddress: yup.string().required('This field is required'),
-  contactName: yup.string().required('This field is required'),
-  email: yup
-    .string()
-    .required('This field is required')
-    .email('Email must be valid'),
-  phoneNumber: yup.object({
-    code: yup.string().required(),
-    number: yup
-      .string()
-      .required('This field is required')
-      .matches(/^[0-9]+$/, 'Phone number is not valid')
-      .matches(/^0?\d{0,10}$/, 'Phone number length exceeded'),
-  }),
-  // identification: yup.string().min(6, 'Sort code must be 6 digits'),
-  // externalAccountId: yup.string().min(8, 'Account number must be 8 digits'),
-});
-
-const limitedCompanySchema = yup.object({
-  ...businessInfoSchema,
-  ...addBankAccountSchema,
-});
-
-const addMerchantSchema = yup.lazy((values) => {
-  if (values.businessType.value === 'limited') {
-    return limitedCompanySchema;
-  } else if (values.businessType.value === 'individual') {
-    return soleTraderSchema
-  } else {
-    return yup.object()
-  }
-})
-
-interface BusinessInfoValues {
+interface BusinessInfoValues extends BankDetailsTypeValues {
   businessType: { label: string; value: string };
   country: { label: string; value: string };
 }
 
-interface BankAccountValues extends BusinessInfoValues {}
+interface BankDetailsTypeValues {
+  bankDetailsType: string;
+}
 
-interface SoleTraderValues extends BankAccountValues {
-  utr: string;
-  tradingName: string;
-  tradingAddress: string;
-  businessName: string;
-  businessAddress: string;
-  contactName: string;
-  email: string;
-  industry: {
+interface BankAccountValues extends BusinessInfoValues {
+  provider: {
     label: string;
     value: string;
   };
-  taxpayerId: string;
-  phoneNumber: {
-    code: string;
-    number: string;
+  name: string;
+  identification: string;
+  externalAccountId: string;
+}
+
+interface SoleTraderValues extends BankAccountValues {
+  soleTrader: {
+    utr: string;
+    tradingName: string;
+    tradingAddress: string;
+    contactName: string;
+    email: string;
+    industry: {
+      label: string;
+      value: string;
+    };
+    phoneNumber: {
+      code: string;
+      number: string;
+    };
   };
 }
 
 interface LimitedCompanyValues extends BankAccountValues {
-  // coming
+  limitedCompany: {
+    crn: string;
+    registeredName: string;
+    registeredAddress: string;
+    industry: {
+      label: string;
+      value: string;
+    };
+    tradingName: string;
+    tradingAddress: string;
+    registrationNumber: string;
+    primaryContactName: string;
+    email: string;
+    phoneNumber: {
+      code: string;
+      number: string;
+    };
+    directorContactName: string;
+    directorEmail: string;
+    directorPhoneNumber: {
+      code: string;
+      number: string;
+    };
+  };
 }
 
 type AddMerchantValues = SoleTraderValues | LimitedCompanyValues;
 
-const soleTraderDefaultValues = {
+const addMerchantDefaultValues = {
   country: { label: '', value: '' },
   businessType: { label: '', value: '' },
-  utr: '',
-  tradingName: '',
-  tradingAddress: '',
-  businessName: '',
-  businessAddress: '',
-  contactName: '',
-  email: '',
-  industry: { label: '', value: '' },
-  phoneNumber: {
-    code: 'GB',
-    number: '',
+  bankDetailsType: 'manual',
+  soleTrader: {
+    utr: '',
+    tradingName: '',
+    tradingAddress: '',
+    industry: { label: '', value: '' },
+    contactName: '',
+    email: '',
+    phoneNumber: {
+      code: 'GB',
+      number: '',
+    },
+  },
+  limitedCompany: {
+    crn: '',
+    registeredName: '',
+    registeredAddress: '',
+    industry: {
+      label: '',
+      value: '',
+    },
+    tradingName: '',
+    tradingAddress: '',
+    registrationNumber: '',
+    primaryContactName: '',
+    email: '',
+    phoneNumber: {
+      code: 'GB',
+      number: '',
+    },
+    directorContactName: '',
+    directorEmail: '',
+    directorPhoneNumber: {
+      code: '',
+      number: '',
+    },
   },
 };
 
 const AddNewMerchantForm: NextPage = () => {
-  const { handleSubmit, control, watch } = useForm<AddMerchantValues>({
-    defaultValues: soleTraderDefaultValues,
+  const {
+    handleSubmit,
+    control,
+    watch,
+    formState: { errors },
+  } = useForm<AddMerchantValues>({
+    defaultValues: addMerchantDefaultValues,
     mode: 'onChange',
     resolver: yupResolver(addMerchantSchema),
   });
@@ -181,14 +165,7 @@ const AddNewMerchantForm: NextPage = () => {
 
   const businessType = watch('businessType');
 
-  // console.log('getVals', getValues());
-
-  // const { businessType, country: countryData } = getValues();
-
-  // const [countryData, setCountry] = useState<{
-  //   country?: string;
-  //   countryName?: string;
-  // }>({});
+  const bankDetailsType = watch('bankDetailsType');
 
   const mappedCountryCodes = COUNTRY_CODES.map((el) => ({
     label: el.countryName,
@@ -196,14 +173,14 @@ const AddNewMerchantForm: NextPage = () => {
   }));
 
   const onSubmit = (data: any) => {
-    console.log(data);
+    console.log('submittedData', data);
   };
 
   return (
     <Content>
       <Title variant="subtitle4">Add new merchant</Title>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <DropdownFormField
+        <StyledDropdownFormField
           required
           withCountryFlags
           name="country"
@@ -212,7 +189,7 @@ const AddNewMerchantForm: NextPage = () => {
           label="Registration country"
           items={mappedCountryCodes}
         />
-        <DropdownFormField
+        <StyledDropdownFormField
           required
           name="businessType"
           control={control as any}
@@ -220,31 +197,7 @@ const AddNewMerchantForm: NextPage = () => {
           label="Business structure"
           items={businessTypeItems}
         />
-        {/* <WrapperTextField>
-          <CountrySelectionDropdown
-            required
-            value={countryData.countryName}
-            label="Registration country"
-            onChange={setCountry}
-            placeholder="Select your country..."
-          />
-        </WrapperTextField>
-        <WrapperTextField>
-          <SelectDropDown
-            label="Business structure"
-            required
-            value={businessType ? businessTypes[businessType] : null}
-            placeholder="Choose your business structure"
-            fullWidth
-          >
-            <MenuItem onClick={onBusinessTypeChange('limited')}>
-              Limited Company
-            </MenuItem>
-            <MenuItem onClick={onBusinessTypeChange('individual')}>
-              Sole Trader / Individual
-            </MenuItem>
-          </SelectDropDown>
-        </WrapperTextField> */}
+
         {countryData?.value && businessType?.value && (
           <>
             {businessType.value === 'individual' && (
@@ -259,7 +212,10 @@ const AddNewMerchantForm: NextPage = () => {
                 control={control as any}
               />
             )}
-            <AddBankAccountForm control={control as any} />
+            <AddBankAccountForm
+              control={control as any}
+              renderType={bankDetailsType}
+            />
             <ButtonWrapper>
               <ButtonWithChildren type="submit" variant="contained">
                 ADD

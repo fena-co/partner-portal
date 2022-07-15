@@ -38,7 +38,7 @@ const AddNewMerchantSoleTraderForm: React.FunctionComponent<
   return (
     <>
       <TextFormField
-        name="utr"
+        name="soleTrader.utr"
         control={control}
         required={countryCode !== 'GB'}
         label={
@@ -48,52 +48,35 @@ const AddNewMerchantSoleTraderForm: React.FunctionComponent<
         }
       />
       <TextFormField
-        name="tradingName"
+        name="soleTrader.tradingName"
         control={control}
         required
         label="Trading name"
       />
       <TextFormField
-        name="tradingAddress"
+        name="soleTrader.tradingAddress"
         control={control}
         leftIcon={SearchIcon}
         required
         label="Trading address"
       />
       <StyledDropdownFormField
-        name="industry"
+        name="soleTrader.industry"
         control={control}
         placeholder="Choose industry"
         label="Industry"
         items={industriesItems}
       />
-      {countryCode === 'GB' && (
-        <>
-          <TextFormField
-            name="businessName"
-            control={control}
-            required
-            label="Business name"
-          />
-          <TextFormField
-            name="businessAddress"
-            control={control}
-            leftIcon={SearchIcon}
-            required
-            label="Business address"
-          />
-        </>
-      )}
       <TextFormField
-        name="contactName"
+        name="soleTrader.contactName"
         control={control}
         required
         label="Contact name"
       />
-      <TextFormField name="email" control={control} required label="Email" />
+      <TextFormField name="soleTrader.email" control={control} required label="Email" />
       <StyledPhoneFormField
         required
-        name="phoneNumber"
+        name="soleTrader.phoneNumber"
         control={control}
         label="Phone number"
       />

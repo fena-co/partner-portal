@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Control } from 'react-hook-form';
 import DropdownFormField from '../../components/DropdownFormField';
@@ -6,12 +6,17 @@ import PhoneFormField from '../../components/PhoneFormField';
 import TextFormField from '../../components/TextFormField';
 import { industries } from '../../constant/industries';
 import SearchIcon from 'image/icon/search-blue.svg';
+import CheckBox from '../../components/Checkbox';
 
 const StyledDropdownFormField = styled(DropdownFormField)`
   padding-top: 20px;
 `;
 
 const StyledPhoneFormField = styled(PhoneFormField)`
+  padding-top: 20px;
+`;
+
+const WrapperCheckbox = styled.div`
   padding-top: 20px;
 `;
 
@@ -35,32 +40,35 @@ const AddNewMerchantLimitedCompanyForm: React.FunctionComponent<
     })),
   }));
 
+  const [isDirector, setIsDirector] = useState(false);
+
   return (
     <>
       <TextFormField
-        name="crn"
+        name="limitedCompany.crn"
         control={control}
+        required
         label={
           countryCode !== 'GB'
             ? 'Registration number'
-            : 'Company registration number'
+            : 'Company registration number (CRN)'
         }
       />
       <TextFormField
-        name="registeredName"
+        name="limitedCompany.registeredName"
         control={control}
         required
         label="Registered name"
       />
       <TextFormField
-        name="registeredAddress"
+        name="limitedCompany.registeredAddress"
         control={control}
         leftIcon={SearchIcon}
         required
         label="Registered address"
       />
       <StyledDropdownFormField
-        name="industry"
+        name="limitedCompany.industry"
         control={control}
         placeholder="Choose industry"
         label="Industry"
@@ -68,36 +76,58 @@ const AddNewMerchantLimitedCompanyForm: React.FunctionComponent<
       />
 
       <TextFormField
-        name="tradingName"
+        name="limitedCompany.tradingName"
         control={control}
         label="Trading name"
       />
 
       <TextFormField
-        name="tradingAddress"
+        name="limitedCompany.tradingAddress"
         control={control}
-        required
         label="Trading address"
         leftIcon={SearchIcon}
       />
       <TextFormField
-        name="businessAddress"
+        name="limitedCompany.registrationNumber"
         control={control}
-        required
-        label="Business address"
+        label="Registration number"
       />
       <TextFormField
-        name="contactName"
+        name="limitedCompany.primaryContactName"
         control={control}
-        required
-        label="Contact name"
+        label="Primary contact name"
       />
-      <TextFormField name="email" control={control} required label="Email" />
+      <TextFormField name="limitedCompany.email" control={control} label="Email" />
       <StyledPhoneFormField
-        required
-        name="phoneNumber"
+        name="limitedCompany.phoneNumber"
         control={control}
         label="Phone number"
+      />
+      <WrapperCheckbox>
+        <CheckBox
+          label="This is a director"
+          onClick={() => setIsDirector(!isDirector)}
+          checked={isDirector}
+        />
+      </WrapperCheckbox>
+
+      <TextFormField
+        required
+        name="limitedCompany.directorContactName"
+        control={control}
+        label="Director's contact name"
+      />
+      <TextFormField
+        required
+        name="limitedCompany.directorEmail"
+        control={control}
+        label="Director's email"
+      />
+      <StyledPhoneFormField
+        required
+        name="limitedCompany.directorPhoneNumber"
+        control={control}
+        label="Director's phone number"
       />
     </>
   );
