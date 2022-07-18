@@ -1,4 +1,4 @@
-import { ChangeEvent, FC } from 'react';
+import React, { ChangeEvent, FC } from 'react';
 import styled, { css } from 'styled-components';
 import InputMask, { Props } from 'react-input-mask';
 
@@ -68,6 +68,7 @@ const Container = styled.div<{ fullWidth?: boolean }>`
   ${({ fullWidth }) => (fullWidth ? FullWidth : '')}
   display: flex;
   flex-direction: column;
+  padding-top: 20px;
 `;
 
 const WrapperTextField = styled.div<{
@@ -124,50 +125,58 @@ interface IInputProps {
 }
 interface ITextFieldComponent {
   label?: string | JSX.Element;
+  leftIcon?: typeof React.Component;
+  icon?: typeof React.Component;
   fullWidth?: boolean;
   error?: any;
   variant?: string;
-  leftIcon?: any;
   inputProps?: IInputProps;
-  icon?: any;
   disabled?: boolean;
   borderColor?: any;
 }
 
-const TextFieldComponent: FC<ITextFieldComponent> = (props) => {
+const TextFieldComponent: FC<ITextFieldComponent> = ({
+  label,
+  inputProps,
+  icon: Icon,
+  error,
+  borderColor,
+  disabled,
+  fullWidth,
+  leftIcon: LeftIcon,
+  variant
+}) => {
   return (
-    <Container fullWidth={props.fullWidth}>
-      {props.label && (
+    <Container fullWidth={fullWidth}>
+      {label && (
         <FieldLabel>
-          {props.label}{' '}
-          {props.inputProps?.required && (
-            <span style={{ color: 'red' }}>*</span>
-          )}
+          {label}{' '}
+          {inputProps?.required && <span style={{ color: 'red' }}>*</span>}
         </FieldLabel>
       )}
       <WrapperTextField
-        error={props.error}
-        variant={props.variant}
-        borderColor={props.borderColor}
-        disabled={props.disabled}
+        error={error}
+        variant={variant}
+        borderColor={borderColor}
+        disabled={disabled}
       >
-        {props.leftIcon && (
+        {LeftIcon && (
           <IconWrapper>
-            <props.leftIcon />
+            <LeftIcon style={{ marginRight: '5px' }} />
           </IconWrapper>
         )}
         <TextField
           maskChar={null}
-          disabled={props.disabled}
-          {...props.inputProps}
+          disabled={disabled}
+          {...inputProps}
         />
-        {props.icon && (
+        {Icon && (
           <IconWrapper>
-            <props.icon />
+            <Icon />
           </IconWrapper>
         )}
       </WrapperTextField>
-      {props.error && <InputError>{props.error}</InputError>}
+      {error && <InputError>{error}</InputError>}
     </Container>
   );
 };

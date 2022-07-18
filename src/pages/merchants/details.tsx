@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { Transaction } from '../../types/api';
 import BankAccountCard from '../../components/BankAccountCard';
 import CopyInput from '../../components/CopyInput';
+import ShareVerificationLink from '../../components/ShareVerificationLink';
 
 const BackButton = styled.div`
   display: flex;
@@ -119,7 +120,7 @@ const ShareSection = styled.div`
 `;
 
 const CopyInputWrapper = styled.div`
-margin-top: 15px;
+  margin-top: 15px;
 `;
 
 interface DetailsProps {
@@ -228,7 +229,6 @@ const accounts = [
 ];
 
 const Details: React.FunctionComponent<DetailsProps> = ({ handleClose }) => {
-
   const [activePage, setActivePage] = useState<string>('company');
   return (
     <>
@@ -264,7 +264,6 @@ const Details: React.FunctionComponent<DetailsProps> = ({ handleClose }) => {
               Verification
             </HeaderMenuItem>
           </HeaderMenu>
-          
         </ContentHeader>
         {activePage === 'company' && (
           <DetailsWrapper>
@@ -392,20 +391,7 @@ const Details: React.FunctionComponent<DetailsProps> = ({ handleClose }) => {
                   </tbody>
                 </Table>
               </TableWrapper>
-
-              <ShareSection>
-                <Title variant="subtitle5">
-                  Share verification link
-                </Title>
-                <Typography variant="lightBody">
-                  Share the verification link with your merchants to enable them
-                  to complete ID verification. Just copy the link and share via
-                  email, SMS, whatsapp or any other messaging service
-                </Typography>
-                <CopyInputWrapper>
-                  <CopyInput value="https://app.fena.com/r/mw0" />
-                </CopyInputWrapper>
-              </ShareSection>
+              <ShareVerificationLink />
             </VerificationContainer>
           </DetailsWrapper>
         )}
