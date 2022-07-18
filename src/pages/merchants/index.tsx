@@ -54,7 +54,7 @@ const menus = [
 
 const Merchants: NextPage = () => {
   const router = useRouter();
-  const [isOpenPreview, setIsOpenPreview] = useState(false);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [merchants, setMerchants] = useState<any>([
@@ -64,6 +64,31 @@ const Merchants: NextPage = () => {
       phoneNumber: '+44 897 66 55',
       website: 'alliescomputing.com',
       status: 'pending',
+      _id: '1234567'
+    },
+    {
+      name: 'Allies Computing Ltd',
+      contact: 'Frank Gallagher',
+      phoneNumber: '+44 897 66 55',
+      website: 'alliescomputing.com',
+      status: 'active',
+      _id: '1234567'
+    },
+    {
+      name: 'Allies Computing Ltd',
+      contact: 'Frank Gallagher',
+      phoneNumber: '+44 897 66 55',
+      website: 'alliescomputing.com',
+      status: 'inactive',
+      _id: '1234567'
+    },
+    {
+      name: 'Allies Computing Ltd',
+      contact: 'Frank Gallagher',
+      phoneNumber: '+44 897 66 55',
+      website: 'alliescomputing.com',
+      status: 'disabled',
+      _id: '1234567'
     },
   ]);
   const [limit, setLimit] = useState(25);
@@ -127,8 +152,8 @@ const Merchants: NextPage = () => {
         },
       ]}
     >
-      {isOpenPreview ? (
-        <Details handleClose={() => setIsOpenPreview(false)} />
+      {isPreviewOpen ? (
+        <Details handleClose={() => setIsPreviewOpen(false)} />
       ) : (
         <>
           <Container>
@@ -151,6 +176,7 @@ const Merchants: NextPage = () => {
               </HeaderButtons>
             </HeaderWrapper>
             <LinkMenu menus={menus} clickHandler={setFilterRule} />
+
             <BodyWrapper>
               <LoadingBlock loading={loading}>
                 {merchants?.length ? (
@@ -173,7 +199,7 @@ const Merchants: NextPage = () => {
                           key={item._id}
                           onClick={() => {
                             setSelectedMerchantId(item._id);
-                            setIsOpenPreview(true);
+                            setIsPreviewOpen(true);
                           }}
                         >
                           <TableBodyCell>{item.name}</TableBodyCell>
@@ -198,7 +224,7 @@ const Merchants: NextPage = () => {
                                   label: 'Details',
                                   onClick: () => {
                                     setSelectedMerchantId(item._id);
-                                    setIsOpenPreview(true);
+                                    setIsPreviewOpen(true);
                                   },
                                 },
                                 {
