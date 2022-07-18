@@ -13,6 +13,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@hookform/resolvers": "^2.9.5",
     "@svgr/webpack": "6.1.2",
     "aws-amplify": "4.3.11",
     "moment": "^2.29.1",
@@ -21,10 +22,13 @@
     "react-datepicker": "^4.7.0",
     "react-dom": "17.0.2",
     "react-dropdown-select": "^4.8.3",
+    "react-flag-kit": "^1.1.1",
+    "react-hook-form": "^7.33.1",
     "react-input-mask": "^2.0.4",
     "react-table": "^7.7.0",
     "react-tooltip": "^4.2.21",
-    "styled-components": "^5.3.3"
+    "styled-components": "^5.3.3",
+    "yup": "^0.32.11"
   },
   "devDependencies": {
     "@babel/plugin-proposal-class-properties": "^7.16.7",
