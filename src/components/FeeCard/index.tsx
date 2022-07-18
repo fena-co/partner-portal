@@ -10,7 +10,7 @@ const Wrapper = styled.div`
       content: 'x';
       font-weight: bold;
       font-size: 20px;
-      padding: 2rem;
+      padding: 1rem;
     }
   }
   &:nth-child(2n) {
@@ -22,7 +22,7 @@ const Wrapper = styled.div`
   }
   &:nth-child(3n) {
     &:after {
-      content: none;
+      content: ' ';
     }
   }
 `;
