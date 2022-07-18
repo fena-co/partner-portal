@@ -25,7 +25,6 @@ const TableHeaderCell = styled.th<{ width?: number }>`
   font-weight: 600;
   font-size: 14px;
   line-height: 20px;
-  text-transform: uppercase;
   color: #13273f;
   ${({ width }) => width && `width: ${width}px;`}
   :last-child {

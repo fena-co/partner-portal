@@ -22,6 +22,11 @@ const Content = styled.div`
     flex-direction: column;
   `} */
   padding-top: 54px;
+  @media (max-width: 900px) {
+    flex-direction: column;
+    align-items: center;
+    padding-top: 20px;
+  }
 `;
 
 const LightText = styled.div`
@@ -30,17 +35,25 @@ const LightText = styled.div`
   font-size: 13px;
   line-height: 25px;
   color: #8181a5;
+  margin-top: 15px;
+`;
+
+const ContactLightText = styled(LightText)`
+  padding-bottom: 1px;
+  text-decoration: underline;
 `;
 
 const SocialWrapper = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 20px;
+  margin-top: 15px;
 
   svg:not(:first-child):not(:last-child) {
     padding: 0 4px;
-    box-sizing: content-box;
+  }
+  @media (max-width: 900px) {
+    margin-bottom: 20px;
   }
 `;
 
@@ -81,75 +94,202 @@ const AppStoresWrapper = styled.div`
   svg:last-child {
     margin-left: 10px;
   }
+  @media (max-width: 900px) {
+    margin-bottom: 20px;
+  }
+`;
+
+const StyledA = styled.a`
+  text-decoration: none;
+`;
+
+const SocialA = styled.a`
+  margin-right: 5px;
+`;
+
+const ResponsiveContent = styled.div`
+  @media (max-width: 900px) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+`;
+
+const Styledli = styled.li`
+  @media (max-width: 900px) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
 `;
 
 const HomeFooter = () => {
   return (
     <Container>
       <Content>
-        <div>
+        <ResponsiveContent>
           <Logo size="small" />
-          <LightText>Contact us</LightText>
-          <Typography variant="body5">support@fena.co</Typography>
+          <StyledA
+            href="https://help.fena.co/support/tickets/new "
+            target="_blank"
+          >
+            <ContactLightText>Contact us</ContactLightText>
+          </StyledA>
           <SocialWrapper>
-            <Facebook />
-            <Twitter />
-            <Linkedin />
-            <Instagram />
+            <SocialA
+              href="https://www.facebook.com/fenapayment"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <Facebook />
+            </SocialA>
+            <SocialA
+              href="https://twitter.com/fenapayment"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <Twitter />
+            </SocialA>
+            <SocialA
+              href="https://www.linkedin.com/company/faizpay-fena/"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <Linkedin />
+            </SocialA>
+            <SocialA
+              href="https://www.instagram.com/fenapayments/"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <Instagram />
+            </SocialA>
           </SocialWrapper>
-        </div>
-        <div>
+        </ResponsiveContent>
+        <ResponsiveContent>
           <Typography variant="body5">Resources</Typography>
           <FooterLinkList>
-            <li>
-              <LightText>Blog</LightText>
-            </li>
-            <li>
-              <LightText>Help Centre</LightText>
-            </li>
-            <li>
-              <LightText>How to pay with fena</LightText>
-            </li>
-            <li>
-              <LightText>How fena terminal works</LightText>
-            </li>
-            <li>
-              <LightText>Order fena NFC card</LightText>
-            </li>
+            <Styledli>
+              <StyledA
+                href="https://www.fena.co/blog"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <LightText>Blog</LightText>
+              </StyledA>
+            </Styledli>
+            <Styledli>
+              <StyledA
+                href="https://help.fena.co/support/home"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <LightText>Help Centre</LightText>
+              </StyledA>
+            </Styledli>
+            <Styledli>
+              <StyledA
+                href="https://www.fena.co/how-to-pay-with-fena"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <LightText>How to pay with fena</LightText>
+              </StyledA>
+            </Styledli>
+            <Styledli>
+              <StyledA
+                href="https://www.fena.co/how-fena-terminal-works"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <LightText>How fena terminal works</LightText>
+              </StyledA>
+            </Styledli>
+            <Styledli>
+              <StyledA
+                href="https://www.fena.co/order-fena-nfc-card"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <LightText>Order fena NFC card</LightText>
+              </StyledA>
+            </Styledli>
           </FooterLinkList>
-        </div>
-        <div>
+        </ResponsiveContent>
+        <ResponsiveContent>
           <Typography variant="body5">Legal</Typography>
           <FooterLinkList>
-            <li>
-              <LightText>Privacy policy</LightText>
-            </li>
-            <li>
-              <LightText>Terms and conditions</LightText>
-            </li>
-            <li>
-              <LightText>Fena Consumer App</LightText>
-            </li>
-            <li>
-              <LightText>Fena Merchant App</LightText>
-            </li>
-            <li>
-              <LightText>Security </LightText>
-            </li>
+            <Styledli>
+              <StyledA
+                href="https://www.fena.co/privacy-policy"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <LightText>Privacy policy</LightText>
+              </StyledA>
+            </Styledli>
+            <Styledli>
+              <StyledA
+                href="https://www.fena.co/terms-and-conditions"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <LightText>Terms and conditions</LightText>
+              </StyledA>
+            </Styledli>
+            <Styledli>
+              <StyledA
+                href="https://www.fena.co/terms-and-conditions-fena-consumer-app"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <LightText>Fena Consumer App</LightText>
+              </StyledA>
+            </Styledli>
+            <Styledli>
+              <StyledA
+                href="https://www.fena.co/terms-and-conditions-merchant-app"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <LightText>Fena Merchant App</LightText>
+              </StyledA>
+            </Styledli>
+            <Styledli>
+              <StyledA
+                href="https://www.fena.co/security"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <LightText>Security </LightText>
+              </StyledA>
+            </Styledli>
           </FooterLinkList>
-        </div>
-        <div>
-          <Typography variant="body5">Download the app</Typography>
+        </ResponsiveContent>
+        <ResponsiveContent>
+          {/* <Typography variant="body5">Download the app</Typography>
           <AppStoresWrapper>
-            <GooglePlay />
-            <AppStore />
-          </AppStoresWrapper>
-        </div>
+            <StyledA
+              href="https://play.google.com/store/apps/details?id=co.fena.merchant"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <GooglePlay />
+            </StyledA>
+            <StyledA
+              href="https://apps.apple.com/gb/app/fenamerchant/id1586556024"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <AppStore />
+            </StyledA>
+          </AppStoresWrapper> */}
+        </ResponsiveContent>
       </Content>
       <Copyright>
-        @fena 2022. Fena is a trading name of FaizPay. All rights reserved.
-        FaizPay is authorised and regulated by the Financial Conduct Authority
-        (#934835)
+        ©fena 2022. Fena is a trading name of Fena Labs Ltd. All rights
+        reserved. Fena Labs Ltd is authorised and regulated by the Financial
+        Conduct Authority (#934835)
       </Copyright>
     </Container>
   );

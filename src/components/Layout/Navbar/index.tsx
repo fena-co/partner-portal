@@ -23,8 +23,6 @@ const Container = styled.ul`
   position: fixed;
   z-index: 1;
   overflow-x: hidden;
-
-  height: calc(100vh - 84px - 88px);
 `;
 
 const LogoutWrapper = styled.div`

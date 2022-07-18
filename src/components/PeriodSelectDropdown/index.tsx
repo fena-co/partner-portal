@@ -1,9 +1,7 @@
-import { FC } from 'react';
+import { FC, useEffect } from 'react';
 import styled, { css } from 'styled-components';
 import ArrowDown from 'image/icon/arrow-down.svg';
 import ArrowUp from 'image/icon/arrow-up.svg';
-import { useEffect } from 'react';
-import { useState } from 'react';
 import { useRef } from 'react';
 
 const FullWidth = css`
@@ -35,6 +33,7 @@ const DropDownHeader = styled.div<{
   border: 1px solid;
   border-radius: 5px;
   padding: 14px;
+  min-height: 18px;
   position: relative;
   ${({ error, isOpen }) => (error && !isOpen ? BorderError : DefaultBorder)}
 `;
@@ -56,8 +55,9 @@ const ValueSelect = styled.span<{
 
 const DropDownListContainer = styled.div`
   position: absolute;
-  width: 100%;
-  z-index: 99;
+  width: 130%;
+  z-index: 1;
+  right: 0;
   margin-top: 8px;
 `;
 
@@ -68,7 +68,6 @@ const DropDownList = styled.div`
   margin-top: 8px;
   background: #fff;
   max-height: 300px;
-  overflow: scroll;
   display: flex;
   flex-direction: column;
 `;
@@ -109,26 +108,23 @@ interface ISelectDropdown {
   required?: boolean;
   isOpen: boolean;
   handleExpand: () => void;
+  setIsOpen: (value: boolean) => void;
 }
 
 const SelectDropDown: FC<ISelectDropdown> = (props) => {
-  // const [isOpen, setIsOpen] = useState(false);
   const ref = useRef(null);
   const valueRef = useRef(null);
 
-  // const handleExpand = () => setIsOpen(!isOpen);
-  // console.log(isOpen);
+  useEffect(() => {
+    const clickOnWindows = (e: any) => {
+      if (ref.current !== e.target && e.target !== valueRef.current) {
+        props.setIsOpen(false);
+      }
+    };
+    window.addEventListener('click', clickOnWindows);
 
-  // useEffect(() => {
-  //   const clickOnWindows = (e: any) => {
-  //     if (ref.current !== e.target && e.target !== valueRef.current) {
-  //       setIsOpen(false);
-  //     }
-  //   };
-  //   window.addEventListener('click', clickOnWindows);
-
-  //   return () => window.removeEventListener('click', clickOnWindows);
-  // }, []);
+    return () => window.removeEventListener('click', clickOnWindows);
+  }, [props]);
 
   return (
     <Container style={props.style} fullWidth={props.fullWidth}>
