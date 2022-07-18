@@ -2,7 +2,7 @@ import React, { FC } from 'react';
 import styled from 'styled-components';
 import ArrowRight from 'image/icon/arrow-right-outline.svg';
 import MenuItem from './MenuItem';
-import SelectDropDown from './PeriodSelectDropdown';
+import SelectDropDown from './SelectDropDown';
 
 const Container = styled.div`
   display: flex;
