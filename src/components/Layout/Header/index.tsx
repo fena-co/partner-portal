@@ -15,6 +15,7 @@ import { ROUTES } from '../../../constant/route';
 // import { resetData as resetCompanyData } from '../../../store/company';
 // import { resetData as resetUserData } from '../../../store/user';
 import Logo from '../../Logo';
+import Typography from '../../Typography';
 
 const HeaderContainer = styled.header`
   padding: 23px 46px;
@@ -85,7 +86,7 @@ const ContextMenuContainer = styled.div<{ width: number }>`
   background: #ffffff;
   box-shadow: 0px 2px 30px rgba(129, 129, 165, 0.15);
   border-radius: 5px;
-  padding-bottom: 50px;
+  padding-bottom: 20px;
 `;
 
 const ContextMenuHeader = styled.div`
@@ -103,10 +104,10 @@ const ContextMenuHeader = styled.div`
 `;
 
 const SettingsMenuItemContainer = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  width: 100%;
-  margin-top: 20px;
+  /* display: grid;
+  grid-template-columns: 1fr 1fr; */
+  /* width: 100%; */
+  /* margin-top: 20px; */
   margin-left: 60px;
 `;
 
@@ -160,6 +161,8 @@ const ContextMenuItem = styled.div`
   }
 `;
 
+const ProfileMenuContainer = styled.div``;
+
 const ContextMenuOverlay = styled.div`
   position: fixed;
   top: 0;
@@ -168,6 +171,39 @@ const ContextMenuOverlay = styled.div`
   bottom: 0;
   z-index: 1;
   cursor: default;
+`;
+
+const ProfileMenuHeader = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  border-bottom: 1px solid #dbe3eb;
+  padding: 30px 50px;
+`;
+
+const ProfileMenuContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 30px 50px 20px 50px;
+`;
+
+const ProfileMenuItemWrapper = styled.div`
+  cursor: pointer;
+  margin-bottom: 10px;
+  &:last-child {
+    margin-bottom: 0;
+  }
+`;
+
+const ProfileMenuItem = styled(Typography)`
+  &:hover {
+    color: #2cd19e;
+  }
+`;
+
+const ProfileHolder = styled(Typography)`
+  margin-bottom: 10px;
 `;
 
 // const menus = [
@@ -188,11 +224,11 @@ const ContextMenuOverlay = styled.div`
 const homeMenus = [
   {
     name: 'Login',
-    pathName: ROUTES.LOGIN,
+    pathName: '',
   },
   {
     name: 'Sign up',
-    pathName: ROUTES.SIGN_UP,
+    pathName: '',
   },
 ];
 
@@ -248,14 +284,14 @@ const Header = ({ variant }: { variant: 'home' | 'dashboard' }) => {
     return router.pathname === '/';
   };
 
-  const handleClickMenuItem = (pathName: any) => {
-    if (pathName === ROUTES.PAYMENT) {
-      router.push(ROUTES.PAYMENT_INVOICE);
-      return;
-    }
+  // const handleClickMenuItem = (pathName: any) => {
+  //   if (pathName === ROUTES.PAYMENT) {
+  //     router.push(ROUTES.PAYMENT_INVOICE);
+  //     return;
+  //   }
 
-    router.push(pathName);
-  };
+  //   router.push(pathName);
+  // };
 
   const handleLogOut = async () => {
     // await Auth.signOut();
@@ -299,7 +335,7 @@ const Header = ({ variant }: { variant: 'home' | 'dashboard' }) => {
                   setSettingOpen(false);
                 }}
               >
-                <ContextMenuContainer width={665}>
+                <ContextMenuContainer width={300}>
                   <ContextMenuHeader>Settings</ContextMenuHeader>
                   <SettingsMenuItemContainer>
                     {settingsItems.map((item) => {
@@ -336,15 +372,33 @@ const Header = ({ variant }: { variant: 'home' | 'dashboard' }) => {
                 }}
               >
                 <ContextMenuContainer width={300}>
-                  <ContextMenuHeader>Profile</ContextMenuHeader>
-                  <SettingsMenuItemContainer>
-                    <ContextMenuItem onClick={handleLogOut}>
-                      <SettingsItemIcon>
-                        <Business />
-                      </SettingsItemIcon>
-                      <SettingsItemText>Log out</SettingsItemText>
-                    </ContextMenuItem>
-                  </SettingsMenuItemContainer>
+                  <ProfileMenuContainer>
+                    <ProfileMenuHeader>
+                      <ProfileHolder variant="body5">
+                        Malgorzata Furmanik
+                      </ProfileHolder>
+                      <Typography variant="grayBody">Administrator</Typography>
+                    </ProfileMenuHeader>
+                    <ProfileMenuContent>
+                      <ProfileMenuItemWrapper>
+                        <ProfileMenuItem variant="body4">
+                          Profile
+                        </ProfileMenuItem>
+                      </ProfileMenuItemWrapper>
+
+                      <ProfileMenuItemWrapper>
+                        <ProfileMenuItem variant="body4">
+                          Switch to business portal
+                        </ProfileMenuItem>
+                      </ProfileMenuItemWrapper>
+
+                      <ProfileMenuItemWrapper>
+                        <ProfileMenuItem variant="body4">
+                          Sign out
+                        </ProfileMenuItem>
+                      </ProfileMenuItemWrapper>
+                    </ProfileMenuContent>
+                  </ProfileMenuContainer>
                 </ContextMenuContainer>
               </ContextMenuOverlay>
             )}

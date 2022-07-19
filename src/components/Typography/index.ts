@@ -80,6 +80,13 @@ const LightBody = css`
   line-height: 20px;
 `;
 
+const GrayBody = css`
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  color: #8181a5;
+`;
+
 const variants = {
   h1: H1,
   h2: H2,
@@ -95,6 +102,7 @@ const variants = {
   body4: Body4,
   body5: Body5,
   lightBody: LightBody,
+  grayBody: GrayBody,
 };
 
 const Typography = styled.p<{
