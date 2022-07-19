@@ -14,7 +14,6 @@ const Container = styled.div<{ fullWidth?: boolean }>`
   ${({ fullWidth }) => (fullWidth ? FullWidth : '')}
   position: relative;
   height: inherit;
-  padding-top: 20px;
   font-size: 15px;
   line-height: 18px;
 `;
