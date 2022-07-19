@@ -3,6 +3,7 @@ import styled, { css } from 'styled-components';
 import ArrowDown from 'image/icon/arrow-down.svg';
 import ArrowUp from 'image/icon/arrow-up.svg';
 import { useRef } from 'react';
+import 'react-datepicker/dist/react-datepicker.css';
 
 const FullWidth = css`
   width: 100%;
