@@ -1,5 +1,4 @@
 import { NextPage } from 'next';
-import router from 'next/router';
 import Layout from '../../../components/Layout';
 import SearchBox from '../../../components/SearchBox';
 import {
@@ -16,16 +15,16 @@ import {
   TableHeaderCell,
 } from '../../../components/StyledComponents';
 import KeyIcon from 'image/icon/key.svg';
-import Close from 'image/icon/close.svg';
 import Typography from '../../../components/Typography';
-import { ROUTES } from '../../../constant/route';
 import styled from 'styled-components';
 import ContextMenu from '../../../components/ContextMenu';
 import { useState } from 'react';
 import UrlWrapper from '../../../components/UrlWrapper';
 import Paginator from '../../../components/Paginator';
-import TextFieldComponent from '../../../components/Textfield';
-import ButtonWithChildren from '../../../components/Button';
+import Hypertext from '../../../components/Hypertext';
+import { Control, useForm } from 'react-hook-form';
+import CreationModal from './modals/creationModal';
+import ViewSecretModal from './modals/viewModal';
 
 const Key = styled(KeyIcon)`
   margin-right: 10px;
@@ -37,30 +36,21 @@ const StyledModalContent = styled(ModalContent)`
   top: 20%;
 `;
 
-const ModalHeader = styled.div`
-  padding-bottom: 10px;
-  border-bottom: 1px solid #dbe3eb;
-`;
-
-const ModalWrapperContent = styled.div`
-  display: flex;
-  flex-direction: column;
-  padding: 30px;
-  width: 400px;
-`;
-
-const CloseCircledButton = styled.div``;
-
-const CloseIcon = styled(Close)`
-  fill: #495b6c;
-`;
-
 const ApiKeysPage: NextPage = () => {
+  const { handleSubmit, control } = useForm({
+    mode: 'onChange',
+  });
+
   const [apiKeys, setApiKeys] = useState([
     {
-      name: 'data-application-fena',
+      name: 'Data-application-fena',
       key: '2ff114b3925b595879v83de9dc15d40a',
-      createdOn: 'a few seconds ago',
+      terminalSecret: '342ffll34234mmj3l3n33995',
+    },
+    {
+      name: 'API Key created by john on 2022-07-01',
+      key: '62b488ae6ba2cb6a040b1e46',
+      terminalSecret: '342ffll34234mmj3l3n33990',
     },
   ]);
 
@@ -68,11 +58,19 @@ const ApiKeysPage: NextPage = () => {
   const [limit, setLimit] = useState(25);
   const [total, setTotal] = useState(0);
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isCreateApiKeyModalOpen, setIsCreateApiKeyModalOpen] = useState(false);
+
+  const [isSecretShowModalOpen, setIsSecretShowModalOpen] = useState(false);
+
+  const [itemSecretData, setItemSecretData] = useState('');
 
   const handleRowsPerPageChange = async (val: number) => {
     setLimit(val);
     setCurrentPage(1);
+  };
+
+  const onApiCreate = (data: any) => {
+    console.log(data);
   };
 
   return (
@@ -86,7 +84,7 @@ const ApiKeysPage: NextPage = () => {
           <ButtonCreation
             variant="contained"
             onClick={() => {
-              setIsModalOpen(true);
+              setIsCreateApiKeyModalOpen(true);
             }}
           >
             <Key />
@@ -100,7 +98,7 @@ const ApiKeysPage: NextPage = () => {
             <tr>
               <TableHeaderCell>Name</TableHeaderCell>
               <TableHeaderCell>Key</TableHeaderCell>
-              <TableHeaderCell>Created</TableHeaderCell>
+              <TableHeaderCell>Terminal secret</TableHeaderCell>
               <TableHeaderCell></TableHeaderCell>
             </tr>
           </TableHeader>
@@ -118,7 +116,16 @@ const ApiKeysPage: NextPage = () => {
                   <TableBodyCell>
                     <UrlWrapper>{item.key}</UrlWrapper>
                   </TableBodyCell>
-                  <TableBodyCell>{item.createdOn}</TableBodyCell>
+                  <TableBodyCell>
+                    <Hypertext
+                      onClick={() => {
+                        setItemSecretData(item.terminalSecret);
+                        setIsSecretShowModalOpen(true);
+                      }}
+                    >
+                      Show
+                    </Hypertext>
+                  </TableBodyCell>
 
                   <TableBodyCell>
                     <ContextMenu
@@ -127,7 +134,7 @@ const ApiKeysPage: NextPage = () => {
                           label: 'Edit',
                           onClick: () => {
                             // setCurrentTerminalData(item);
-                            // setEditOpen(true);
+                            setIsCreateApiKeyModalOpen(true);
                           },
                         },
                         {
@@ -155,21 +162,22 @@ const ApiKeysPage: NextPage = () => {
           onPerPageChange={handleRowsPerPageChange}
         />
       </Content>
-      <Modal show={isModalOpen}>
+      <Modal show={isCreateApiKeyModalOpen}>
         <StyledModalContent>
-          <ModalWrapperContent>
-            <ModalHeader>
-              <Typography variant="body1">New API Key</Typography>
-              <CloseCircledButton>
-                <CloseIcon />
-              </CloseCircledButton>
-            </ModalHeader>
-            <Typography>Name</Typography>
-            <TextFieldComponent />
-            <ButtonWithChildren variant="contained">
-              Create key
-            </ButtonWithChildren>
-          </ModalWrapperContent>
+          <form onSubmit={handleSubmit(onApiCreate)}>
+            <CreationModal
+              handleClose={() => setIsCreateApiKeyModalOpen(false)}
+              control={control as Control}
+            />
+          </form>
+        </StyledModalContent>
+      </Modal>
+      <Modal show={isSecretShowModalOpen}>
+        <StyledModalContent>
+          <ViewSecretModal
+            handleClose={() => setIsSecretShowModalOpen(false)}
+            itemSecretData={itemSecretData}
+          />
         </StyledModalContent>
       </Modal>
     </Layout>
