@@ -1,10 +1,12 @@
-import CalendarIcon from 'image/icon/calendar.svg';
-import FilterIcon from 'image/icon/filter-black.svg';
 import React, { forwardRef, useState } from 'react';
-import Datepicker from 'react-datepicker';
+import FilterIcon from 'image/icon/filter-black.svg';
 import styled, { css } from 'styled-components';
-import CheckBox from './Checkbox';
+import Datepicker from 'react-datepicker';
+import CalendarIcon from 'image/icon/calendar.svg';
+import moment from 'moment';
 import Typography from './Typography';
+import CheckBox from './Checkbox';
+import 'react-datepicker/dist/react-datepicker.css';
 
 const FilterContainer = styled.div`
   list-style-type: none;
@@ -14,6 +16,7 @@ const FilterContainer = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: flex-end;
+  z-index: 5;
 `;
 
 const FilterButton = styled.button`
@@ -39,10 +42,10 @@ const FilterContent = styled.div<{ isOpen: boolean }>`
   margin-top: 6px;
   position: absolute;
   background: #ffffff;
-  box-shadow: 0px 2px 10px rgba(129, 129, 165, 0.35);
+  box-shadow: 0 2px 10px rgba(129, 129, 165, 0.35);
   border-radius: 5px;
   min-width: 266px;
-  z-index: 2;
+  z-index: 99;
 
   & > a {
     color: black;
@@ -54,13 +57,15 @@ const FilterContent = styled.div<{ isOpen: boolean }>`
       background-color: #f1f1f1;
     }
   }
+  @media (max-width: 900px) {
+    left: 0;
+  }
 `;
 
 const Header = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-bottom: 18px;
   background: #f4f7f9;
   padding: 10px 18px;
 `;
@@ -133,7 +138,6 @@ const CalendarWrapper = styled.div`
   padding: 0 3px;
   display: flex;
   width: 25px;
-  display: flex;
   align-items: center;
   justify-content: center;
 `;
@@ -181,37 +185,7 @@ const MenuItem = styled.div<{ color?: string }>`
   }
 `;
 
-const LabelRadioButton = styled(Typography)`
-  font-weight: normal;
-  font-size: 16px;
-  line-height: 20px;
-  margin: 10px 0;
-  display: flex;
-  align-items: center;
-  padding: 0;
-`;
-
-const TimezoneWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  width: 100%;
-  justify-content: space-between;
-
-  font-family: Montserrat;
-  font-style: normal;
-  font-weight: 500;
-  font-size: 12px;
-  line-height: 15px;
-  /* identical to box height */
-
-  /* secondary/dark-grey */
-
-  color: #6c6c8a;
-  margin-top: 38px;
-`;
-
 const TextInput = styled.input`
-  border: none;
   outline: none;
   width: 100%;
 
@@ -234,7 +208,7 @@ const TextInput = styled.input`
 
   &:hover {
     border: 1px solid rgba(129, 129, 165, 0.66);
-    box-shadow: 0px 0px 8px rgba(129, 129, 165, 0.25);
+    box-shadow: 0 0 8px rgba(129, 129, 165, 0.25);
   }
 `;
 
@@ -272,11 +246,23 @@ const CustomDatepickerInput = forwardRef((props: any, ref) => {
 });
 CustomDatepickerInput.displayName = 'CustomDEInput';
 
-function Filter() {
+interface FilterProps {
+  transactions?: boolean;
+  onChange?: (filter: FilterObj) => void;
+}
+
+const Filter: React.FunctionComponent<FilterProps> = ({
+  onChange,
+  transactions,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
 
-  const [filter, setFilter] = useState<FilterObj>({});
+  const [filter, setFilterState] = useState<FilterObj>({});
 
+  const setFilter = (filter: FilterObj) => {
+    setFilterState(filter);
+    onChange && onChange(filter);
+  };
   return (
     <>
       <FilterContainer>
@@ -289,11 +275,21 @@ function Filter() {
         </FilterButton>
         <FilterContent isOpen={isOpen}>
           <Header>
-            <HeaderButtons onClick={() => setFilter({})} variant="outline">
+            <HeaderButtons
+              onClick={() => {
+                setFilter({});
+              }}
+              variant="outline"
+            >
               <Typography variant="body4">Clear</Typography>
             </HeaderButtons>
             <Typography variant="body4">FILTERS</Typography>
-            <HeaderButtons variant="contained">
+            <HeaderButtons
+              variant="contained"
+              onClick={() => {
+                setIsOpen(!isOpen);
+              }}
+            >
               <Typography variant="body4" color="#fff">
                 Done
               </Typography>
@@ -307,7 +303,10 @@ function Filter() {
                   if (e.target.checked) {
                     setFilter({
                       ...filter,
-                      created: { from: new Date(), to: new Date() },
+                      created: {
+                        from: moment(new Date()).startOf('day').toDate(),
+                        to: moment(new Date()).endOf('day').toDate(),
+                      },
                     });
                   } else {
                     setFilter({ ...filter, created: undefined });
@@ -339,12 +338,20 @@ function Filter() {
                     />
                     <RangeSubscript>and</RangeSubscript>
                     <Datepicker
+                      includeDateIntervals={[
+                        {
+                          start: filter.created.from,
+                          end: moment().endOf('year').toDate(),
+                        },
+                      ]}
                       value={filter['created']?.to.toLocaleDateString('en-UK')}
                       onChange={(e) => {
                         setFilter({
                           ...filter,
                           created: {
-                            to: new Date(e || ''),
+                            to: moment(new Date(e || ''))
+                              .endOf('day')
+                              .toDate(),
                             from: filter['created']?.from || new Date(),
                           },
                         });
@@ -371,6 +378,7 @@ function Filter() {
           </>
 
           {/* Due Date */}
+
           <>
             <MenuItem>
               <CheckBox
@@ -378,7 +386,10 @@ function Filter() {
                   if (e.target.checked) {
                     setFilter({
                       ...filter,
-                      dueDate: { from: new Date(), to: new Date() },
+                      dueDate: {
+                        from: moment(new Date()).startOf('day').toDate(),
+                        to: moment(new Date()).endOf('day').toDate(),
+                      },
                     });
                   } else {
                     setFilter({ ...filter, dueDate: undefined });
@@ -386,7 +397,7 @@ function Filter() {
                 }}
                 checked={filter['dueDate'] !== undefined}
               />{' '}
-              Due Date
+              {!transactions ? 'Due Date' : 'Completed'}
             </MenuItem>
             {filter['dueDate'] ? (
               <DateFilterContainer>
@@ -410,12 +421,20 @@ function Filter() {
                     />
                     <RangeSubscript>and</RangeSubscript>
                     <Datepicker
+                      includeDateIntervals={[
+                        {
+                          start: filter.dueDate.from,
+                          end: moment().endOf('year').toDate(),
+                        },
+                      ]}
                       value={filter['dueDate']?.to.toLocaleDateString('en-UK')}
                       onChange={(e) => {
                         setFilter({
                           ...filter,
                           dueDate: {
-                            to: new Date(e || ''),
+                            to: moment(new Date(e || ''))
+                              .endOf('day')
+                              .toDate(),
                             from: filter['dueDate']?.from || new Date(),
                           },
                         });
@@ -515,6 +534,6 @@ function Filter() {
       )}
     </>
   );
-}
+};
 
 export default Filter;

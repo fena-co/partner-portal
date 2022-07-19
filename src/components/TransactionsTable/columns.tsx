@@ -1,14 +1,14 @@
 export const COLUMNS = [
   {
-    Header: 'Transaction size (All merchants)',
+    Header: 'TRANSACTION SIZE (All merchants)',
     accessor: 'size',
   },
   {
-    Header: 'Number (Last 28 days)',
+    Header: 'NUMBER (Last 28 days)',
     accessor: 'value',
   },
   {
-    Header: 'Number (All time)',
+    Header: 'NUMBER (All time)',
     accessor: 'totalValue',
   },
 ];

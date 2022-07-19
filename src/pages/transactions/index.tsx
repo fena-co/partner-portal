@@ -58,7 +58,40 @@ const Transactions: NextPage = () => {
   const [isOpenPreview, setIsOpenPreview] = useState(false);
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [transactions, setTransactions] = useState<any>([]);
+  const [transactions, setTransactions] = useState<any>([
+    {
+      amount: '1200',
+      fee: '0.10',
+      merchantName: 'Amazon',
+      completedOn: '04.01.2022, 14:21',
+      status: 'pending',
+      _id: '1234567',
+    },
+    {
+      amount: '1200',
+      fee: '0.10',
+      merchantName: 'Amazon',
+      completedOn: '04.01.2022, 14:21',
+      status: 'completed',
+      _id: '1234567',
+    },
+    {
+      amount: '1200',
+      fee: '0.10',
+      merchantName: 'Amazon',
+      completedOn: '04.01.2022, 14:21',
+      status: 'rejected',
+      _id: '1234567',
+    },
+    {
+      amount: '1200',
+      fee: '0.10',
+      merchantName: 'Amazon',
+      completedOn: '04.01.2022, 14:21',
+      status: 'refund',
+      _id: '1234567',
+    },
+  ]);
   const [limit, setLimit] = useState(25);
   const [total, setTotal] = useState(0);
   const [selectedTransactionId, setSelectedTransactionId] = useState<
@@ -192,7 +225,7 @@ const Transactions: NextPage = () => {
                         >
                           <TableBodyCell>{item._id}</TableBodyCell>
                           <AmmountCell>£{item.amount}</AmmountCell>
-                          <AmmountCell>{item.fee}</AmmountCell>
+                          <AmmountCell>£{item.fee}</AmmountCell>
                           <TableBodyCell>
                             <StatusWrapper status={item.status}>
                               {item.status}

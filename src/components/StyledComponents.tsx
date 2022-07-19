@@ -150,6 +150,12 @@ export const StatusWrapper = styled.span<{ status: string }>`
         return RejectedStatus;
       case 'refunds':
         return RefundStatus;
+      case 'active':
+        return SentOrCompletedStatus;
+      case 'inactive':
+        return DraftStatus;
+      case 'disabled':
+        return RejectedStatus;
       default:
         return css`
           background-color: #f4f7f9;

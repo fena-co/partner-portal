@@ -1,7 +1,9 @@
-import { FC, useEffect } from 'react';
+import { FC } from 'react';
 import styled, { css } from 'styled-components';
 import ArrowDown from 'image/icon/arrow-down.svg';
 import ArrowUp from 'image/icon/arrow-up.svg';
+import { useEffect } from 'react';
+import { useState } from 'react';
 import { useRef } from 'react';
 
 const FullWidth = css`
@@ -12,6 +14,9 @@ const Container = styled.div<{ fullWidth?: boolean }>`
   ${({ fullWidth }) => (fullWidth ? FullWidth : '')}
   position: relative;
   height: inherit;
+  padding-top: 20px;
+  font-size: 15px;
+  line-height: 18px;
 `;
 
 const BorderError = css`
@@ -33,9 +38,14 @@ const DropDownHeader = styled.div<{
   border: 1px solid;
   border-radius: 5px;
   padding: 14px;
-  min-height: 18px;
   position: relative;
   ${({ error, isOpen }) => (error && !isOpen ? BorderError : DefaultBorder)}
+  ${({ isOpen }) =>
+    isOpen
+      ? css`
+          border: 1px solid #027aff;
+        `
+      : ''}
 `;
 
 const ValueSelect = styled.span<{
@@ -45,31 +55,29 @@ const ValueSelect = styled.span<{
   font-family: Montserrat;
   font-style: normal;
   font-weight: normal;
-  font-size: 15px;
-  line-height: 18px;
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
   color: ${({ isPlaceholder }) => (isPlaceholder ? '#9898AD' : '#13273f')};
+  padding-right: 20px;
 `;
 
 const DropDownListContainer = styled.div`
   position: absolute;
-  width: 130%;
-  z-index: 1;
-  right: 0;
+  width: 100%;
+  z-index: 99;
   margin-top: 8px;
 `;
 
-const DropDownList = styled.div`
+const DropDownList = styled.ul`
   border: 1px solid #dbe3eb;
   box-sizing: border-box;
   border-radius: 5px;
+  padding: 0;
   margin-top: 8px;
   background: #fff;
   max-height: 300px;
-  display: flex;
-  flex-direction: column;
+  overflow: auto;
 `;
 
 const ErrorMessage = styled.span`
@@ -106,25 +114,25 @@ interface ISelectDropdown {
   placeholder?: string;
   label?: string;
   required?: boolean;
-  isOpen: boolean;
-  handleExpand: () => void;
-  setIsOpen: (value: boolean) => void;
 }
 
 const SelectDropDown: FC<ISelectDropdown> = (props) => {
+  const [isOpen, setIsOpen] = useState(false);
   const ref = useRef(null);
   const valueRef = useRef(null);
+
+  const handleExpand = () => setIsOpen(!isOpen);
 
   useEffect(() => {
     const clickOnWindows = (e: any) => {
       if (ref.current !== e.target && e.target !== valueRef.current) {
-        props.setIsOpen(false);
+        setIsOpen(false);
       }
     };
     window.addEventListener('click', clickOnWindows);
 
     return () => window.removeEventListener('click', clickOnWindows);
-  }, [props]);
+  }, []);
 
   return (
     <Container style={props.style} fullWidth={props.fullWidth}>
@@ -136,8 +144,8 @@ const SelectDropDown: FC<ISelectDropdown> = (props) => {
       )}
       <DropDownHeader
         error={props.error}
-        isOpen={props.isOpen}
-        onClick={props.handleExpand}
+        isOpen={isOpen}
+        onClick={handleExpand}
         ref={ref}
       >
         {props.leftIcon && (
@@ -152,17 +160,15 @@ const SelectDropDown: FC<ISelectDropdown> = (props) => {
         >
           {props.value ? props.value : props.placeholder}
         </ValueSelect>
-        {props.isOpen ? <ArrowUp /> : <ArrowDown />}
+        {isOpen ? <ArrowUp /> : <ArrowDown />}
       </DropDownHeader>
-      {props.isOpen && (
+      {isOpen && (
         <DropDownListContainer>
           <DropDownList>{props.children}</DropDownList>
         </DropDownListContainer>
       )}
       {props.error && (
-        <ErrorMessage
-          style={{ visibility: props.isOpen ? 'hidden' : 'visible' }}
-        >
+        <ErrorMessage style={{ visibility: isOpen ? 'hidden' : 'visible' }}>
           {props.error}
         </ErrorMessage>
       )}
