@@ -1,7 +1,12 @@
 import '../../styles/globals.css';
 import type { AppProps } from 'next/app';
-import '../components/DayInput/datepicker.css';
 import { Amplify } from 'aws-amplify';
+import Authenticator from '../components/Authenticator';
+import { Provider } from 'react-redux';
+import { persistor, store } from '../store';
+import { PersistGate } from 'redux-persist/integration/react';
+import '../../styles/globals.css';
+import '../components/DayInput/datepicker.css';
 
 const config = {
   aws_project_region: process.env.REGION,
@@ -19,7 +24,15 @@ const config = {
 Amplify.configure(config);
 
 function MyApp({ Component, pageProps }: AppProps) {
-  return <Component {...pageProps} />;
+  return (
+    <Provider store={store}>
+      <PersistGate persistor={persistor} loading={null}>
+        <Authenticator pageProps={pageProps}>
+          <Component {...pageProps} />
+        </Authenticator>
+      </PersistGate>
+    </Provider>
+  );
 }
 
 export default MyApp;

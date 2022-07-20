@@ -1,8 +1,9 @@
 import { Auth } from 'aws-amplify';
 import router from 'next/router';
+import { UserApiType } from '../types/api';
 
-// const apiUrl = process.env.NEXT_PUBLIC_API_URL as string;
-const apiUrl = 'http://localhost:8084/';
+const apiUrl = process.env.NEXT_PUBLIC_API_URL as string;
+// const apiUrl = 'http://localhost:8084/';
 // const providerApiUrl = 'http://localhost:8080/';
 console.log({ apiUrl });
 
@@ -51,26 +52,25 @@ class Api {
     this.defaultHeaders.set('accesstoken', token);
   }
 
-  async getCompaniesHouseData(crn: string) {
-    const url = new URL(this.mainUrl + 'ch/get');
-    url.searchParams.set('q', crn);
+  async getUser(): Promise<UserApiType> {
+    const url = new URL(this.mainUrl + 'user/data');
     const result = await this.fetcher(url.toString(), {
-      method: 'GET',
+      method: 'get',
+      headers: this.defaultHeaders,
     });
     const data = await result.json();
     return data.data;
   }
 
-  // async getProviders(): Promise<Array<ProviderApiType>> {
-  //   const url = new URL(`${this.mainUrl}providers/list`);
-
-  //   const result = await this.fetcher(url.toString(), {
-  //     method: 'GET',
-  //     headers: this.defaultHeaders,
-  //   });
-  //   const data = await result.json();
-  //   return data.data;
-  // }
+  async getCompany() {
+    const url = new URL(this.mainUrl + 'company/get');
+    const result = await this.fetcher(url.toString(), {
+      method: 'get',
+      headers: this.defaultHeaders,
+    });
+    const data = await result.json();
+    return data.data;
+  }
 }
 
 export default new Api(apiUrl);

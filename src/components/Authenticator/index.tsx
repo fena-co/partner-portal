@@ -53,25 +53,6 @@ const Authenticator: FC<any> = ({ pageProps, children }) => {
           setLoading(false);
           return;
         }
-        if (!user.phoneNumber) {
-          await router.push({
-            pathname: '/register/additional',
-          });
-          setLoading(false);
-          return;
-        }
-        if (!user.company) {
-          await router.push({
-            pathname: '/register/business/',
-          });
-          setLoading(false);
-          return;
-        }
-        if (user.company.status === CompanyStatus.BANNED) {
-          await router.push({ pathname: '/login/suspended' });
-          setLoading(false);
-          return;
-        }
         const companyData = await Api.getCompany();
         console.log('companyData', companyData);
         dispatch(
@@ -79,21 +60,6 @@ const Authenticator: FC<any> = ({ pageProps, children }) => {
             ...companyData,
           })
         );
-        /* if (
-          user.company.type === CompanyTypes.COMPANY &&
-          !user.company.tradingAddress
-        ) {
-          await router.push({
-            pathname: '/register/business/limited',
-          });
-          setLoading(false);
-          return;
-        }
-        if (router.pathname.includes('login')) {
-          await router.push({
-            pathname: '/dashboard/transactions',
-          });
-        }*/
         setLoading(false);
       } catch (e) {
         if (pageProps.protected) {
