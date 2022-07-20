@@ -10,7 +10,8 @@
     "dev": "next dev",
     "build": "next build && next export",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "co:login": "aws codeartifact login --tool npm --repository fena --domain repo --domain-owner 578657107977"
   },
   "dependencies": {
     "@hookform/resolvers": "^2.9.5",
