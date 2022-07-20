@@ -165,6 +165,30 @@ export const StatusWrapper = styled.span<{ status: string }>`
   }}
 `;
 
+export const Modal = styled.div<{ show: boolean }>`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(14, 35, 62, 0.48);
+  z-index: 99;
+
+  display: ${({ show }) => (show ? 'block' : 'none')};
+`;
+
+export const ModalContent = styled.div`
+  display: flex;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  background: #ffffff;
+  border-radius: 5px;
+  z-index: 30;
+`;
+
 export const SentOrCompletedStatus = css`
   color: #2cd19e;
   background-color: #e4f9f2;

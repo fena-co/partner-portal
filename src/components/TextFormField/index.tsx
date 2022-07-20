@@ -36,6 +36,7 @@ interface TextFormFieldProps extends InputHTMLAttributes<HTMLInputElement> {
   leftIcon?: () => JSX.Element;
   label?: string | JSX.Element;
   mask?: string;
+  className?: string;
 }
 
 const TextFormField: React.FunctionComponent<TextFormFieldProps> = ({
@@ -46,9 +47,10 @@ const TextFormField: React.FunctionComponent<TextFormFieldProps> = ({
   leftIcon,
   disabled,
   required,
+  className,
   ...inputProps
 }) => (
-  <Container>
+  <Container className={className}>
     <Controller
       name={name}
       control={control}

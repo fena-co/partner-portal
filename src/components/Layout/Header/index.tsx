@@ -1,19 +1,14 @@
-// import { Auth } from 'aws-amplify';
 import Bell from 'image/icon/bell.svg';
 import Cog from 'image/icon/cog.svg';
 import Person from 'image/icon/person.svg';
-import Business from 'image/icon/settings/business.svg';
-import ManageBank from 'image/icon/settings/manageBank.svg';
-import ManageIntegrations from 'image/icon/settings/manageIntegrations.svg';
-import Terminal from 'image/icon/settings/terminal.svg';
+import ApiKeyIcon from 'image/icon/settings/api-key.svg';
+import BusinessIcon from 'image/icon/settings/business.svg';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
-// import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { ROUTES } from '../../../constant/route';
-// import { resetData as resetCompanyData } from '../../../store/company';
-// import { resetData as resetUserData } from '../../../store/user';
 import Logo from '../../Logo';
+import Typography from '../../Typography';
 
 const HeaderContainer = styled.header`
   padding: 23px 46px;
@@ -84,7 +79,7 @@ const ContextMenuContainer = styled.div<{ width: number }>`
   background: #ffffff;
   box-shadow: 0px 2px 30px rgba(129, 129, 165, 0.15);
   border-radius: 5px;
-  padding-bottom: 50px;
+  padding-bottom: 20px;
 `;
 
 const ContextMenuHeader = styled.div`
@@ -102,10 +97,6 @@ const ContextMenuHeader = styled.div`
 `;
 
 const SettingsMenuItemContainer = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  width: 100%;
-  margin-top: 20px;
   margin-left: 60px;
 `;
 
@@ -159,58 +150,66 @@ const ContextMenuItem = styled.div`
   }
 `;
 
-// const menus = [
-//   {
-//     name: 'Transactions',
-//     pathName: ROUTES.TRANSACTION,
-//   },
-//   {
-//     name: 'Payments',
-//     pathName: ROUTES.PAYMENT,
-//   },
-//   /*{
-//     name: 'Products',
-//     pathName: ROUTES.PRODUCT,
-//   },*/
-// ];
+const ProfileMenuContainer = styled.div``;
 
-const homeMenus = [
-  {
-    name: 'Login',
-    pathName: ROUTES.LOGIN,
-  },
-  {
-    name: 'Sign up',
-    pathName: ROUTES.SIGN_UP,
-  },
-];
+const ContextMenuOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  cursor: default;
+`;
+
+const ProfileMenuHeader = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  border-bottom: 1px solid #dbe3eb;
+  padding: 30px 50px;
+`;
+
+const ProfileMenuContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 30px 50px 20px 50px;
+`;
+
+const ProfileMenuItemWrapper = styled.div`
+  cursor: pointer;
+  margin-bottom: 10px;
+  &:last-child {
+    margin-bottom: 0;
+  }
+`;
+
+const ProfileMenuItem = styled(Typography)`
+  &:hover {
+    color: #2cd19e;
+  }
+`;
+
+const ProfileHolder = styled(Typography)`
+  margin-bottom: 10px;
+`;
 
 const settingsItems = [
   {
-    title: 'Business details',
-    icon: <Business />,
-    route: ROUTES.BUSINESS_DETAILS,
+    title: 'Business Details',
+    icon: <BusinessIcon />,
+    route: '',
   },
   {
-    title: 'Manage integrations',
-    icon: <ManageIntegrations />,
-    route: ROUTES.MANAGE_INTEGRATIONS,
-  },
-  {
-    title: 'Manage bank accounts',
-    icon: <ManageBank />,
-    route: ROUTES.MANAGE_BANK_ACCOUNT,
-  },
-  {
-    title: 'Terminal management',
-    icon: <Terminal />,
-    route: ROUTES.TERMINAL_SETTINGS,
+    title: 'API Keys',
+    icon: <ApiKeyIcon />,
+    route: ROUTES.API_KEYS,
   },
 ];
 
 const Header = ({ variant }: { variant: 'home' | 'dashboard' }) => {
   const router = useRouter();
-  // const dispatch = useDispatch();
 
   const [settingOpen, setSettingOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
@@ -226,14 +225,14 @@ const Header = ({ variant }: { variant: 'home' | 'dashboard' }) => {
     return router.pathname === '/';
   };
 
-  const handleClickMenuItem = (pathName: any) => {
-    if (pathName === ROUTES.PAYMENT) {
-      router.push(ROUTES.PAYMENT_INVOICE);
-      return;
-    }
+  // const handleClickMenuItem = (pathName: any) => {
+  //   if (pathName === ROUTES.PAYMENT) {
+  //     router.push(ROUTES.PAYMENT_INVOICE);
+  //     return;
+  //   }
 
-    router.push(pathName);
-  };
+  //   router.push(pathName);
+  // };
 
   const handleLogOut = async () => {
     // await Auth.signOut();
@@ -248,15 +247,6 @@ const Header = ({ variant }: { variant: 'home' | 'dashboard' }) => {
         <Logo />
       </LogoContainer>
       <MenuList moveRight={variant === 'home'}>
-        {/* {(variant === 'dashboard' ? menus : homeMenus).map((menu: any) => (
-          <MenuItem
-            active={isMenuActive(menu.pathName)}
-            key={menu.name}
-            onClick={() => handleClickMenuItem(menu.pathName)}
-          >
-            {menu.name}
-          </MenuItem>
-        ))} */}
       </MenuList>
       {variant === 'dashboard' && (
         <HeaderButtonContainer>
@@ -271,25 +261,32 @@ const Header = ({ variant }: { variant: 'home' | 'dashboard' }) => {
           >
             <Cog />
             {settingOpen && (
-              <ContextMenuContainer width={665}>
-                <ContextMenuHeader>Settings</ContextMenuHeader>
-                <SettingsMenuItemContainer>
-                  {settingsItems.map((item) => {
-                    return (
-                      <ContextMenuItem
-                        key={item.title}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          item.route && router.push(item.route);
-                        }}
-                      >
-                        <SettingsItemIcon>{item.icon}</SettingsItemIcon>
-                        <SettingsItemText>{item.title}</SettingsItemText>
-                      </ContextMenuItem>
-                    );
-                  })}
-                </SettingsMenuItemContainer>
-              </ContextMenuContainer>
+              <ContextMenuOverlay
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setSettingOpen(false);
+                }}
+              >
+                <ContextMenuContainer width={300}>
+                  <ContextMenuHeader>Settings</ContextMenuHeader>
+                  <SettingsMenuItemContainer>
+                    {settingsItems.map((item) => {
+                      return (
+                        <ContextMenuItem
+                          key={item.title}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            item.route && router.push(item.route);
+                          }}
+                        >
+                          <SettingsItemIcon>{item.icon}</SettingsItemIcon>
+                          <SettingsItemText>{item.title}</SettingsItemText>
+                        </ContextMenuItem>
+                      );
+                    })}
+                  </SettingsMenuItemContainer>
+                </ContextMenuContainer>
+              </ContextMenuOverlay>
             )}
           </HeaderButton>
           <HeaderButton
@@ -300,17 +297,42 @@ const Header = ({ variant }: { variant: 'home' | 'dashboard' }) => {
           >
             <Person />
             {profileOpen && (
-              <ContextMenuContainer width={300}>
-                <ContextMenuHeader>Profile</ContextMenuHeader>
-                <SettingsMenuItemContainer>
-                  <ContextMenuItem onClick={handleLogOut}>
-                    <SettingsItemIcon>
-                      <Business />
-                    </SettingsItemIcon>
-                    <SettingsItemText>Log out</SettingsItemText>
-                  </ContextMenuItem>
-                </SettingsMenuItemContainer>
-              </ContextMenuContainer>
+              <ContextMenuOverlay
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setProfileOpen(false);
+                }}
+              >
+                <ContextMenuContainer width={300}>
+                  <ProfileMenuContainer>
+                    <ProfileMenuHeader>
+                      <ProfileHolder variant="body5">
+                        Malgorzata Furmanik
+                      </ProfileHolder>
+                      <Typography variant="grayBody">Administrator</Typography>
+                    </ProfileMenuHeader>
+                    <ProfileMenuContent>
+                      <ProfileMenuItemWrapper>
+                        <ProfileMenuItem variant="body4">
+                          Profile
+                        </ProfileMenuItem>
+                      </ProfileMenuItemWrapper>
+
+                      <ProfileMenuItemWrapper>
+                        <ProfileMenuItem variant="body4">
+                          Switch to business portal
+                        </ProfileMenuItem>
+                      </ProfileMenuItemWrapper>
+
+                      <ProfileMenuItemWrapper>
+                        <ProfileMenuItem variant="body4">
+                          Sign out
+                        </ProfileMenuItem>
+                      </ProfileMenuItemWrapper>
+                    </ProfileMenuContent>
+                  </ProfileMenuContainer>
+                </ContextMenuContainer>
+              </ContextMenuOverlay>
             )}
           </HeaderButton>
         </HeaderButtonContainer>
