@@ -23,8 +23,8 @@ import UrlWrapper from '../../../components/UrlWrapper';
 import Paginator from '../../../components/Paginator';
 import Hypertext from '../../../components/Hypertext';
 import { Control, useForm } from 'react-hook-form';
-import CreationModal from './modals/creationModal';
-import ViewSecretModal from './modals/viewModal';
+import CreationModal from '../../../views/ApiKeyModals/creationModal';
+import ViewSecretModal from '../../../views/ApiKeyModals/viewModal';
 
 const Key = styled(KeyIcon)`
   margin-right: 10px;

@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import Typography from '../../../../components/Typography';
+import Typography from '../../components/Typography';
 import ReactTooltip from 'react-tooltip';
 import {
   CloseCircledButton,
@@ -9,7 +9,7 @@ import {
   ModalWrapperContent,
   WrapperModalButton,
 } from './modalStyled';
-import { ButtonCreation } from '../../../../components/StyledComponents';
+import { ButtonCreation } from '../../components/StyledComponents';
 
 const StyledTypography = styled(Typography)`
   padding: 15px 0;

@@ -1,8 +1,8 @@
 import { Control } from 'react-hook-form';
 import styled from 'styled-components';
-import TextFormField from '../../../../components/TextFormField';
-import Typography from '../../../../components/Typography';
-import { ButtonCreation } from '../../../../components/StyledComponents';
+import TextFormField from '../../components/TextFormField';
+import Typography from '../../components/Typography';
+import { ButtonCreation } from '../../components/StyledComponents';
 import {
   CloseCircledButton,
   CloseIcon,
