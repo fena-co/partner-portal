@@ -11,12 +11,10 @@ import Api from '../../util/api';
 import { useRouter } from 'next/router';
 import { setUserData } from '../../store/user';
 import { setCompanyData } from '../../store/company';
-import Hypertext from '../../components/Hypertext';
-import { CompanyStatus, CompanyTypes } from '@fena/types';
-
 import Profile from 'image/icon/profile.svg';
 import Spinner from '../../components/Spinner';
 import { useSignIn } from '../../constant/hooks/useSignIn';
+import { NotAuthorizedException } from '@aws-sdk/client-cognito-identity';
 
 const yupSchema = yup.object().shape({
   email: yup
@@ -92,10 +90,10 @@ const LoginWithEmail = () => {
     email: '',
     password: '',
   });
-  const [loginError, setLoginError] = useState(null);
+  const [loginError, setLoginError] = useState<string | null>(null);
 
   const asyncCheck = async () => {
-    await checkSignInStatus();
+    // await checkSignInStatus();
     setLoading(false);
   };
 
@@ -148,37 +146,18 @@ const LoginWithEmail = () => {
             ...companyData,
           })
         );
-        if (!user.phoneNumber) {
-          await router.push({
-            pathname: '/register/additional',
-          });
-          return;
-        }
-        if (!user.company) {
-          await router.push({
-            pathname: '/register/business/',
-          });
-          return;
-        }
         if (
-          companyData.type === CompanyTypes.COMPANY &&
-          !companyData.tradingName
+          companyData.canManageCompanies
         ) {
-          await router.push({
-            pathname: '/register/business/limited',
-          });
+          router.push('/dashboard');
           return;
-        }
-        if (companyData.status === CompanyStatus.BANNED) {
-          await router.push({ pathname: '/login/suspended' });
-          setLoading(false);
-          return;
+        } else {
+          setLoginError('You are not registered as a partner, please contact us at support@fena.co if you want to become one!');
         }
       }
-      router.push('/dashboard/payment/invoice');
-    } catch (error: any) {
-      setLoginError(error);
+    } catch (error: NotAuthorizedException) {
       console.error(error);
+      setLoginError(error.message);
     }
   };
 
@@ -205,7 +184,7 @@ const LoginWithEmail = () => {
                 textAlign: 'center',
               }}
             >
-              Email/Password combination is incorrect
+              {loginError}
             </Typography>
           )}
           <WrapperTextField>
@@ -253,29 +232,6 @@ const LoginWithEmail = () => {
           >
             Sign in
           </Button>
-          <WrapperText>
-            <Typography variant="body4">
-              Don&apos;t have an account?{' '}
-            </Typography>
-            <Hypertext
-              onClick={() => router.push('/register')}
-              style={{ marginLeft: '3px' }}
-            >
-              Sign up
-            </Hypertext>
-          </WrapperText>
-          <WrapperText>
-            <Typography variant="body4">Forgotten your password? </Typography>
-            <Hypertext
-              onClick={async () => {
-                //TODO page for forgot psw with input 'email'
-                router.push('/restore');
-              }}
-              style={{ marginLeft: '3px' }}
-            >
-              Reset
-            </Hypertext>
-          </WrapperText>
         </Form>
       </LogIn>
     </LogInWrapper>

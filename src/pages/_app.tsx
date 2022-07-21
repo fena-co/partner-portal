@@ -20,7 +20,7 @@ const config = {
     userPoolWebClientId: process.env.COGNITO_USER_POOL_WEB_CLIENT_ID,
   },
 };
-
+console.warn(config);
 Amplify.configure(config);
 
 function MyApp({ Component, pageProps }: AppProps) {

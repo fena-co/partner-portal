@@ -28,7 +28,7 @@ import {
 } from '../../components/StyledComponents';
 import Typography from '../../components/Typography';
 import { ROUTES } from '../../constant/route';
-import { TransactionStatus } from '../../types/api';
+import { TransactionStatus } from '@fena/types';
 import Preview from './Preview';
 
 const menus = [
