@@ -2,7 +2,7 @@ import { Address, BankAccount, Company } from '@fena/types';
 import { Auth } from 'aws-amplify';
 import router from 'next/router';
 import { stringify } from 'querystring';
-import { BankAccountApiType, CompanyApiType, UserApiType } from '../types/api';
+import { ProviderApiType, UserApiType } from '../types/api';
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL as string;
 // const apiUrl = 'http://localhost:8084/';
@@ -89,6 +89,17 @@ class Api {
       headers: this.defaultHeaders,
     });
     return await result.json();
+  }
+
+  async getProviders(): Promise<Array<ProviderApiType>> {
+    const url = new URL(`${this.mainUrl}providers/list`);
+
+    const result = await this.fetcher(url.toString(), {
+      method: 'GET',
+      headers: this.defaultHeaders,
+    });
+    const data = await result.json();
+    return data.data;
   }
 
   async getPaginatedTransactions(

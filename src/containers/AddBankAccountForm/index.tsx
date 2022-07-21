@@ -1,5 +1,5 @@
 import { NextPage } from 'next';
-import React, { ChangeEvent, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Typography from '../../components/Typography';
 import ShareVerificationLink from '../../components/ShareVerificationLink';
@@ -7,6 +7,7 @@ import DropdownFormField from '../../components/DropdownFormField';
 import TextFormField from '../../components/TextFormField';
 import { Control } from 'react-hook-form';
 import RadioButton from '../../components/RadioButton';
+import Api from '../../util/api';
 
 const StyledDropdownFormField = styled(DropdownFormField)`
   padding-top: 20px;
@@ -51,25 +52,32 @@ const AddBankAccountForm: NextPage<AddBankAccountProps> = ({
   control,
   renderType,
 }) => {
-  const [providers, setProviders] = useState([
-    {
-      id: '62339d64ce1712d21eb055e4',
-      name: 'Bank of Scotland Business',
-      providerExternalId: 'ob-bos-business',
-      value: '62339d64ce1712d21eb055e4',
-    },
-    {
-      id: '62339d64ce1712d21eb055e6',
-      name: 'Barclays Business',
-      providerExternalId: 'ob-barclays-business',
-      value: '62339d64ce1712d21eb055e6',
-    },
-  ]);
+  const [providers, setProviders] = useState<
+    Array<{ label: string; value: string }>
+  >([]);
 
-  const mappedProviders = providers.map((el) => ({
-    label: el.name,
-    value: el.value,
-  }));
+  const getProviders = async () => {
+    const results = await Api.getProviders();
+    const mapped = results.map((result: any) => ({
+      label: result.name,
+      value: result._id,
+    }));
+    setProviders(
+      mapped.sort(function (a, b) {
+        if (a.label < b.label) {
+          return -1;
+        }
+        if (a.label > b.label) {
+          return 1;
+        }
+        return 0;
+      })
+    );
+  };
+
+  useEffect(() => {
+    getProviders();
+  }, []);
 
   return (
     <>
@@ -95,7 +103,7 @@ const AddBankAccountForm: NextPage<AddBankAccountProps> = ({
               control={control}
               placeholder="Choose bank"
               label="Select bank"
-              items={mappedProviders}
+              items={providers}
             />
             <TextFormField name="name" control={control} label="Account name" />
             <TextFormField
