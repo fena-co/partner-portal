@@ -23,3 +23,9 @@ export type ProviderApiType = WithId<Provider>;
 export type UserApiType = WithId<User>;
 
 export type TransactionApiType = WithId<Transaction>;
+
+export enum MerchantStatus {
+  ACTIVE = 'active',
+  INACTIVE = 'inactive',
+  DISABLED = 'disabled',
+}

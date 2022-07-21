@@ -146,13 +146,13 @@ const LoginWithEmail = () => {
             ...companyData,
           })
         );
-        if (
-          companyData.canManageCompanies
-        ) {
+        if (companyData.canManageCompanies) {
           router.push('/dashboard');
           return;
         } else {
-          setLoginError('You are not registered as a partner, please contact us at support@fena.co if you want to become one!');
+          setLoginError(
+            'You are not registered as a partner, please contact us at support@fena.co if you want to become one!'
+          );
         }
       }
     } catch (error: NotAuthorizedException) {
