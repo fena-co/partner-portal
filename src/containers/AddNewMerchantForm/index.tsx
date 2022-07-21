@@ -11,6 +11,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import DropdownFormField from '../../components/DropdownFormField';
 import { COUNTRY_CODES } from '../../constant/countries';
 import { addMerchantSchema } from './validation';
+import { CompanyTypes } from '@fena/types';
+import Api from '../../util/api';
 
 const businessTypeItems = [
   { label: 'Sole Trader / Individual', value: 'individual' },
@@ -172,8 +174,77 @@ const AddNewMerchantForm: NextPage = () => {
     value: el.country,
   }));
 
-  const onSubmit = (data: any) => {
+  const onSubmit = async (data: any) => {
     console.log('submittedData', data);
+    const {
+      businessType,
+      soleTrader,
+      limitedCompany,
+      provider,
+      name,
+      identification,
+      externalAccountId,
+    } = data;
+    console.log('chosenType', businessType.value);
+    if (businessType.value === 'individual') {
+      console.log('individ');
+      const individualApiRes = await Api.createMerchant({
+        type: CompanyTypes.SOLE_TRADER,
+        identifier: soleTrader.utr,
+        tradingName: soleTrader.tradingName,
+        address: {
+          addressLine1: soleTrader.tradingAddress?.addressLine1,
+          addressLine2: soleTrader.tradingAddress?.addressLine2,
+          city: soleTrader.tradingAddress?.city,
+          zipCode: soleTrader.tradingAddress?.zipCode,
+        },
+        industry: soleTrader.industry.value,
+        publicEmail: soleTrader.email,
+        supportPhone: soleTrader.phoneNumber.value,
+        name: soleTrader.contactName,
+        bankAccount: {
+          provider: provider.value,
+          name: name,
+          identification: identification,
+          externalAccountId: externalAccountId,
+        },
+      });
+      console.log(individualApiRes);
+    } else {
+      console.log('limited');
+      const limitedApiRes = await Api.createMerchant({
+        type: CompanyTypes.COMPANY,
+        identifier: limitedCompany.crn,
+        name: limitedCompany.registeredName,
+        address: {
+          addressLine1: limitedCompany.tradingAddress?.addressLine1,
+          addressLine2: limitedCompany.tradingAddress?.addressLine2,
+          city: limitedCompany.tradingAddress?.city,
+          zipCode: limitedCompany.tradingAddress?.zipCode,
+        },
+        tradingAddress: {
+          addressLine1: limitedCompany.tradingAddress?.addressLine1,
+          addressLine2: limitedCompany.tradingAddress?.addressLine2,
+          city: limitedCompany.tradingAddress?.city,
+          zipCode: limitedCompany.tradingAddress?.zipCode,
+        },
+        industry: limitedCompany.industry.value,
+        publicEmail: limitedCompany.email,
+        supportPhone: limitedCompany.phoneNumber.value,
+        directorsInfo: {
+          email: limitedCompany.directorEmail,
+          name: limitedCompany.directorName,
+          phone: limitedCompany.directorPhoneNumber,
+        },
+        bankAccount: {
+          provider: provider.value,
+          name: name,
+          identification: identification,
+          externalAccountId: externalAccountId,
+        },
+      });
+      console.log(limitedApiRes);
+    }
   };
 
   return (

@@ -1,6 +1,8 @@
+import { Address, BankAccount, Company } from '@fena/types';
 import { Auth } from 'aws-amplify';
 import router from 'next/router';
-import { UserApiType } from '../types/api';
+import { stringify } from 'querystring';
+import { BankAccountApiType, CompanyApiType, UserApiType } from '../types/api';
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL as string;
 // const apiUrl = 'http://localhost:8084/';
@@ -66,6 +68,47 @@ class Api {
     const url = new URL(this.mainUrl + 'company/get');
     const result = await this.fetcher(url.toString(), {
       method: 'get',
+      headers: this.defaultHeaders,
+    });
+    const data = await result.json();
+    return data.data;
+  }
+
+  async createMerchant(
+    merchantData: Partial<Company> & {
+      address: Partial<Address>;
+      bankAccount?: Partial<BankAccount>;
+      directorsInfo?: any;
+      tradingAddress?: Partial<Address>;
+    }
+  ) {
+    const url = new URL(this.mainUrl + 'company/create');
+    const result = await this.fetcher(url.toString(), {
+      method: 'POST',
+      body: JSON.stringify(merchantData),
+      headers: this.defaultHeaders,
+    });
+    return await result.json();
+  }
+
+  async getPaginatedTransactions(
+    page: number,
+    limit?: number,
+    status?: string,
+    customFilter?: any
+  ) {
+    const queryString = stringify({
+      limit,
+      status,
+      page,
+      ...customFilter,
+    });
+    console.log(queryString);
+    const url = new URL(
+      `${this.mainUrl}company/transactions/list?${queryString}`
+    );
+    const result = await this.fetcher(url.toString(), {
+      method: 'GET',
       headers: this.defaultHeaders,
     });
     const data = await result.json();
