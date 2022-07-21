@@ -282,6 +282,7 @@ const AddNewMerchantForm: NextPage = () => {
           items={mappedCountryCodes}
         />
         <StyledDropdownFormField
+          withoutSearch
           required
           name="businessType"
           control={control as any}
