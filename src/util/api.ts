@@ -74,6 +74,16 @@ class Api {
     return data.data;
   }
 
+  async getDashboardStats() {
+    const url = new URL(this.mainUrl + 'companies/dashboard');
+    const result = await this.fetcher(url.toString(), {
+      method: 'GET',
+      headers: this.defaultHeaders,
+    });
+    const data = await result.json();
+    return data.data;
+  }
+
   async createMerchant(
     merchantData: Partial<Company> & {
       address: Partial<Address>;
