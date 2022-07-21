@@ -116,7 +116,12 @@ const addMerchantDefaultValues = {
   soleTrader: {
     utr: '',
     tradingName: '',
-    tradingAddress: '',
+    address: {
+      addressLine1: '',
+      addressLine2: '',
+      city: '',
+      zipCode: '',
+    },
     industry: { label: '', value: '' },
     contactName: '',
     email: '',
@@ -128,13 +133,23 @@ const addMerchantDefaultValues = {
   limitedCompany: {
     crn: '',
     registeredName: '',
-    registeredAddress: '',
+    address: {
+      addressLine1: '',
+      addressLine2: '',
+      city: '',
+      zipCode: '',
+    },
     industry: {
       label: '',
       value: '',
     },
     tradingName: '',
-    tradingAddress: '',
+    tradingAddress: {
+      addressLine1: '',
+      addressLine2: '',
+      city: '',
+      zipCode: '',
+    },
     registrationNumber: '',
     primaryContactName: '',
     email: '',
@@ -181,6 +196,7 @@ const AddNewMerchantForm: NextPage = () => {
       soleTrader,
       limitedCompany,
       provider,
+      country,
       name,
       identification,
       externalAccountId,
@@ -190,6 +206,7 @@ const AddNewMerchantForm: NextPage = () => {
       console.log('individ');
       const individualApiRes = await Api.createMerchant({
         type: CompanyTypes.SOLE_TRADER,
+        countryCode: country.value,
         identifier: soleTrader.utr,
         tradingName: soleTrader.tradingName,
         address: {
@@ -197,11 +214,12 @@ const AddNewMerchantForm: NextPage = () => {
           addressLine2: soleTrader.tradingAddress?.addressLine2,
           city: soleTrader.tradingAddress?.city,
           zipCode: soleTrader.tradingAddress?.zipCode,
+          country: country.label,
         },
         industry: soleTrader.industry.value,
         publicEmail: soleTrader.email,
         supportPhone: soleTrader.phoneNumber.value,
-        name: soleTrader.contactName,
+        // contact name
         bankAccount: {
           provider: provider.value,
           name: name,
@@ -214,19 +232,22 @@ const AddNewMerchantForm: NextPage = () => {
       console.log('limited');
       const limitedApiRes = await Api.createMerchant({
         type: CompanyTypes.COMPANY,
+        countryCode: country.value,
         identifier: limitedCompany.crn,
         name: limitedCompany.registeredName,
         address: {
-          addressLine1: limitedCompany.tradingAddress?.addressLine1,
-          addressLine2: limitedCompany.tradingAddress?.addressLine2,
-          city: limitedCompany.tradingAddress?.city,
-          zipCode: limitedCompany.tradingAddress?.zipCode,
+          addressLine1: limitedCompany.address?.addressLine1,
+          addressLine2: limitedCompany.address?.addressLine2,
+          city: limitedCompany.address?.city,
+          zipCode: limitedCompany.address?.zipCode,
+          country: country.label,
         },
         tradingAddress: {
           addressLine1: limitedCompany.tradingAddress?.addressLine1,
           addressLine2: limitedCompany.tradingAddress?.addressLine2,
           city: limitedCompany.tradingAddress?.city,
           zipCode: limitedCompany.tradingAddress?.zipCode,
+          country: country.label,
         },
         industry: limitedCompany.industry.value,
         publicEmail: limitedCompany.email,
