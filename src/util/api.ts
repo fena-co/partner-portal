@@ -75,7 +75,7 @@ class Api {
   }
 
   async getDashboardStats() {
-    const url = new URL(this.mainUrl + 'companies/dashboard');
+    const url = new URL(this.mainUrl + 'partner/companies/list');
     const result = await this.fetcher(url.toString(), {
       method: 'GET',
       headers: this.defaultHeaders,
@@ -92,7 +92,8 @@ class Api {
       tradingAddress?: Partial<Address>;
     }
   ) {
-    const url = new URL(this.mainUrl + 'company/create');
+    console.log('apiData', merchantData);
+    const url = new URL(this.mainUrl + 'partner/companies/create');
     const result = await this.fetcher(url.toString(), {
       method: 'POST',
       body: JSON.stringify(merchantData),
@@ -128,6 +129,39 @@ class Api {
     const url = new URL(
       `${this.mainUrl}company/transactions/list?${queryString}`
     );
+    const result = await this.fetcher(url.toString(), {
+      method: 'GET',
+      headers: this.defaultHeaders,
+    });
+    const data = await result.json();
+    return data.data;
+  }
+
+  async getPaginatedMerchants(
+    page: number,
+    limit?: number,
+    status?: string,
+    customFilter?: any
+  ) {
+    const queryString = stringify({
+      limit,
+      status,
+      page,
+      ...customFilter,
+    });
+    console.log(queryString);
+    const url = new URL(`${this.mainUrl}partner/companies/list?${queryString}`);
+    const result = await this.fetcher(url.toString(), {
+      method: 'GET',
+      headers: this.defaultHeaders,
+    });
+    const data = await result.json();
+    return data.data;
+  }
+
+  async getMerchant(id: string): Promise<Array<ProviderApiType>> {
+    const url = new URL(`${this.mainUrl}partner/companies/${id}/data`);
+
     const result = await this.fetcher(url.toString(), {
       method: 'GET',
       headers: this.defaultHeaders,

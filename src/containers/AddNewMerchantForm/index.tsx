@@ -206,6 +206,7 @@ const AddNewMerchantForm: NextPage = () => {
       console.log('individ');
       const individualApiRes = await Api.createMerchant({
         type: CompanyTypes.SOLE_TRADER,
+        name: soleTrader.contactName,
         countryCode: country.value,
         identifier: soleTrader.utr,
         tradingName: soleTrader.tradingName,
@@ -223,7 +224,7 @@ const AddNewMerchantForm: NextPage = () => {
         bankAccount: {
           provider: provider.value,
           name: name,
-          identification: identification,
+          identification: identification.replace(/-/g, ''),
           externalAccountId: externalAccountId,
         },
       });
@@ -251,6 +252,7 @@ const AddNewMerchantForm: NextPage = () => {
         },
         industry: limitedCompany.industry.value,
         publicEmail: limitedCompany.email,
+        
         supportPhone: limitedCompany.phoneNumber.value,
         directorsInfo: {
           email: limitedCompany.directorEmail,
@@ -260,7 +262,7 @@ const AddNewMerchantForm: NextPage = () => {
         bankAccount: {
           provider: provider.value,
           name: name,
-          identification: identification,
+          identification: identification.replace(/-/g, ''),
           externalAccountId: externalAccountId,
         },
       });

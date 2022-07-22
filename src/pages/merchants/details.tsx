@@ -1,11 +1,11 @@
 import styled, { css } from 'styled-components';
 import ArrowLeftIcon from 'image/icon/arrow-back.svg';
 import Typography from '../../components/Typography';
-import { useState } from 'react';
-import { Transaction } from '../../types/api';
+import { useEffect, useState } from 'react';
 import BankAccountCard from '../../components/BankAccountCard';
 import CopyInput from '../../components/CopyInput';
 import ShareVerificationLink from '../../components/ShareVerificationLink';
+import Api from '../../util/api';
 
 const BackButton = styled.div`
   display: flex;
@@ -124,6 +124,7 @@ const CopyInputWrapper = styled.div`
 `;
 
 interface DetailsProps {
+  itemId: string;
   handleClose: () => void;
 }
 
@@ -228,8 +229,25 @@ const accounts = [
   },
 ];
 
-const Details: React.FunctionComponent<DetailsProps> = ({ handleClose }) => {
+const Details: React.FunctionComponent<DetailsProps> = ({
+  handleClose,
+  itemId,
+}) => {
   const [activePage, setActivePage] = useState<string>('company');
+  const [data, setData] = useState<any>(null);
+
+  console.log('details', data);
+
+  const getData = async () => {
+    // setLoading(true);
+    const result = await Api.getMerchant(itemId);
+    setData(result);
+    // setLoading(false);
+  };
+
+  useEffect(() => {
+    getData();
+  }, []);
   return (
     <>
       <BackButton onClick={() => handleClose()}>
@@ -269,8 +287,8 @@ const Details: React.FunctionComponent<DetailsProps> = ({ handleClose }) => {
           <DetailsWrapper>
             <DetailsContainer>
               <Title variant="body5">Company number</Title>
-              <Typography variant="lightBody">{company.identifier}</Typography>
-              <Typography variant="lightBody">{company.type}</Typography>
+              <Typography variant="lightBody">{data?._id}</Typography>
+              <Typography variant="lightBody">{data?.type}</Typography>
             </DetailsContainer>
             <DetailsContainer>
               <Title variant="body5">Registered name</Title>
@@ -281,26 +299,35 @@ const Details: React.FunctionComponent<DetailsProps> = ({ handleClose }) => {
             <DetailsContainer>
               <Title variant="body5">Registered address</Title>
               <Typography variant="lightBody">
-                {company.address.addressLine1}
+                {data?.address?.addressLine1}
               </Typography>
               <Typography variant="lightBody">
-                {company.address.addressLine2}
+                {data?.address?.addressLine2}
               </Typography>
+              <Typography variant="lightBody">{data?.address?.city}</Typography>
               <Typography variant="lightBody">
-                {company.address.city}
-              </Typography>
-              <Typography variant="lightBody">
-                {company.address.zipCode}
+                {data?.address?.zipCode}
               </Typography>
             </DetailsContainer>
             <DetailsContainer>
               <Title variant="body5">Trading name</Title>
-              <Typography variant="lightBody">{company.tradingName}</Typography>
+              <Typography variant="lightBody">{data?.tradingName}</Typography>
             </DetailsContainer>
             <DetailsContainer>
               <Title variant="body5">Trading address</Title>
               <Typography variant="lightBody">
-                {company.tradingAddress.addressLine1}
+                <Typography variant="lightBody">
+                  {data?.tradingAddress?.addressLine1}
+                </Typography>
+                <Typography variant="lightBody">
+                  {data?.tradingAddress?.addressLine2}
+                </Typography>
+                <Typography variant="lightBody">
+                  {data?.tradingAddress?.city}
+                </Typography>
+                <Typography variant="lightBody">
+                  {data?.tradingAddress?.zipCode}
+                </Typography>
               </Typography>
             </DetailsContainer>
           </DetailsWrapper>

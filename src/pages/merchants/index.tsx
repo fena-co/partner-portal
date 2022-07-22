@@ -1,7 +1,9 @@
+import { get } from 'lodash';
 import moment from 'moment';
 import { NextPage } from 'next';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import styled from 'styled-components';
 import ContextMenu from '../../components/ContextMenu';
 import Filter from '../../components/Filter';
 import SearchIcon from '../../components/Icon/SearchIcon';
@@ -31,7 +33,15 @@ import {
 import Typography from '../../components/Typography';
 import { ROUTES } from '../../constant/route';
 import { MerchantStatus } from '../../types/api';
+import Api from '../../util/api';
 import Details from './details';
+
+const ContactCell = styled(AmmountCell)`
+  display: flex;
+  flex-direction: column;
+`;
+
+const ContactItem = styled.div``;
 
 const menus = [
   {
@@ -58,38 +68,38 @@ const Merchants: NextPage = () => {
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [merchants, setMerchants] = useState<any>([
-    {
-      name: 'Allies Computing Ltd',
-      contact: 'Frank Gallagher',
-      phoneNumber: '+44 897 66 55',
-      website: 'alliescomputing.com',
-      status: 'pending',
-      _id: '1234567'
-    },
-    {
-      name: 'Allies Computing Ltd',
-      contact: 'Frank Gallagher',
-      phoneNumber: '+44 897 66 55',
-      website: 'alliescomputing.com',
-      status: 'active',
-      _id: '1234567'
-    },
-    {
-      name: 'Allies Computing Ltd',
-      contact: 'Frank Gallagher',
-      phoneNumber: '+44 897 66 55',
-      website: 'alliescomputing.com',
-      status: 'inactive',
-      _id: '1234567'
-    },
-    {
-      name: 'Allies Computing Ltd',
-      contact: 'Frank Gallagher',
-      phoneNumber: '+44 897 66 55',
-      website: 'alliescomputing.com',
-      status: 'disabled',
-      _id: '1234567'
-    },
+    // {
+    //   name: 'Allies Computing Ltd',
+    //   contact: 'Frank Gallagher',
+    //   phoneNumber: '+44 897 66 55',
+    //   website: 'alliescomputing.com',
+    //   status: 'pending',
+    //   _id: '1234567'
+    // },
+    // {
+    //   name: 'Allies Computing Ltd',
+    //   contact: 'Frank Gallagher',
+    //   phoneNumber: '+44 897 66 55',
+    //   website: 'alliescomputing.com',
+    //   status: 'active',
+    //   _id: '1234567'
+    // },
+    // {
+    //   name: 'Allies Computing Ltd',
+    //   contact: 'Frank Gallagher',
+    //   phoneNumber: '+44 897 66 55',
+    //   website: 'alliescomputing.com',
+    //   status: 'inactive',
+    //   _id: '1234567'
+    // },
+    // {
+    //   name: 'Allies Computing Ltd',
+    //   contact: 'Frank Gallagher',
+    //   phoneNumber: '+44 897 66 55',
+    //   website: 'alliescomputing.com',
+    //   status: 'disabled',
+    //   _id: '1234567'
+    // },
   ]);
   const [limit, setLimit] = useState(25);
   const [total, setTotal] = useState(0);
@@ -99,6 +109,61 @@ const Merchants: NextPage = () => {
   const [statusFilter, setStatusFilter] = useState<MerchantStatus | undefined>(
     undefined
   );
+
+  const [filterConfig, setFilterConfig] = useState({});
+  const [searchConfig, setSearchConfig] = useState({});
+
+  const [isSortAscending, setSortAscending] = useState(false);
+  const sortDirection = isSortAscending ? 'DESC' : 'ASC';
+  const [sortConfig, setSortConfig] = useState({
+    sort: 'completedAt',
+    sortDirection: 'DESC',
+  });
+
+  const [toggleSortArrow, setToggleSortArrow] = useState({
+    completed: false,
+    amount: false,
+    created: false,
+  });
+
+  const getMerchants = async () => {
+    try {
+      setLoading(true);
+      const merchantsResult = await Api.getPaginatedMerchants(
+        currentPage,
+        limit,
+        statusFilter,
+        {
+          from: get(filterConfig, 'created.from'),
+          to: get(filterConfig, 'created.to'),
+          completedFrom: get(filterConfig, 'dueDate.from'),
+          completedTo: get(filterConfig, 'dueDate.to'),
+          amountFrom: get(filterConfig, 'amount.from'),
+          amountTo: get(filterConfig, 'amount.to'),
+          searchKeyword: get(searchConfig, 'searchKeyword'),
+          sort: get(sortConfig, 'sort'),
+          sortDirection: get(sortConfig, 'sortDirection'),
+        }
+      );
+      console.log(merchantsResult);
+      setMerchants(merchantsResult.docs);
+      setTotal(merchantsResult.totalDocs);
+      setLoading(false);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  useEffect(() => {
+    getMerchants();
+  }, [
+    currentPage,
+    statusFilter,
+    limit,
+    filterConfig,
+    searchConfig,
+    sortConfig,
+  ]);
 
   const setFilterRule = (status: MerchantStatus | undefined) => {
     console.log(status);
@@ -153,7 +218,10 @@ const Merchants: NextPage = () => {
       ]}
     >
       {isPreviewOpen ? (
-        <Details handleClose={() => setIsPreviewOpen(false)} />
+        <Details
+          itemId={selectedMerchantId!}
+          handleClose={() => setIsPreviewOpen(false)}
+        />
       ) : (
         <>
           <Container>
@@ -202,8 +270,11 @@ const Merchants: NextPage = () => {
                             setIsPreviewOpen(true);
                           }}
                         >
-                          <TableBodyCell>{item.name}</TableBodyCell>
-                          <AmmountCell>{item.contact}</AmmountCell>
+                          <TableBodyCell>{item.tradingName}</TableBodyCell>
+                          <ContactCell>
+                            <ContactItem>{item.name}</ContactItem>
+                            <ContactItem> {item.publicEmail}</ContactItem>
+                          </ContactCell>
                           <TableBodyCell>{item.phoneNumber}</TableBodyCell>
                           <TableBodyCell>{item.website}</TableBodyCell>
                           <TableBodyCell>
