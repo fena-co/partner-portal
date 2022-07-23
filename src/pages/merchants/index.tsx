@@ -5,7 +5,6 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import ContextMenu from '../../components/ContextMenu';
-import Filter from '../../components/Filter';
 import SearchIcon from '../../components/Icon/SearchIcon';
 import Layout from '../../components/Layout';
 import LinkMenu from '../../components/LinkMenu';
@@ -36,9 +35,13 @@ import { MerchantStatus } from '../../types/api';
 import Api from '../../util/api';
 import Details from './details';
 
-const ContactCell = styled(AmmountCell)`
-  display: flex;
-  flex-direction: column;
+const StyledTableBodyCell = styled(TableBodyCell)`
+  line-height: 25px;
+  height: 45px;
+`;
+
+const ContactCell = styled(StyledTableBodyCell)`
+  line-height: 25px;
 `;
 
 const ContactItem = styled.div``;
@@ -50,7 +53,7 @@ const menus = [
   },
   {
     name: 'Pending merchants',
-    value: MerchantStatus.ACTIVE,
+    value: MerchantStatus.PENDING,
   },
   {
     name: 'Inactive merchants',
@@ -67,40 +70,7 @@ const Merchants: NextPage = () => {
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [merchants, setMerchants] = useState<any>([
-    // {
-    //   name: 'Allies Computing Ltd',
-    //   contact: 'Frank Gallagher',
-    //   phoneNumber: '+44 897 66 55',
-    //   website: 'alliescomputing.com',
-    //   status: 'pending',
-    //   _id: '1234567'
-    // },
-    // {
-    //   name: 'Allies Computing Ltd',
-    //   contact: 'Frank Gallagher',
-    //   phoneNumber: '+44 897 66 55',
-    //   website: 'alliescomputing.com',
-    //   status: 'active',
-    //   _id: '1234567'
-    // },
-    // {
-    //   name: 'Allies Computing Ltd',
-    //   contact: 'Frank Gallagher',
-    //   phoneNumber: '+44 897 66 55',
-    //   website: 'alliescomputing.com',
-    //   status: 'inactive',
-    //   _id: '1234567'
-    // },
-    // {
-    //   name: 'Allies Computing Ltd',
-    //   contact: 'Frank Gallagher',
-    //   phoneNumber: '+44 897 66 55',
-    //   website: 'alliescomputing.com',
-    //   status: 'disabled',
-    //   _id: '1234567'
-    // },
-  ]);
+  const [merchants, setMerchants] = useState<any>([]);
   const [limit, setLimit] = useState(25);
   const [total, setTotal] = useState(0);
   const [selectedMerchantId, setSelectedMerchantId] = useState<
@@ -134,12 +104,6 @@ const Merchants: NextPage = () => {
         limit,
         statusFilter,
         {
-          from: get(filterConfig, 'created.from'),
-          to: get(filterConfig, 'created.to'),
-          completedFrom: get(filterConfig, 'dueDate.from'),
-          completedTo: get(filterConfig, 'dueDate.to'),
-          amountFrom: get(filterConfig, 'amount.from'),
-          amountTo: get(filterConfig, 'amount.to'),
           searchKeyword: get(searchConfig, 'searchKeyword'),
           sort: get(sortConfig, 'sort'),
           sortDirection: get(sortConfig, 'sortDirection'),
@@ -156,18 +120,16 @@ const Merchants: NextPage = () => {
 
   useEffect(() => {
     getMerchants();
-  }, [
-    currentPage,
-    statusFilter,
-    limit,
-    filterConfig,
-    searchConfig,
-    sortConfig,
-  ]);
+  }, [currentPage, statusFilter, limit, searchConfig, sortConfig]);
 
   const setFilterRule = (status: MerchantStatus | undefined) => {
     console.log(status);
     setStatusFilter(status);
+    setCurrentPage(1);
+  };
+
+  const handleSearchChange = (filterValues: any) => {
+    setSearchConfig(filterValues);
     setCurrentPage(1);
   };
 
@@ -228,10 +190,10 @@ const Merchants: NextPage = () => {
             <HeaderWrapper>
               <HeaderLeft>
                 <Typography variant="subtitle4">Merchants</Typography>
-                <SearchBox />
+                <SearchBox onChangeHandler={handleSearchChange} />
               </HeaderLeft>
               <HeaderButtons>
-                <Filter />
+                {/* <Filter /> */}
                 <ButtonCreation
                   variant="contained"
                   onClick={() => {
@@ -270,25 +232,33 @@ const Merchants: NextPage = () => {
                             setIsPreviewOpen(true);
                           }}
                         >
-                          <TableBodyCell>{item.tradingName}</TableBodyCell>
+                          <StyledTableBodyCell>
+                            {item.tradingName}
+                          </StyledTableBodyCell>
                           <ContactCell>
                             <ContactItem>{item.name}</ContactItem>
-                            <ContactItem> {item.publicEmail}</ContactItem>
+                            <ContactItem> {item.publicEmail} </ContactItem>
                           </ContactCell>
-                          <TableBodyCell>{item.phoneNumber}</TableBodyCell>
-                          <TableBodyCell>{item.website}</TableBodyCell>
-                          <TableBodyCell>
+                          <StyledTableBodyCell>
+                            {item.phoneNumber}
+                          </StyledTableBodyCell>
+                          <StyledTableBodyCell>
+                            {item.businessWebsite}
+                          </StyledTableBodyCell>
+                          <StyledTableBodyCell>
                             <StatusWrapper status={item.status}>
-                              {item.status}
+                              {item.status === 'pending_verification'
+                                ? 'pending'
+                                : item.status}
                             </StatusWrapper>
-                          </TableBodyCell>
-                          <TableBodyCell>
+                          </StyledTableBodyCell>
+                          <StyledTableBodyCell>
                             {item.lastActivity
                               ? moment(item.lastActivity).format('MM/DD/YYYY')
                               : 'None'}
-                          </TableBodyCell>
-                          <TableBodyCell>{item._id}</TableBodyCell>
-                          <TableBodyCell>
+                          </StyledTableBodyCell>
+                          <StyledTableBodyCell>{item._id}</StyledTableBodyCell>
+                          <StyledTableBodyCell>
                             <ContextMenu
                               actions={[
                                 {
@@ -307,14 +277,14 @@ const Merchants: NextPage = () => {
                                 },
                                 {
                                   color: '#EF6355',
-                                  label: 'Delete',
+                                  label: 'Disable',
                                   onClick: () => {
                                     console.log('delete');
                                   },
                                 },
                               ]}
                             />
-                          </TableBodyCell>
+                          </StyledTableBodyCell>
                         </TableBodyRow>
                       ))}
                     </tbody>

@@ -146,6 +146,8 @@ export const StatusWrapper = styled.span<{ status: string }>`
         return DraftStatus;
       case 'pending':
         return PendingStatus;
+      case 'pending_verification':
+        return PendingStatus;
       case 'rejected':
         return RejectedStatus;
       case 'refunds':

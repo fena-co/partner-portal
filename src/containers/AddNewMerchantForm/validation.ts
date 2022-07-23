@@ -62,6 +62,7 @@ export const soleTraderSchema = yup.object({
         .matches(/^[0-9]+$/, 'Phone number is not valid')
         .matches(/^(0?\d{9}|\d{8})$/, 'Phone number is not valid'),
     }),
+    publicWebsite: yup.string().url('Enter correct url'),
   }),
 });
 
@@ -104,6 +105,7 @@ export const limitedCompanySchema = yup.object({
         .matches(/^[0-9]+$/, 'Phone number is not valid')
         .matches(/^(0?\d{9}|\d{8})$/, 'Phone number is not valid'),
     }),
+    publicWebsite: yup.string().url('Enter correct url'),
     directorContactName: yup.string().required('This field is required'),
     directorEmail: yup.string().email('Email must be valid'),
     directorPhoneNumber: yup.object({

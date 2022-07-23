@@ -113,6 +113,18 @@ class Api {
     return data.data;
   }
 
+  async updateAccount(accountData: any, companyId: string, accountId: string) {
+    const url = new URL(
+      `${this.mainUrl}partner/companies/${companyId}/bank-accounts/${accountId}/edit`
+    );
+    const result = await this.fetcher(url.toString(), {
+      method: 'POST',
+      headers: this.defaultHeaders,
+      body: JSON.stringify(accountData),
+    });
+    return await result.json();
+  }
+
   async getPaginatedTransactions(
     page: number,
     limit?: number,

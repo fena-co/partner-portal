@@ -138,12 +138,17 @@ const AddNewMerchantLimitedCompanyForm: React.FunctionComponent<
       <TextFormField
         name="limitedCompany.email"
         control={control}
-        label="Email"
+        label="Primary contact email"
       />
       <StyledPhoneFormField
         name="limitedCompany.phoneNumber"
         control={control}
-        label="Phone number"
+        label="Primary phone number"
+      />
+      <TextFormField
+        name="limitedCompany.publicWebsite"
+        control={control}
+        label="Business website"
       />
       <WrapperCheckbox>
         <CheckBox

@@ -3,9 +3,9 @@ import ArrowLeftIcon from 'image/icon/arrow-back.svg';
 import Typography from '../../components/Typography';
 import { useEffect, useState } from 'react';
 import BankAccountCard from '../../components/BankAccountCard';
-import CopyInput from '../../components/CopyInput';
 import ShareVerificationLink from '../../components/ShareVerificationLink';
 import Api from '../../util/api';
+import { CompanyTypes } from '@fena/types';
 
 const BackButton = styled.div`
   display: flex;
@@ -88,13 +88,13 @@ const Status = styled.div<{ status: string }>`
   border-radius: 5px;
   padding: 5px 15px;
   background-color: ${(props) =>
-    props.status === 'verified' ? '#E4F9F2' : '#fce4e2'};
-  color: ${(props) => (props.status === 'verified' ? '#2CD19E' : '#EF6355')};
+    props.status === 'active' ? '#E4F9F2' : '#fce4e2'};
+  color: ${(props) => (props.status === 'active' ? '#2CD19E' : '#EF6355')};
 `;
 
 const TableWrapper = styled.div`
-  display: flex;
-  flex-basis: 35%;
+  /* display: flex;
+  flex-basis: 35%; */
 `;
 
 const Table = styled.table`
@@ -103,25 +103,20 @@ const Table = styled.table`
 
 const ChecksCell = styled.td`
   padding-right: 50px;
+  padding-top: 10px;
 `;
 
 const Checks = styled(Typography)``;
 
-const StatusCell = styled.td``;
+const StatusCell = styled.td`
+  padding-top: 10px;
+`;
 
 const Th = styled.th`
   text-align: start;
 `;
 
-const ShareSection = styled.div`
-  display: flex;
-  flex-direction: column;
-  flex-basis: 40%;
-`;
-
-const CopyInputWrapper = styled.div`
-  margin-top: 15px;
-`;
+const Tbody = styled.tbody``;
 
 interface DetailsProps {
   itemId: string;
@@ -285,30 +280,37 @@ const Details: React.FunctionComponent<DetailsProps> = ({
         </ContentHeader>
         {activePage === 'company' && (
           <DetailsWrapper>
-            <DetailsContainer>
-              <Title variant="body5">Company number</Title>
-              <Typography variant="lightBody">{data?._id}</Typography>
-              <Typography variant="lightBody">{data?.type}</Typography>
-            </DetailsContainer>
-            <DetailsContainer>
-              <Title variant="body5">Registered name</Title>
-              <Typography variant="lightBody">
-                {company.registeredName}
-              </Typography>
-            </DetailsContainer>
-            <DetailsContainer>
-              <Title variant="body5">Registered address</Title>
-              <Typography variant="lightBody">
-                {data?.address?.addressLine1}
-              </Typography>
-              <Typography variant="lightBody">
-                {data?.address?.addressLine2}
-              </Typography>
-              <Typography variant="lightBody">{data?.address?.city}</Typography>
-              <Typography variant="lightBody">
-                {data?.address?.zipCode}
-              </Typography>
-            </DetailsContainer>
+            {data?.type === CompanyTypes.COMPANY && (
+              <>
+                <DetailsContainer>
+                  <Title variant="body5">Company number</Title>
+                  <Typography variant="lightBody">{data?._id}</Typography>
+                  <Typography variant="lightBody">company</Typography>
+                </DetailsContainer>
+                <DetailsContainer>
+                  <Title variant="body5">Registered name</Title>
+                  <Typography variant="lightBody">
+                    {company.registeredName}
+                  </Typography>
+                </DetailsContainer>
+                <DetailsContainer>
+                  <Title variant="body5">Registered address</Title>
+                  <Typography variant="lightBody">
+                    {data?.address?.addressLine1}
+                  </Typography>
+                  <Typography variant="lightBody">
+                    {data?.address?.addressLine2}
+                  </Typography>
+                  <Typography variant="lightBody">
+                    {data?.address?.city}
+                  </Typography>
+                  <Typography variant="lightBody">
+                    {data?.address?.zipCode}
+                  </Typography>
+                </DetailsContainer>
+              </>
+            )}
+
             <DetailsContainer>
               <Title variant="body5">Trading name</Title>
               <Typography variant="lightBody">{data?.tradingName}</Typography>
@@ -317,16 +319,24 @@ const Details: React.FunctionComponent<DetailsProps> = ({
               <Title variant="body5">Trading address</Title>
               <Typography variant="lightBody">
                 <Typography variant="lightBody">
-                  {data?.tradingAddress?.addressLine1}
+                  {data?.type === CompanyTypes.SOLE_TRADER
+                    ? data?.address?.addressLine1
+                    : data?.tradingAddress?.addressLine1}
                 </Typography>
                 <Typography variant="lightBody">
-                  {data?.tradingAddress?.addressLine2}
+                  {data?.type === CompanyTypes.SOLE_TRADER
+                    ? data?.address?.addressLine2
+                    : data?.tradingAddress?.addressLine2}
                 </Typography>
                 <Typography variant="lightBody">
-                  {data?.tradingAddress?.city}
+                  {data?.type === CompanyTypes.SOLE_TRADER
+                    ? data?.address?.city
+                    : data?.tradingAddress?.city}
                 </Typography>
                 <Typography variant="lightBody">
-                  {data?.tradingAddress?.zipCode}
+                  {data?.type === CompanyTypes.SOLE_TRADER
+                    ? data?.address?.zipCode
+                    : data?.tradingAddress?.zipCode}
                 </Typography>
               </Typography>
             </DetailsContainer>
@@ -345,22 +355,24 @@ const Details: React.FunctionComponent<DetailsProps> = ({
               <Typography variant="lightBody">{user.email}</Typography>
               <Typography variant="lightBody">{user.phoneNumber}</Typography>
             </DetailsContainer>
-            <DetailsContainer>
-              <Title variant="body5">Secondary contact details</Title>
-              <Typography variant="lightBody">
-                {user.firstName}
-                {` `}
-                {user.lastName}
-              </Typography>
-              <Typography variant="lightBody">{user.supportEmail}</Typography>
-              <Typography variant="lightBody">{user.supportPhone}</Typography>
-            </DetailsContainer>
+            {data?.type === CompanyTypes.COMPANY && (
+              <DetailsContainer>
+                <Title variant="body5">Director details</Title>
+                <Typography variant="lightBody">
+                  {user.firstName}
+                  {` `}
+                  {user.lastName}
+                </Typography>
+                <Typography variant="lightBody">{user.supportEmail}</Typography>
+                <Typography variant="lightBody">{user.supportPhone}</Typography>
+              </DetailsContainer>
+            )}
           </DetailsWrapper>
         )}
 
         {activePage === 'bankAccounts' && (
           <BankAccountCardWrapper>
-            {accounts.map((acc) => {
+            {data.bankAccounts.map((acc: any) => {
               return (
                 <BankAccountCard
                   key={acc._id}
@@ -372,6 +384,7 @@ const Details: React.FunctionComponent<DetailsProps> = ({
                     title: acc.provider.name,
                     status: acc.status,
                     accId: acc._id,
+                    companyId: data._id,
                   }}
                   getBankAccounts={() => {}}
                 />
@@ -394,18 +407,22 @@ const Details: React.FunctionComponent<DetailsProps> = ({
                     </tr>
                   </thead>
 
-                  <tbody>
+                  <Tbody>
                     <tr>
                       <ChecksCell>
-                        <Checks variant="body5">AML checks</Checks>
+                        <Checks variant="body5">ID and AML checks</Checks>
                       </ChecksCell>
                       <StatusCell>
                         <StatusWrapper>
-                          <Status status="verified">Verified</Status>
+                          <Status status={data.status}>
+                            {data.status === 'active'
+                              ? 'Verified'
+                              : 'Unverified'}
+                          </Status>
                         </StatusWrapper>
                       </StatusCell>
                     </tr>
-                    <tr>
+                    {/* <tr>
                       <ChecksCell>
                         <Checks variant="body5">Identity checks</Checks>
                       </ChecksCell>
@@ -414,8 +431,8 @@ const Details: React.FunctionComponent<DetailsProps> = ({
                           <Status status="unverified">Unverified</Status>
                         </StatusWrapper>
                       </StatusCell>
-                    </tr>
-                  </tbody>
+                    </tr> */}
+                  </Tbody>
                 </Table>
               </TableWrapper>
               <ShareVerificationLink />

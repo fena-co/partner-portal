@@ -1,12 +1,9 @@
 import {
   BankAccount,
   Company,
-  Integration,
   Invoice,
   Provider,
-  Payment,
   User,
-  CompanyOfficer,
   Transaction,
 } from '@fena/types';
 
@@ -26,6 +23,7 @@ export type TransactionApiType = WithId<Transaction>;
 
 export enum MerchantStatus {
   ACTIVE = 'active',
+  PENDING = 'pending_verification',
   INACTIVE = 'inactive',
   DISABLED = 'disabled',
 }

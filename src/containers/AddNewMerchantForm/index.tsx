@@ -129,6 +129,7 @@ const addMerchantDefaultValues = {
       code: 'GB',
       number: '',
     },
+    publicWebsite: '',
   },
   limitedCompany: {
     crn: '',
@@ -157,6 +158,7 @@ const addMerchantDefaultValues = {
       code: 'GB',
       number: '',
     },
+    publicWebsite: '',
     directorContactName: '',
     directorEmail: '',
     directorPhoneNumber: {
@@ -220,6 +222,7 @@ const AddNewMerchantForm: NextPage = () => {
         industry: soleTrader.industry.value,
         publicEmail: soleTrader.email,
         supportPhone: soleTrader.phoneNumber.value,
+        publicWebsite: soleTrader.publicWebsite,
         // contact name
         bankAccount: {
           provider: provider.value,
@@ -252,8 +255,9 @@ const AddNewMerchantForm: NextPage = () => {
         },
         industry: limitedCompany.industry.value,
         publicEmail: limitedCompany.email,
-        
+
         supportPhone: limitedCompany.phoneNumber.value,
+        publicWebsite: limitedCompany.publicWebsite,
         directorsInfo: {
           email: limitedCompany.directorEmail,
           name: limitedCompany.directorName,

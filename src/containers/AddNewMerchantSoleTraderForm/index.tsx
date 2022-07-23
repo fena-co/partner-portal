@@ -5,7 +5,6 @@ import DropdownFormField from '../../components/DropdownFormField';
 import PhoneFormField from '../../components/PhoneFormField';
 import TextFormField from '../../components/TextFormField';
 import { industries } from '../../constant/industries';
-import SearchIcon from 'image/icon/search-blue.svg';
 import Typography from '../../components/Typography';
 
 const StyledDropdownFormField = styled(DropdownFormField)`
@@ -69,13 +68,18 @@ const AddNewMerchantSoleTraderForm: React.FunctionComponent<
         name="soleTrader.email"
         control={control}
         required
-        label="Email"
+        label="Contact email"
       />
       <StyledPhoneFormField
         required
         name="soleTrader.phoneNumber"
         control={control}
-        label="Phone number"
+        label="Contact phone number"
+      />
+      <TextFormField
+        name="soleTrader.publicWebsite"
+        control={control}
+        label="Business website"
       />
       <TextFormField
         name="soleTrader.tradingName"
