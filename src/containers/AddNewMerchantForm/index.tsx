@@ -221,13 +221,12 @@ const AddNewMerchantForm: NextPage = () => {
         },
         industry: soleTrader.industry.value,
         publicEmail: soleTrader.email,
-        supportPhone: soleTrader.phoneNumber.value,
+        supportPhone: `${soleTrader.phoneNumber.code} ${soleTrader.phoneNumber.number}`,
         publicWebsite: soleTrader.publicWebsite,
-        // contact name
         bankAccount: {
           provider: provider.value,
           name: name,
-          identification: identification.replace(/-/g, ''),
+          identification: identification?.replace(/-/g, ''),
           externalAccountId: externalAccountId,
         },
       });
@@ -238,7 +237,7 @@ const AddNewMerchantForm: NextPage = () => {
         type: CompanyTypes.COMPANY,
         countryCode: country.value,
         identifier: limitedCompany.crn,
-        name: limitedCompany.registeredName,
+        name: limitedCompany.contactName,
         address: {
           addressLine1: limitedCompany.address?.addressLine1,
           addressLine2: limitedCompany.address?.addressLine2,
@@ -256,7 +255,7 @@ const AddNewMerchantForm: NextPage = () => {
         industry: limitedCompany.industry.value,
         publicEmail: limitedCompany.email,
 
-        supportPhone: limitedCompany.phoneNumber.value,
+        supportPhone: `${soleTrader.phoneNumber.code} ${soleTrader.phoneNumber.number}`,
         publicWebsite: limitedCompany.publicWebsite,
         directorsInfo: {
           email: limitedCompany.directorEmail,
