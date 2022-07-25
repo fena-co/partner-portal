@@ -11,6 +11,7 @@ import {
   ModalWrapperContent,
   WrapperModalButton,
 } from './modalStyled';
+import api from '../../util/api';
 
 const StyledTextFormField = styled(TextFormField)`
   padding-top: 0;
@@ -25,6 +26,10 @@ const CreationModal: React.FunctionComponent<CreationModalProps> = ({
   handleClose,
   control,
 }) => {
+  // const handlerCreateKey = async () => {
+  //   const response = await api.createApiKey(name);
+  //   console.log(response);
+  // };
   return (
     <ModalWrapperContent>
       <ModalHeader>

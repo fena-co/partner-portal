@@ -84,6 +84,17 @@ class Api {
     return data.data;
   }
 
+  async createApiKey(name: { name: string }) {
+    console.log('keyApiData', name);
+    const url = new URL(this.mainUrl + 'partner/access-keys/create');
+    const result = await this.fetcher(url.toString(), {
+      method: 'POST',
+      body: JSON.stringify(name),
+      headers: this.defaultHeaders,
+    });
+    return await result.json();
+  }
+
   async createMerchant(
     merchantData: Partial<Company> & {
       address: Partial<Address>;
