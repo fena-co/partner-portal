@@ -116,6 +116,7 @@ const AddBankAccountForm: NextPage<AddBankAccountProps> = ({
               name="externalAccountId"
               control={control}
               label="Account number"
+              mask="99999999"
             />
           </>
         ) : (

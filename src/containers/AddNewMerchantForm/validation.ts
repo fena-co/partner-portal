@@ -19,9 +19,13 @@ export const addBankAccountSchema = {
   name: yup.string(),
   identification: yup
     .string()
+    .nullable()
+    .transform((o, c) => (o === '' ? null : c))
     .matches(/\d{2}-\d{2}-\d{2}/, 'Sort code is invalid'),
   externalAccountId: yup
     .string()
+    .nullable()
+    .transform((o, c) => (o === '' ? null : c))
     .min(8, 'Account number must be 8 digits')
     .max(8, 'Account number must be 8 digits'),
 };
