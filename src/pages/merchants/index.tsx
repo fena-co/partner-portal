@@ -108,8 +108,8 @@ const Merchants: NextPage = () => {
         statusFilter,
         {
           searchKeyword: get(searchConfig, 'searchKeyword'),
-          sort: get(sortConfig, 'sort'),
-          sortDirection: get(sortConfig, 'sortDirection'),
+          // sort: get(sortConfig, 'sort'),
+          // sortDirection: get(sortConfig, 'sortDirection'),
         }
       );
       console.log(merchantsResult);

@@ -382,7 +382,7 @@ const Details: React.FunctionComponent<DetailsProps> = ({
                     accId: acc._id,
                     companyId: data._id,
                   }}
-                  getBankAccounts={() => {}}
+                  getBankAccounts={() => {getData()}}
                 />
               );
             })}

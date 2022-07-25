@@ -168,7 +168,11 @@ const addMerchantDefaultValues = {
   },
 };
 
-const AddNewMerchantForm: NextPage = () => {
+interface AddMerchantFormProps {
+  setSuccess: (email: string) => void;
+}
+
+const AddNewMerchantForm: NextPage<AddMerchantFormProps> = ({ setSuccess }) => {
   const {
     handleSubmit,
     control,
@@ -230,6 +234,7 @@ const AddNewMerchantForm: NextPage = () => {
           externalAccountId: externalAccountId,
         },
       });
+      setSuccess(soleTrader.email);
       console.log(individualApiRes);
     } else {
       console.log('limited');
@@ -265,16 +270,17 @@ const AddNewMerchantForm: NextPage = () => {
         bankAccount: {
           provider: provider.value,
           name: name,
-          identification: identification.replace(/-/g, ''),
+          identification: identification?.replace(/-/g, ''),
           externalAccountId: externalAccountId,
         },
       });
+      setSuccess(limitedCompany.email);
       console.log(limitedApiRes);
     }
   };
 
   return (
-    <Content>
+    <>
       <Title variant="subtitle4">Add new merchant</Title>
       <form onSubmit={handleSubmit(onSubmit)}>
         <StyledDropdownFormField
@@ -315,14 +321,20 @@ const AddNewMerchantForm: NextPage = () => {
               renderType={bankDetailsType}
             />
             <ButtonWrapper>
-              <ButtonWithChildren type="submit" variant="contained">
+              <ButtonWithChildren
+                onClick={() => {
+                  window.scrollTo({ top: 0, left: 0 });
+                }}
+                type="submit"
+                variant="contained"
+              >
                 ADD
               </ButtonWithChildren>
             </ButtonWrapper>
           </>
         )}
       </form>
-    </Content>
+    </>
   );
 };
 
