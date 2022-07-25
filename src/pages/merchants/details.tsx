@@ -347,13 +347,9 @@ const Details: React.FunctionComponent<DetailsProps> = ({
           <DetailsWrapper>
             <DetailsContainer>
               <Title variant="body5">Primary contact details</Title>
-              <Typography variant="lightBody">
-                {user.firstName}
-                {` `}
-                {user.lastName}
-              </Typography>
-              <Typography variant="lightBody">{user.email}</Typography>
-              <Typography variant="lightBody">{user.phoneNumber}</Typography>
+              <Typography variant="lightBody">{data.name}</Typography>
+              <Typography variant="lightBody">{data.publicEmail}</Typography>
+              <Typography variant="lightBody">{data.supportPhone}</Typography>
             </DetailsContainer>
             {data?.type === CompanyTypes.COMPANY && (
               <DetailsContainer>

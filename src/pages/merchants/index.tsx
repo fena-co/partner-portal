@@ -5,6 +5,7 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import ContextMenu from '../../components/ContextMenu';
+import Hypertext from '../../components/Hypertext';
 import SearchIcon from '../../components/Icon/SearchIcon';
 import Layout from '../../components/Layout';
 import LinkMenu from '../../components/LinkMenu';
@@ -45,6 +46,8 @@ const ContactCell = styled(StyledTableBodyCell)`
 `;
 
 const ContactItem = styled.div``;
+
+const Link = styled.a``;
 
 const menus = [
   {
@@ -240,10 +243,14 @@ const Merchants: NextPage = () => {
                             <ContactItem> {item.publicEmail} </ContactItem>
                           </ContactCell>
                           <StyledTableBodyCell>
-                            {item.phoneNumber}
+                            {item.supportPhone}
                           </StyledTableBodyCell>
-                          <StyledTableBodyCell>
-                            {item.businessWebsite}
+                          <StyledTableBodyCell
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <Hypertext href={item.publicWebsite} target="blank">
+                              {item.publicWebsite}
+                            </Hypertext>
                           </StyledTableBodyCell>
                           <StyledTableBodyCell>
                             <StatusWrapper status={item.status}>
@@ -309,5 +316,13 @@ const Merchants: NextPage = () => {
     </Layout>
   );
 };
+
+export async function getStaticProps(context: any) {
+  return {
+    props: {
+      protected: true,
+    },
+  };
+}
 
 export default Merchants;

@@ -412,4 +412,12 @@ const Dashboard: NextPage = () => {
   );
 };
 
+export async function getStaticProps(context: any) {
+  return {
+    props: {
+      protected: true,
+    },
+  };
+}
+
 export default Dashboard;

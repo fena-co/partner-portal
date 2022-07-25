@@ -25,6 +25,7 @@ import Hypertext from '../../../components/Hypertext';
 import { Control, useForm } from 'react-hook-form';
 import CreationModal from '../../../views/ApiKeyModals/creationModal';
 import ViewSecretModal from '../../../views/ApiKeyModals/viewModal';
+import Api from '../../../util/api';
 
 const Key = styled(KeyIcon)`
   margin-right: 10px;
@@ -69,8 +70,9 @@ const ApiKeysPage: NextPage = () => {
     setCurrentPage(1);
   };
 
-  const onApiCreate = (data: any) => {
-    console.log(data);
+  const onApiCreate = async (data: any) => {
+    const response = await Api.createApiKey({ name: data.apiKey });
+    console.log(response);
   };
 
   return (
@@ -78,7 +80,7 @@ const ApiKeysPage: NextPage = () => {
       <HeaderWrapper>
         <HeaderLeft>
           <Typography variant="subtitle4">API keys</Typography>
-          <SearchBox />
+          <SearchBox onChangeHandler={() => {}} />
         </HeaderLeft>
         <HeaderButtons>
           <ButtonCreation
@@ -183,5 +185,13 @@ const ApiKeysPage: NextPage = () => {
     </Layout>
   );
 };
+
+export async function getStaticProps(context: any) {
+  return {
+    props: {
+      protected: true,
+    },
+  };
+}
 
 export default ApiKeysPage;
