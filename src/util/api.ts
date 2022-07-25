@@ -129,7 +129,7 @@ class Api {
       `${this.mainUrl}partner/companies/${companyId}/bank-accounts/${accountId}/edit`
     );
     const result = await this.fetcher(url.toString(), {
-      method: 'POST',
+      method: 'PUT',
       headers: this.defaultHeaders,
       body: JSON.stringify(accountData),
     });

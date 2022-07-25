@@ -171,7 +171,7 @@ function BankAccountCard({ account, getBankAccounts }: BankAccountCardProps) {
   const onBankAccountSave = async () => {
     setEditMode(false);
     const response = await Api.updateAccount(
-      { accountName: name },
+      { name: accName },
       account.companyId,
       account.accId
     );
