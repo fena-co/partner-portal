@@ -92,10 +92,7 @@ const Status = styled.div<{ status: string }>`
   color: ${(props) => (props.status === 'active' ? '#2CD19E' : '#EF6355')};
 `;
 
-const TableWrapper = styled.div`
-  /* display: flex;
-  flex-basis: 35%; */
-`;
+const TableWrapper = styled.div``;
 
 const Table = styled.table`
   margin-right: 50px;
@@ -148,81 +145,7 @@ const company = {
   },
 };
 
-const accounts = [
-  {
-    attachmentUrl:
-      'https://s3.eu-west-2.amazonaws.com/fena-stage/2022-06-07T09%3A19%3A05.348Zimage%20%283%29.png',
-    createdAt: '2022-06-07T09:19:05.161Z',
-    deletedAt: null,
-    externalAccountId: '13827551',
-    identification: '070246',
-    identificationType: 'SORT_CODE_ACCOUNT_NUMBER',
-    name: 'Nationwide',
-    owner: '62863cb44b34d4e4ebe23483',
-    ownerType: 'Company',
-    provider: {
-      countryId: 'GB',
-      deletedAt: null,
-      enabled: true,
-      externalId: 'ob-nationwide',
-      logo: 'https://fena-assets.s3.eu-west-2.amazonaws.com/banks/nationwide.png',
-      name: 'Nationwide',
-      __v: 0,
-      _id: '62339d64ce1712d21eb055ef',
-    },
-    status: 'verified',
-    __v: 0,
-    _id: '629f1809de0f2c70d177d3d6',
-  },
-  {
-    attachmentUrl:
-      'https://s3.eu-west-2.amazonaws.com/fena-stage/2022-06-07T09%3A19%3A05.348Zimage%20%283%29.png',
-    createdAt: '2022-06-07T09:19:05.161Z',
-    deletedAt: null,
-    externalAccountId: '13827551',
-    identification: '070246',
-    identificationType: 'SORT_CODE_ACCOUNT_NUMBER',
-    name: 'Nationwide',
-    owner: '62863cb44b34d4e4ebe23483',
-    ownerType: 'Company',
-    _id: '62339d64ce1712d21eb055ef',
-    status: 'verified',
-    provider: {
-      countryId: 'GB',
-      deletedAt: null,
-      enabled: true,
-      externalId: 'ob-nationwide',
-      logo: 'https://fena-assets.s3.eu-west-2.amazonaws.com/banks/nationwide.png',
-      name: 'Nationwide',
-      __v: 0,
-      _id: '62339d64ce1712d21eb055ef',
-    },
-  },
-  {
-    attachmentUrl:
-      'https://s3.eu-west-2.amazonaws.com/fena-stage/2022-06-07T09%3A19%3A05.348Zimage%20%283%29.png',
-    createdAt: '2022-06-07T09:19:05.161Z',
-    deletedAt: null,
-    externalAccountId: '13827551',
-    identification: '070246',
-    identificationType: 'SORT_CODE_ACCOUNT_NUMBER',
-    name: 'Nationwide',
-    owner: '62863cb44b34d4e4ebe23483',
-    ownerType: 'Company',
-    _id: '62339d64ce1712d21eb055ef',
-    status: 'verified',
-    provider: {
-      countryId: 'GB',
-      deletedAt: null,
-      enabled: true,
-      externalId: 'ob-nationwide',
-      logo: 'https://fena-assets.s3.eu-west-2.amazonaws.com/banks/nationwide.png',
-      name: 'Nationwide',
-      __v: 0,
-      _id: '62339d64ce1712d21eb055ef',
-    },
-  },
-];
+
 
 const Details: React.FunctionComponent<DetailsProps> = ({
   handleClose,
@@ -382,7 +305,9 @@ const Details: React.FunctionComponent<DetailsProps> = ({
                     accId: acc._id,
                     companyId: data._id,
                   }}
-                  getBankAccounts={() => {getData()}}
+                  getBankAccounts={() => {
+                    getData();
+                  }}
                 />
               );
             })}
@@ -418,16 +343,6 @@ const Details: React.FunctionComponent<DetailsProps> = ({
                         </StatusWrapper>
                       </StatusCell>
                     </tr>
-                    {/* <tr>
-                      <ChecksCell>
-                        <Checks variant="body5">Identity checks</Checks>
-                      </ChecksCell>
-                      <StatusCell>
-                        <StatusWrapper>
-                          <Status status="unverified">Unverified</Status>
-                        </StatusWrapper>
-                      </StatusCell>
-                    </tr> */}
                   </Tbody>
                 </Table>
               </TableWrapper>

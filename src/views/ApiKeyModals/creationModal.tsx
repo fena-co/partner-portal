@@ -11,7 +11,6 @@ import {
   ModalWrapperContent,
   WrapperModalButton,
 } from './modalStyles';
-import api from '../../util/api';
 import ReactTooltip from 'react-tooltip';
 
 const StyledTextFormField = styled(TextFormField)`
@@ -50,7 +49,7 @@ const CreationModal: React.FunctionComponent<CreationModalProps> = ({
       </ModalHeader>
       <ModalBody>
         {!isKeyCreated ? (
-          <StyledTextFormField name="apiKey" control={control} label="Name" />
+          <StyledTextFormField name="keyName" control={control} label="Name" />
         ) : (
           <>
             <Label variant="body5">Key</Label>
