@@ -25,5 +25,5 @@ export enum MerchantStatus {
   ACTIVE = 'active',
   PENDING = 'pending_verification',
   INACTIVE = 'inactive',
-  DISABLED = 'disabled',
+  BANNED = 'banned',
 }

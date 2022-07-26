@@ -158,6 +158,8 @@ export const StatusWrapper = styled.span<{ status: string }>`
         return DraftStatus;
       case 'disabled':
         return RejectedStatus;
+      case 'banned':
+        return RejectedStatus;
       default:
         return css`
           background-color: #f4f7f9;

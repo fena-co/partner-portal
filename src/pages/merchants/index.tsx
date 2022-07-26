@@ -64,7 +64,7 @@ const menus = [
   },
   {
     name: 'Disabled merchants',
-    value: MerchantStatus.DISABLED,
+    value: MerchantStatus.BANNED,
   },
 ];
 
@@ -136,6 +136,13 @@ const Merchants: NextPage = () => {
     setCurrentPage(1);
   };
 
+  const handlerDisable = (id: string) => {
+    console.log('disabled:', id);
+    const res = Api.disableMerchant(id);
+    getMerchants();
+    console.log(res);
+  };
+
   const renderEmpty = () => {
     if (!statusFilter) {
       return (
@@ -163,6 +170,54 @@ const Merchants: NextPage = () => {
         </Typography>
       </InvoiceBody>
     );
+  };
+
+  const getMerchantsActions = (item: any) => {
+    switch (item.status) {
+      case MerchantStatus.BANNED:
+        return [
+          {
+            label: 'Details',
+            onClick: () => {
+              setSelectedMerchantId(item._id);
+              setIsPreviewOpen(true);
+            },
+          },
+          {
+            label: 'Analytics',
+            onClick: () => {
+              setSelectedMerchantId(item._id);
+              router.push('/merchants/analytics/id');
+            },
+          },
+        ];
+      case MerchantStatus.ACTIVE:
+      case MerchantStatus.PENDING:
+      case MerchantStatus.INACTIVE:
+        return [
+          {
+            label: 'Details',
+            onClick: () => {
+              setSelectedMerchantId(item._id);
+              setIsPreviewOpen(true);
+            },
+          },
+          {
+            label: 'Analytics',
+            onClick: () => {
+              setSelectedMerchantId(item._id);
+              router.push('/merchants/analytics/id');
+            },
+          },
+          {
+            color: '#EF6355',
+            label: 'Disable',
+            onClick: () => {
+              handlerDisable(item._id);
+            },
+          },
+        ];
+    }
   };
 
   return (
@@ -266,31 +321,7 @@ const Merchants: NextPage = () => {
                           </StyledTableBodyCell>
                           <StyledTableBodyCell>{item._id}</StyledTableBodyCell>
                           <StyledTableBodyCell>
-                            <ContextMenu
-                              actions={[
-                                {
-                                  label: 'Details',
-                                  onClick: () => {
-                                    setSelectedMerchantId(item._id);
-                                    setIsPreviewOpen(true);
-                                  },
-                                },
-                                {
-                                  label: 'Analytics',
-                                  onClick: () => {
-                                    setSelectedMerchantId(item._id);
-                                    router.push('/merchants/analytics/id');
-                                  },
-                                },
-                                {
-                                  color: '#EF6355',
-                                  label: 'Disable',
-                                  onClick: () => {
-                                    console.log('delete');
-                                  },
-                                },
-                              ]}
-                            />
+                            <ContextMenu actions={getMerchantsActions(item)} />
                           </StyledTableBodyCell>
                         </TableBodyRow>
                       ))}

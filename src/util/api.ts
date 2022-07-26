@@ -192,6 +192,15 @@ class Api {
     const data = await result.json();
     return data.data;
   }
+
+  async disableMerchant(id: string) {
+    const url = new URL(this.mainUrl + `partner/companies/${id}/ban`);
+    const result = await this.fetcher(url.toString(), {
+      method: 'GET',
+      headers: this.defaultHeaders,
+    });
+    return await result.json();
+  }
 }
 
 export default new Api(apiUrl);
