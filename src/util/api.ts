@@ -84,6 +84,24 @@ class Api {
     return data.data;
   }
 
+  async getPaginatedApiKeys(page: number, limit?: number, customFilter?: any) {
+    const queryString = stringify({
+      limit,
+      page,
+      ...customFilter,
+    });
+    console.log(queryString);
+    const url = new URL(
+      `${this.mainUrl}partner/access-keys/list?${queryString}`
+    );
+    const result = await this.fetcher(url.toString(), {
+      method: 'POST',
+      headers: this.defaultHeaders,
+    });
+    const data = await result.json();
+    return data.data;
+  }
+
   async createApiKey(name: { name: string }) {
     console.log('keyApiData', name);
     const url = new URL(this.mainUrl + 'partner/access-keys/create');
