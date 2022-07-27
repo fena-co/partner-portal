@@ -113,6 +113,26 @@ class Api {
     return await result.json();
   }
 
+  async updateApiKey(data: any, id: string) {
+    console.log('api upd:', data, id);
+    const url = new URL(`${this.mainUrl}partner/access-keys/${id}/edit`);
+    const result = await this.fetcher(url.toString(), {
+      method: 'POST',
+      headers: this.defaultHeaders,
+      body: JSON.stringify(data),
+    });
+    return await result.json();
+  }
+
+  async disableApiKey(id: string) {
+    const url = new URL(this.mainUrl + `partner/access-keys/${id}/disable`);
+    const result = await this.fetcher(url.toString(), {
+      method: 'POST',
+      headers: this.defaultHeaders,
+    });
+    return await result.json();
+  }
+
   async createMerchant(
     merchantData: Partial<Company> & {
       address: Partial<Address>;

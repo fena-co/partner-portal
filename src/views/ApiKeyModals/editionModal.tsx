@@ -11,32 +11,21 @@ import {
   ModalWrapperContent,
   WrapperModalButton,
 } from './modalStyles';
-import ReactTooltip from 'react-tooltip';
 
 const StyledTextFormField = styled(TextFormField)`
   padding-top: 0;
 `;
 
-const Label = styled(Typography)`
-  margin-bottom: 5px;
-`;
-
-const StyledButtonCreation = styled(ButtonCreation)`
-  margin-left: 10px;
-`;
 interface CreationModalProps {
   handleClose: () => void;
 
   control: Control;
-  data: any;
 }
 
 const EditionModal: React.FunctionComponent<CreationModalProps> = ({
   handleClose,
   control,
-  data,
 }) => {
-  console.log('edition', data);
   return (
     <ModalWrapperContent>
       <ModalHeader>
@@ -46,10 +35,10 @@ const EditionModal: React.FunctionComponent<CreationModalProps> = ({
         </CloseCircledButton>
       </ModalHeader>
       <ModalBody>
-        <StyledTextFormField name="newApiKey" control={control} label="Name" />
+        <StyledTextFormField name="newKeyName" control={control} label="Name" />
       </ModalBody>
       <WrapperModalButton>
-        <ButtonCreation form="api-create" type="submit" variant="contained">
+        <ButtonCreation form="api-edit" type="submit" variant="contained">
           Save
         </ButtonCreation>
       </WrapperModalButton>
