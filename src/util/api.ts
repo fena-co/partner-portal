@@ -188,7 +188,19 @@ class Api {
     });
     console.log(queryString);
     const url = new URL(
-      `${this.mainUrl}/partner/transactions/list?${queryString}`
+      `${this.mainUrl}partner/transactions/list?${queryString}`
+    );
+    const result = await this.fetcher(url.toString(), {
+      method: 'GET',
+      headers: this.defaultHeaders,
+    });
+    const data = await result.json();
+    return data.data;
+  }
+
+  async getSingleTransaction(id: string) {
+    const url = new URL(
+      `${this.mainUrl}partner/transactions/${id}`
     );
     const result = await this.fetcher(url.toString(), {
       method: 'GET',
