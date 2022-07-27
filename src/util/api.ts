@@ -4,8 +4,8 @@ import router from 'next/router';
 import { stringify } from 'querystring';
 import { ProviderApiType, UserApiType } from '../types/api';
 
-//const apiUrl = process.env.NEXT_PUBLIC_API_URL as string;
-const apiUrl = 'http://localhost:8084/';
+const apiUrl = process.env.NEXT_PUBLIC_API_URL as string;
+//const apiUrl = 'http://localhost:8084/';
 // const providerApiUrl = 'http://localhost:8080/';
 console.log({ apiUrl });
 
