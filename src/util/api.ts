@@ -188,7 +188,19 @@ class Api {
     });
     console.log(queryString);
     const url = new URL(
-      `${this.mainUrl}/partner/transactions/list?${queryString}`
+      `${this.mainUrl}partner/transactions/list?${queryString}`
+    );
+    const result = await this.fetcher(url.toString(), {
+      method: 'GET',
+      headers: this.defaultHeaders,
+    });
+    const data = await result.json();
+    return data.data;
+  }
+
+  async getSingleTransaction(id: string) {
+    const url = new URL(
+      `${this.mainUrl}partner/transactions/${id}`
     );
     const result = await this.fetcher(url.toString(), {
       method: 'GET',
@@ -247,7 +259,7 @@ class Api {
       headers: this.defaultHeaders,
     });
     return await result.json();
-  } 
+  }
 
   async getMerchantsTransactionsStats(date?:string ,merchantId?:string) {
 
@@ -257,7 +269,7 @@ class Api {
       headers: this.defaultHeaders,
     });
     return await result.json();
-  } 
+  }
 
   async getAllMerchantsTransactions() {
 
@@ -267,7 +279,7 @@ class Api {
       headers: this.defaultHeaders,
     });
     return await result.json();
-  } 
+  }
 
   async getPaginatedTransactionsBySingleMerchant(
     merchantId :string, //companyId
@@ -300,7 +312,7 @@ class Api {
       headers: this.defaultHeaders,
     });
     return await result.json();
-  } 
+  }
 }
 
 export default new Api(apiUrl);
