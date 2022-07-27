@@ -199,9 +199,7 @@ class Api {
   }
 
   async getSingleTransaction(id: string) {
-    const url = new URL(
-      `${this.mainUrl}partner/transactions/${id}`
-    );
+    const url = new URL(`${this.mainUrl}partner/transactions/${id}`);
     const result = await this.fetcher(url.toString(), {
       method: 'GET',
       headers: this.defaultHeaders,

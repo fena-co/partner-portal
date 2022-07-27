@@ -121,10 +121,7 @@ const ApiKeysPage: NextPage = () => {
   };
 
   const onApiKeyEdit = async (data: any) => {
-    const updateResponse = await Api.updateApiKey(
-      { name: data.newKeyName },
-      apiKeyId
-    );
+    const updateResponse = await Api.updateApiKey(data.newKeyName, apiKeyId);
     console.log('update', updateResponse);
     setIsEditApiKeyModalOpen(false);
     getApiKeys();
