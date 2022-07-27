@@ -26,7 +26,6 @@ const DropDownContainer = styled.div`
   position: relative;
 `;
 
-
 interface WrapperTextField {
   variant?: 'error' | 'success' | 'active' | 'default';
   disabled?: boolean;
@@ -216,7 +215,8 @@ const PhoneInput: FC<ISelectDropdown> = (props) => {
   };
 
   const handlePhoneChange = (event: ChangeEvent<HTMLInputElement>) => {
-    props.onChange?.({ code: codeValue, number: event.target.value });
+    const code = COUNTRY_CODES.find((c) => c.country === codeValue)?.code;
+    props.onChange?.({ code: code, number: event.target.value });
   };
 
   useEffect(() => {

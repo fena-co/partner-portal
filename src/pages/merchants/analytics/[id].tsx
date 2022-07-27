@@ -30,10 +30,10 @@ import { LoadingBlock } from '../../../components/LoadingBlock';
 import moment from 'moment';
 import ContextMenu from '../../../components/ContextMenu';
 import Paginator from '../../../components/Paginator';
-import { TransactionStatus } from '../../../types/api';
 import SearchIcon from '../../../components/Icon/SearchIcon';
 import { useState } from 'react';
 import Preview from '../../transactions/Preview';
+import { TransactionStatus } from '@fena/types';
 
 const PageHeader = styled.div`
   display: flex;

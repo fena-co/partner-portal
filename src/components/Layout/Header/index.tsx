@@ -1,3 +1,4 @@
+import { Auth } from 'aws-amplify';
 import Bell from 'image/icon/bell.svg';
 import Cog from 'image/icon/cog.svg';
 import Person from 'image/icon/person.svg';
@@ -5,10 +6,14 @@ import ApiKeyIcon from 'image/icon/settings/api-key.svg';
 import BusinessIcon from 'image/icon/settings/business.svg';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { ROUTES } from '../../../constant/route';
+import { getUserSelector } from '../../../store/selectors/user';
 import Logo from '../../Logo';
 import Typography from '../../Typography';
+import { resetData as resetCompanyData } from '../../../store/company';
+import { resetData as resetUserData } from '../../../store/user';
 
 const HeaderContainer = styled.header`
   padding: 23px 46px;
@@ -210,7 +215,8 @@ const settingsItems = [
 
 const Header = ({ variant }: { variant: 'home' | 'dashboard' }) => {
   const router = useRouter();
-
+  const user = useSelector(getUserSelector);
+  const dispatch = useDispatch();
   const [settingOpen, setSettingOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
 
@@ -234,11 +240,11 @@ const Header = ({ variant }: { variant: 'home' | 'dashboard' }) => {
   //   router.push(pathName);
   // };
 
-  const handleLogOut = async () => {
-    // await Auth.signOut();
-    // dispatch(resetUserData());
-    // dispatch(resetCompanyData());
-    // router.push('/login');
+  const handlerLogOut = async () => {
+    await Auth.signOut();
+    dispatch(resetUserData());
+    dispatch(resetCompanyData());
+    router.push('/login');
   };
 
   return (
@@ -246,8 +252,7 @@ const Header = ({ variant }: { variant: 'home' | 'dashboard' }) => {
       <LogoContainer>
         <Logo />
       </LogoContainer>
-      <MenuList moveRight={variant === 'home'}>
-      </MenuList>
+      <MenuList moveRight={variant === 'home'}></MenuList>
       {variant === 'dashboard' && (
         <HeaderButtonContainer>
           <HeaderButton>
@@ -307,9 +312,13 @@ const Header = ({ variant }: { variant: 'home' | 'dashboard' }) => {
                   <ProfileMenuContainer>
                     <ProfileMenuHeader>
                       <ProfileHolder variant="body5">
-                        Malgorzata Furmanik
+                        {user.firstName}
+                        {` `}
+                        {user.lastName}
                       </ProfileHolder>
-                      <Typography variant="grayBody">Administrator</Typography>
+                      <Typography variant="grayBody">
+                        {user.role === 'admin' ? 'Administrator' : user.role}
+                      </Typography>
                     </ProfileMenuHeader>
                     <ProfileMenuContent>
                       <ProfileMenuItemWrapper>
@@ -325,7 +334,10 @@ const Header = ({ variant }: { variant: 'home' | 'dashboard' }) => {
                       </ProfileMenuItemWrapper>
 
                       <ProfileMenuItemWrapper>
-                        <ProfileMenuItem variant="body4">
+                        <ProfileMenuItem
+                          variant="body4"
+                          onClick={handlerLogOut}
+                        >
                           Sign out
                         </ProfileMenuItem>
                       </ProfileMenuItemWrapper>

@@ -1,9 +1,11 @@
+import { get } from 'lodash';
 import moment from 'moment';
 import { NextPage } from 'next';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import styled from 'styled-components';
 import ContextMenu from '../../components/ContextMenu';
-import Filter from '../../components/Filter';
+import Hypertext from '../../components/Hypertext';
 import SearchIcon from '../../components/Icon/SearchIcon';
 import Layout from '../../components/Layout';
 import LinkMenu from '../../components/LinkMenu';
@@ -31,7 +33,21 @@ import {
 import Typography from '../../components/Typography';
 import { ROUTES } from '../../constant/route';
 import { MerchantStatus } from '../../types/api';
+import Api from '../../util/api';
 import Details from './details';
+
+const StyledTableBodyCell = styled(TableBodyCell)`
+  line-height: 25px;
+  height: 45px;
+`;
+
+const ContactCell = styled(StyledTableBodyCell)`
+  line-height: 25px;
+`;
+
+const ContactItem = styled.div``;
+
+const Link = styled.a``;
 
 const menus = [
   {
@@ -40,7 +56,7 @@ const menus = [
   },
   {
     name: 'Pending merchants',
-    value: MerchantStatus.ACTIVE,
+    value: MerchantStatus.PENDING,
   },
   {
     name: 'Inactive merchants',
@@ -48,7 +64,7 @@ const menus = [
   },
   {
     name: 'Disabled merchants',
-    value: MerchantStatus.DISABLED,
+    value: MerchantStatus.BANNED,
   },
 ];
 
@@ -57,40 +73,7 @@ const Merchants: NextPage = () => {
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [merchants, setMerchants] = useState<any>([
-    {
-      name: 'Allies Computing Ltd',
-      contact: 'Frank Gallagher',
-      phoneNumber: '+44 897 66 55',
-      website: 'alliescomputing.com',
-      status: 'pending',
-      _id: '1234567'
-    },
-    {
-      name: 'Allies Computing Ltd',
-      contact: 'Frank Gallagher',
-      phoneNumber: '+44 897 66 55',
-      website: 'alliescomputing.com',
-      status: 'active',
-      _id: '1234567'
-    },
-    {
-      name: 'Allies Computing Ltd',
-      contact: 'Frank Gallagher',
-      phoneNumber: '+44 897 66 55',
-      website: 'alliescomputing.com',
-      status: 'inactive',
-      _id: '1234567'
-    },
-    {
-      name: 'Allies Computing Ltd',
-      contact: 'Frank Gallagher',
-      phoneNumber: '+44 897 66 55',
-      website: 'alliescomputing.com',
-      status: 'disabled',
-      _id: '1234567'
-    },
-  ]);
+  const [merchants, setMerchants] = useState<any>([]);
   const [limit, setLimit] = useState(25);
   const [total, setTotal] = useState(0);
   const [selectedMerchantId, setSelectedMerchantId] = useState<
@@ -100,10 +83,64 @@ const Merchants: NextPage = () => {
     undefined
   );
 
+  const [filterConfig, setFilterConfig] = useState({});
+  const [searchConfig, setSearchConfig] = useState({});
+
+  const [isSortAscending, setSortAscending] = useState(false);
+  const sortDirection = isSortAscending ? 'DESC' : 'ASC';
+  const [sortConfig, setSortConfig] = useState({
+    sort: 'completedAt',
+    sortDirection: 'DESC',
+  });
+
+  const [toggleSortArrow, setToggleSortArrow] = useState({
+    completed: false,
+    amount: false,
+    created: false,
+  });
+
+  const getMerchants = async () => {
+    try {
+      setLoading(true);
+      const merchantsResult = await Api.getPaginatedMerchants(
+        currentPage,
+        limit,
+        statusFilter,
+        {
+          searchKeyword: get(searchConfig, 'searchKeyword'),
+          // sort: get(sortConfig, 'sort'),
+          // sortDirection: get(sortConfig, 'sortDirection'),
+        }
+      );
+      console.log(merchantsResult);
+      setMerchants(merchantsResult.docs);
+      setTotal(merchantsResult.totalDocs);
+      setLoading(false);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  useEffect(() => {
+    getMerchants();
+  }, [currentPage, statusFilter, limit, searchConfig, sortConfig]);
+
   const setFilterRule = (status: MerchantStatus | undefined) => {
     console.log(status);
     setStatusFilter(status);
     setCurrentPage(1);
+  };
+
+  const handleSearchChange = (filterValues: any) => {
+    setSearchConfig(filterValues);
+    setCurrentPage(1);
+  };
+
+  const handlerDisable = (id: string) => {
+    console.log('disabled:', id);
+    const res = Api.disableMerchant(id);
+    getMerchants();
+    console.log(res);
   };
 
   const renderEmpty = () => {
@@ -135,6 +172,54 @@ const Merchants: NextPage = () => {
     );
   };
 
+  const getMerchantsActions = (item: any) => {
+    switch (item.status) {
+      case MerchantStatus.BANNED:
+        return [
+          {
+            label: 'Details',
+            onClick: () => {
+              setSelectedMerchantId(item._id);
+              setIsPreviewOpen(true);
+            },
+          },
+          {
+            label: 'Analytics',
+            onClick: () => {
+              setSelectedMerchantId(item._id);
+              router.push('/merchants/analytics/id');
+            },
+          },
+        ];
+      case MerchantStatus.ACTIVE:
+      case MerchantStatus.PENDING:
+      case MerchantStatus.INACTIVE:
+        return [
+          {
+            label: 'Details',
+            onClick: () => {
+              setSelectedMerchantId(item._id);
+              setIsPreviewOpen(true);
+            },
+          },
+          {
+            label: 'Analytics',
+            onClick: () => {
+              setSelectedMerchantId(item._id);
+              router.push('/merchants/analytics/id');
+            },
+          },
+          {
+            color: '#EF6355',
+            label: 'Disable',
+            onClick: () => {
+              handlerDisable(item._id);
+            },
+          },
+        ];
+    }
+  };
+
   return (
     <Layout
       menuItems={[
@@ -153,17 +238,20 @@ const Merchants: NextPage = () => {
       ]}
     >
       {isPreviewOpen ? (
-        <Details handleClose={() => setIsPreviewOpen(false)} />
+        <Details
+          itemId={selectedMerchantId!}
+          handleClose={() => setIsPreviewOpen(false)}
+        />
       ) : (
         <>
           <Container>
             <HeaderWrapper>
               <HeaderLeft>
                 <Typography variant="subtitle4">Merchants</Typography>
-                <SearchBox />
+                <SearchBox onChangeHandler={handleSearchChange} />
               </HeaderLeft>
               <HeaderButtons>
-                <Filter />
+                {/* <Filter /> */}
                 <ButtonCreation
                   variant="contained"
                   onClick={() => {
@@ -202,48 +290,39 @@ const Merchants: NextPage = () => {
                             setIsPreviewOpen(true);
                           }}
                         >
-                          <TableBodyCell>{item.name}</TableBodyCell>
-                          <AmmountCell>{item.contact}</AmmountCell>
-                          <TableBodyCell>{item.phoneNumber}</TableBodyCell>
-                          <TableBodyCell>{item.website}</TableBodyCell>
-                          <TableBodyCell>
+                          <StyledTableBodyCell>
+                            {item.tradingName}
+                          </StyledTableBodyCell>
+                          <ContactCell>
+                            <ContactItem>{item.name}</ContactItem>
+                            <ContactItem> {item.publicEmail} </ContactItem>
+                          </ContactCell>
+                          <StyledTableBodyCell>
+                            {item.supportPhone}
+                          </StyledTableBodyCell>
+                          <StyledTableBodyCell
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <Hypertext href={item.publicWebsite} target="blank">
+                              {item.publicWebsite}
+                            </Hypertext>
+                          </StyledTableBodyCell>
+                          <StyledTableBodyCell>
                             <StatusWrapper status={item.status}>
-                              {item.status}
+                              {item.status === 'pending_verification'
+                                ? 'pending'
+                                : item.status}
                             </StatusWrapper>
-                          </TableBodyCell>
-                          <TableBodyCell>
+                          </StyledTableBodyCell>
+                          <StyledTableBodyCell>
                             {item.lastActivity
                               ? moment(item.lastActivity).format('MM/DD/YYYY')
                               : 'None'}
-                          </TableBodyCell>
-                          <TableBodyCell>{item._id}</TableBodyCell>
-                          <TableBodyCell>
-                            <ContextMenu
-                              actions={[
-                                {
-                                  label: 'Details',
-                                  onClick: () => {
-                                    setSelectedMerchantId(item._id);
-                                    setIsPreviewOpen(true);
-                                  },
-                                },
-                                {
-                                  label: 'Analytics',
-                                  onClick: () => {
-                                    setSelectedMerchantId(item._id);
-                                    router.push('/merchants/analytics/id');
-                                  },
-                                },
-                                {
-                                  color: '#EF6355',
-                                  label: 'Delete',
-                                  onClick: () => {
-                                    console.log('delete');
-                                  },
-                                },
-                              ]}
-                            />
-                          </TableBodyCell>
+                          </StyledTableBodyCell>
+                          <StyledTableBodyCell>{item._id}</StyledTableBodyCell>
+                          <StyledTableBodyCell>
+                            <ContextMenu actions={getMerchantsActions(item)} />
+                          </StyledTableBodyCell>
                         </TableBodyRow>
                       ))}
                     </tbody>
@@ -268,5 +347,13 @@ const Merchants: NextPage = () => {
     </Layout>
   );
 };
+
+export async function getStaticProps(context: any) {
+  return {
+    props: {
+      protected: true,
+    },
+  };
+}
 
 export default Merchants;

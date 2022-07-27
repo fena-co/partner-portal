@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import ContextMenu from '../ContextMenu';
-// import Api from '../../util/api';
+import Api from '../../util/api';
 import Typography from '../Typography';
 import EditIcon from 'image/icon/edit-pen.svg';
 import ButtonText from '../ButtonText';
@@ -15,6 +14,7 @@ interface BankAccountCardProps {
     sortCode: string;
     status: string;
     accId: string;
+    companyId: string;
   };
   getBankAccounts: () => void;
 }
@@ -170,11 +170,12 @@ function BankAccountCard({ account, getBankAccounts }: BankAccountCardProps) {
 
   const onBankAccountSave = async () => {
     setEditMode(false);
-    // const response = await Api.updateAccount(
-    //   { accountName: name },
-    //   account.accId
-    // );
-    // console.log(response);
+    const response = await Api.updateAccount(
+      { name: accName },
+      account.companyId,
+      account.accId
+    );
+    console.log(response);
     getBankAccounts();
   };
   return (

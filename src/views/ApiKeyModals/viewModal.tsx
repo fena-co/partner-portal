@@ -8,7 +8,7 @@ import {
   ModalHeader,
   ModalWrapperContent,
   WrapperModalButton,
-} from './modalStyled';
+} from './modalStyles';
 import { ButtonCreation } from '../../components/StyledComponents';
 
 const StyledTypography = styled(Typography)`

@@ -5,7 +5,7 @@ import DropdownFormField from '../../components/DropdownFormField';
 import PhoneFormField from '../../components/PhoneFormField';
 import TextFormField from '../../components/TextFormField';
 import { industries } from '../../constant/industries';
-import SearchIcon from 'image/icon/search-blue.svg';
+import Typography from '../../components/Typography';
 
 const StyledDropdownFormField = styled(DropdownFormField)`
   padding-top: 20px;
@@ -13,6 +13,10 @@ const StyledDropdownFormField = styled(DropdownFormField)`
 
 const StyledPhoneFormField = styled(PhoneFormField)`
   padding-top: 20px;
+`;
+
+const SectionLabel = styled(Typography)`
+  margin-top: 20px;
 `;
 
 interface AddNewMerchantSoleTraderFormProps {
@@ -47,19 +51,6 @@ const AddNewMerchantSoleTraderForm: React.FunctionComponent<
             : 'Unique Taxpayer Reference (UTR)'
         }
       />
-      <TextFormField
-        name="soleTrader.tradingName"
-        control={control}
-        required
-        label="Trading name"
-      />
-      <TextFormField
-        name="soleTrader.tradingAddress"
-        control={control}
-        leftIcon={SearchIcon}
-        required
-        label="Trading address"
-      />
       <StyledDropdownFormField
         name="soleTrader.industry"
         control={control}
@@ -73,12 +64,52 @@ const AddNewMerchantSoleTraderForm: React.FunctionComponent<
         required
         label="Contact name"
       />
-      <TextFormField name="soleTrader.email" control={control} required label="Email" />
+      <TextFormField
+        name="soleTrader.email"
+        control={control}
+        required
+        label="Contact email"
+      />
       <StyledPhoneFormField
         required
         name="soleTrader.phoneNumber"
         control={control}
-        label="Phone number"
+        label="Contact phone number"
+      />
+      <TextFormField
+        name="soleTrader.publicWebsite"
+        control={control}
+        label="Business website"
+      />
+      <TextFormField
+        name="soleTrader.tradingName"
+        control={control}
+        required
+        label="Trading name"
+      />
+      <SectionLabel variant="subtitle5">Address</SectionLabel>
+      <TextFormField
+        name="soleTrader.address.addressLine1"
+        control={control}
+        required
+        label="Address line 1"
+      />
+      <TextFormField
+        name="soleTrader.address.addressLine2"
+        control={control}
+        label="Address line 2"
+      />
+      <TextFormField
+        name="soleTrader.address.city"
+        control={control}
+        required
+        label="City"
+      />
+      <TextFormField
+        name="soleTrader.address.zipCode"
+        control={control}
+        required
+        label="Postcode"
       />
     </>
   );

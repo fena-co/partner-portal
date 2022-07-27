@@ -1,7 +1,7 @@
 import GreenArrowUp from 'image/icon/greenArrowUp.svg';
 import RedArrowDown from 'image/icon/redArrowDown.svg';
 import { NextPage } from 'next';
-import { ChangeEvent } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import FeeCard from '../../components/FeeCard';
 import Layout from '../../components/Layout';
@@ -14,6 +14,7 @@ import Typography from '../../components/Typography';
 import { ROUTES } from '../../constant/route';
 import SearchBox from '../../components/SearchBox';
 import CustomHeader from '../../components/ViewportHeader';
+import Api from '../../util/api';
 
 const PageHeader = styled.div`
   display: flex;
@@ -105,7 +106,6 @@ const FifthViewport = styled(FirstViewport)`
   background-color: #f4f7f9;
   border-radius: 10px;
 `;
-
 
 const Dashboard: NextPage = () => {
   const overviewCards = [
@@ -224,6 +224,21 @@ const Dashboard: NextPage = () => {
     },
   ];
 
+  const [dashboard, setDashboard] = useState([]);
+
+  const getDashboardData = async () => {
+    try {
+      const apiRes = await Api.getDashboardStats();
+      console.log('apiRes', apiRes);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  useEffect(() => {
+    getDashboardData();
+  }, []);
+
   const onItemChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
     console.log(e.target.value);
   };
@@ -247,7 +262,7 @@ const Dashboard: NextPage = () => {
     >
       <PageHeader>
         <H3 variant="h3">Dashboard</H3>
-        <SearchBox />
+        <SearchBox onChangeHandler={() => {}} />
       </PageHeader>
       <FirstViewport>
         <CustomHeader
@@ -274,8 +289,11 @@ const Dashboard: NextPage = () => {
       </FirstViewport>
 
       <SecondViewport>
-        <CustomHeader title='Transactions by size' description=' Please filter by merchant(s) and timeframe'/>
-        <SearchBox />
+        <CustomHeader
+          title="Transactions by size"
+          description=" Please filter by merchant(s) and timeframe"
+        />
+        <SearchBox onChangeHandler={() => {}} />
         <TableWrapper>
           <TransactionsTable />
         </TableWrapper>
@@ -368,11 +386,11 @@ const Dashboard: NextPage = () => {
       </FourthViewport>
 
       <FifthViewport>
-      <CustomHeader title='Fees' description='Fees charged by fena' />
-          <Body1 variant="body1">
-              £0.22 per transaction (average of between 1001 and 5000
-              transactions per month)
-            </Body1>
+        <CustomHeader title="Fees" description="Fees charged by fena" />
+        <Body1 variant="body1">
+          £0.22 per transaction (average of between 1001 and 5000 transactions
+          per month)
+        </Body1>
         <FeeCards>
           {feeCards.map((el) => {
             return (
@@ -393,5 +411,13 @@ const Dashboard: NextPage = () => {
     </Layout>
   );
 };
+
+export async function getStaticProps(context: any) {
+  return {
+    props: {
+      protected: true,
+    },
+  };
+}
 
 export default Dashboard;

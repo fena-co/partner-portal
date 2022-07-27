@@ -1,11 +1,11 @@
 import styled, { css } from 'styled-components';
 import ArrowLeftIcon from 'image/icon/arrow-back.svg';
 import Typography from '../../components/Typography';
-import { useState } from 'react';
-import { Transaction } from '../../types/api';
+import { useEffect, useState } from 'react';
 import BankAccountCard from '../../components/BankAccountCard';
-import CopyInput from '../../components/CopyInput';
 import ShareVerificationLink from '../../components/ShareVerificationLink';
+import Api from '../../util/api';
+import { CompanyTypes } from '@fena/types';
 
 const BackButton = styled.div`
   display: flex;
@@ -88,14 +88,11 @@ const Status = styled.div<{ status: string }>`
   border-radius: 5px;
   padding: 5px 15px;
   background-color: ${(props) =>
-    props.status === 'verified' ? '#E4F9F2' : '#fce4e2'};
-  color: ${(props) => (props.status === 'verified' ? '#2CD19E' : '#EF6355')};
+    props.status === 'active' ? '#E4F9F2' : '#fce4e2'};
+  color: ${(props) => (props.status === 'active' ? '#2CD19E' : '#EF6355')};
 `;
 
-const TableWrapper = styled.div`
-  display: flex;
-  flex-basis: 35%;
-`;
+const TableWrapper = styled.div``;
 
 const Table = styled.table`
   margin-right: 50px;
@@ -103,27 +100,23 @@ const Table = styled.table`
 
 const ChecksCell = styled.td`
   padding-right: 50px;
+  padding-top: 10px;
 `;
 
 const Checks = styled(Typography)``;
 
-const StatusCell = styled.td``;
+const StatusCell = styled.td`
+  padding-top: 10px;
+`;
 
 const Th = styled.th`
   text-align: start;
 `;
 
-const ShareSection = styled.div`
-  display: flex;
-  flex-direction: column;
-  flex-basis: 40%;
-`;
-
-const CopyInputWrapper = styled.div`
-  margin-top: 15px;
-`;
+const Tbody = styled.tbody``;
 
 interface DetailsProps {
+  itemId: string;
   handleClose: () => void;
 }
 
@@ -152,84 +145,27 @@ const company = {
   },
 };
 
-const accounts = [
-  {
-    attachmentUrl:
-      'https://s3.eu-west-2.amazonaws.com/fena-stage/2022-06-07T09%3A19%3A05.348Zimage%20%283%29.png',
-    createdAt: '2022-06-07T09:19:05.161Z',
-    deletedAt: null,
-    externalAccountId: '13827551',
-    identification: '070246',
-    identificationType: 'SORT_CODE_ACCOUNT_NUMBER',
-    name: 'Nationwide',
-    owner: '62863cb44b34d4e4ebe23483',
-    ownerType: 'Company',
-    provider: {
-      countryId: 'GB',
-      deletedAt: null,
-      enabled: true,
-      externalId: 'ob-nationwide',
-      logo: 'https://fena-assets.s3.eu-west-2.amazonaws.com/banks/nationwide.png',
-      name: 'Nationwide',
-      __v: 0,
-      _id: '62339d64ce1712d21eb055ef',
-    },
-    status: 'verified',
-    __v: 0,
-    _id: '629f1809de0f2c70d177d3d6',
-  },
-  {
-    attachmentUrl:
-      'https://s3.eu-west-2.amazonaws.com/fena-stage/2022-06-07T09%3A19%3A05.348Zimage%20%283%29.png',
-    createdAt: '2022-06-07T09:19:05.161Z',
-    deletedAt: null,
-    externalAccountId: '13827551',
-    identification: '070246',
-    identificationType: 'SORT_CODE_ACCOUNT_NUMBER',
-    name: 'Nationwide',
-    owner: '62863cb44b34d4e4ebe23483',
-    ownerType: 'Company',
-    _id: '62339d64ce1712d21eb055ef',
-    status: 'verified',
-    provider: {
-      countryId: 'GB',
-      deletedAt: null,
-      enabled: true,
-      externalId: 'ob-nationwide',
-      logo: 'https://fena-assets.s3.eu-west-2.amazonaws.com/banks/nationwide.png',
-      name: 'Nationwide',
-      __v: 0,
-      _id: '62339d64ce1712d21eb055ef',
-    },
-  },
-  {
-    attachmentUrl:
-      'https://s3.eu-west-2.amazonaws.com/fena-stage/2022-06-07T09%3A19%3A05.348Zimage%20%283%29.png',
-    createdAt: '2022-06-07T09:19:05.161Z',
-    deletedAt: null,
-    externalAccountId: '13827551',
-    identification: '070246',
-    identificationType: 'SORT_CODE_ACCOUNT_NUMBER',
-    name: 'Nationwide',
-    owner: '62863cb44b34d4e4ebe23483',
-    ownerType: 'Company',
-    _id: '62339d64ce1712d21eb055ef',
-    status: 'verified',
-    provider: {
-      countryId: 'GB',
-      deletedAt: null,
-      enabled: true,
-      externalId: 'ob-nationwide',
-      logo: 'https://fena-assets.s3.eu-west-2.amazonaws.com/banks/nationwide.png',
-      name: 'Nationwide',
-      __v: 0,
-      _id: '62339d64ce1712d21eb055ef',
-    },
-  },
-];
 
-const Details: React.FunctionComponent<DetailsProps> = ({ handleClose }) => {
+
+const Details: React.FunctionComponent<DetailsProps> = ({
+  handleClose,
+  itemId,
+}) => {
   const [activePage, setActivePage] = useState<string>('company');
+  const [data, setData] = useState<any>(null);
+
+  console.log('details', data);
+
+  const getData = async () => {
+    // setLoading(true);
+    const result = await Api.getMerchant(itemId);
+    setData(result);
+    // setLoading(false);
+  };
+
+  useEffect(() => {
+    getData();
+  }, []);
   return (
     <>
       <BackButton onClick={() => handleClose()}>
@@ -267,40 +203,64 @@ const Details: React.FunctionComponent<DetailsProps> = ({ handleClose }) => {
         </ContentHeader>
         {activePage === 'company' && (
           <DetailsWrapper>
-            <DetailsContainer>
-              <Title variant="body5">Company number</Title>
-              <Typography variant="lightBody">{company.identifier}</Typography>
-              <Typography variant="lightBody">{company.type}</Typography>
-            </DetailsContainer>
-            <DetailsContainer>
-              <Title variant="body5">Registered name</Title>
-              <Typography variant="lightBody">
-                {company.registeredName}
-              </Typography>
-            </DetailsContainer>
-            <DetailsContainer>
-              <Title variant="body5">Registered address</Title>
-              <Typography variant="lightBody">
-                {company.address.addressLine1}
-              </Typography>
-              <Typography variant="lightBody">
-                {company.address.addressLine2}
-              </Typography>
-              <Typography variant="lightBody">
-                {company.address.city}
-              </Typography>
-              <Typography variant="lightBody">
-                {company.address.zipCode}
-              </Typography>
-            </DetailsContainer>
+            {data?.type === CompanyTypes.COMPANY && (
+              <>
+                <DetailsContainer>
+                  <Title variant="body5">Company number</Title>
+                  <Typography variant="lightBody">{data?._id}</Typography>
+                  <Typography variant="lightBody">company</Typography>
+                </DetailsContainer>
+                <DetailsContainer>
+                  <Title variant="body5">Registered name</Title>
+                  <Typography variant="lightBody">
+                    {company.registeredName}
+                  </Typography>
+                </DetailsContainer>
+                <DetailsContainer>
+                  <Title variant="body5">Registered address</Title>
+                  <Typography variant="lightBody">
+                    {data?.address?.addressLine1}
+                  </Typography>
+                  <Typography variant="lightBody">
+                    {data?.address?.addressLine2}
+                  </Typography>
+                  <Typography variant="lightBody">
+                    {data?.address?.city}
+                  </Typography>
+                  <Typography variant="lightBody">
+                    {data?.address?.zipCode}
+                  </Typography>
+                </DetailsContainer>
+              </>
+            )}
+
             <DetailsContainer>
               <Title variant="body5">Trading name</Title>
-              <Typography variant="lightBody">{company.tradingName}</Typography>
+              <Typography variant="lightBody">{data?.tradingName}</Typography>
             </DetailsContainer>
             <DetailsContainer>
               <Title variant="body5">Trading address</Title>
               <Typography variant="lightBody">
-                {company.tradingAddress.addressLine1}
+                <Typography variant="lightBody">
+                  {data?.type === CompanyTypes.SOLE_TRADER
+                    ? data?.address?.addressLine1
+                    : data?.tradingAddress?.addressLine1}
+                </Typography>
+                <Typography variant="lightBody">
+                  {data?.type === CompanyTypes.SOLE_TRADER
+                    ? data?.address?.addressLine2
+                    : data?.tradingAddress?.addressLine2}
+                </Typography>
+                <Typography variant="lightBody">
+                  {data?.type === CompanyTypes.SOLE_TRADER
+                    ? data?.address?.city
+                    : data?.tradingAddress?.city}
+                </Typography>
+                <Typography variant="lightBody">
+                  {data?.type === CompanyTypes.SOLE_TRADER
+                    ? data?.address?.zipCode
+                    : data?.tradingAddress?.zipCode}
+                </Typography>
               </Typography>
             </DetailsContainer>
           </DetailsWrapper>
@@ -310,30 +270,28 @@ const Details: React.FunctionComponent<DetailsProps> = ({ handleClose }) => {
           <DetailsWrapper>
             <DetailsContainer>
               <Title variant="body5">Primary contact details</Title>
-              <Typography variant="lightBody">
-                {user.firstName}
-                {` `}
-                {user.lastName}
-              </Typography>
-              <Typography variant="lightBody">{user.email}</Typography>
-              <Typography variant="lightBody">{user.phoneNumber}</Typography>
+              <Typography variant="lightBody">{data.name}</Typography>
+              <Typography variant="lightBody">{data.publicEmail}</Typography>
+              <Typography variant="lightBody">{data.supportPhone}</Typography>
             </DetailsContainer>
-            <DetailsContainer>
-              <Title variant="body5">Secondary contact details</Title>
-              <Typography variant="lightBody">
-                {user.firstName}
-                {` `}
-                {user.lastName}
-              </Typography>
-              <Typography variant="lightBody">{user.supportEmail}</Typography>
-              <Typography variant="lightBody">{user.supportPhone}</Typography>
-            </DetailsContainer>
+            {data?.type === CompanyTypes.COMPANY && (
+              <DetailsContainer>
+                <Title variant="body5">Director details</Title>
+                <Typography variant="lightBody">
+                  {user.firstName}
+                  {` `}
+                  {user.lastName}
+                </Typography>
+                <Typography variant="lightBody">{user.supportEmail}</Typography>
+                <Typography variant="lightBody">{user.supportPhone}</Typography>
+              </DetailsContainer>
+            )}
           </DetailsWrapper>
         )}
 
         {activePage === 'bankAccounts' && (
           <BankAccountCardWrapper>
-            {accounts.map((acc) => {
+            {data.bankAccounts.map((acc: any) => {
               return (
                 <BankAccountCard
                   key={acc._id}
@@ -345,8 +303,11 @@ const Details: React.FunctionComponent<DetailsProps> = ({ handleClose }) => {
                     title: acc.provider.name,
                     status: acc.status,
                     accId: acc._id,
+                    companyId: data._id,
                   }}
-                  getBankAccounts={() => {}}
+                  getBankAccounts={() => {
+                    getData();
+                  }}
                 />
               );
             })}
@@ -367,28 +328,22 @@ const Details: React.FunctionComponent<DetailsProps> = ({ handleClose }) => {
                     </tr>
                   </thead>
 
-                  <tbody>
+                  <Tbody>
                     <tr>
                       <ChecksCell>
-                        <Checks variant="body5">AML checks</Checks>
+                        <Checks variant="body5">ID and AML checks</Checks>
                       </ChecksCell>
                       <StatusCell>
                         <StatusWrapper>
-                          <Status status="verified">Verified</Status>
+                          <Status status={data.status}>
+                            {data.status === 'active'
+                              ? 'Verified'
+                              : 'Unverified'}
+                          </Status>
                         </StatusWrapper>
                       </StatusCell>
                     </tr>
-                    <tr>
-                      <ChecksCell>
-                        <Checks variant="body5">Identity checks</Checks>
-                      </ChecksCell>
-                      <StatusCell>
-                        <StatusWrapper>
-                          <Status status="unverified">Unverified</Status>
-                        </StatusWrapper>
-                      </StatusCell>
-                    </tr>
-                  </tbody>
+                  </Tbody>
                 </Table>
               </TableWrapper>
               <ShareVerificationLink />

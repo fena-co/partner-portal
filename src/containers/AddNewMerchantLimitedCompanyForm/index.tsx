@@ -5,8 +5,8 @@ import DropdownFormField from '../../components/DropdownFormField';
 import PhoneFormField from '../../components/PhoneFormField';
 import TextFormField from '../../components/TextFormField';
 import { industries } from '../../constant/industries';
-import SearchIcon from 'image/icon/search-blue.svg';
 import CheckBox from '../../components/Checkbox';
+import Typography from '../../components/Typography';
 
 const StyledDropdownFormField = styled(DropdownFormField)`
   padding-top: 20px;
@@ -18,6 +18,10 @@ const StyledPhoneFormField = styled(PhoneFormField)`
 
 const WrapperCheckbox = styled.div`
   padding-top: 20px;
+`;
+
+const SectionLabel = styled(Typography)`
+  margin-top: 20px;
 `;
 
 interface AddNewMerchantSoleTraderFormProps {
@@ -60,12 +64,53 @@ const AddNewMerchantLimitedCompanyForm: React.FunctionComponent<
         required
         label="Registered name"
       />
+      <SectionLabel variant="subtitle5">Registered address</SectionLabel>
       <TextFormField
-        name="limitedCompany.registeredAddress"
+        name="limitedCompany.address.addressLine1"
         control={control}
-        leftIcon={SearchIcon}
         required
-        label="Registered address"
+        label="Address line 1"
+      />
+      <TextFormField
+        name="limitedCompany.address.addressLine2"
+        control={control}
+        label="Address line 2"
+      />
+      <TextFormField
+        name="limitedCompany.address.city"
+        control={control}
+        required
+        label="City"
+      />
+      <TextFormField
+        name="limitedCompany.address.zipCode"
+        control={control}
+        required
+        label="Postcode"
+      />
+      <SectionLabel variant="subtitle5">Trading address</SectionLabel>
+      <TextFormField
+        name="limitedCompany.tradingAddress.addressLine1"
+        control={control}
+        required
+        label="Address line 1"
+      />
+      <TextFormField
+        name="limitedCompany.tradingAddress.addressLine2"
+        control={control}
+        label="Address line 2"
+      />
+      <TextFormField
+        name="limitedCompany.tradingAddress.city"
+        control={control}
+        label="City"
+        required
+      />
+      <TextFormField
+        name="limitedCompany.tradingAddress.zipCode"
+        control={control}
+        label="Postcode"
+        required
       />
       <StyledDropdownFormField
         name="limitedCompany.industry"
@@ -80,33 +125,35 @@ const AddNewMerchantLimitedCompanyForm: React.FunctionComponent<
         control={control}
         label="Trading name"
       />
-
-      <TextFormField
-        name="limitedCompany.tradingAddress"
-        control={control}
-        label="Trading address"
-        leftIcon={SearchIcon}
-      />
-      <TextFormField
+      {/* <TextFormField
         name="limitedCompany.registrationNumber"
         control={control}
         label="Registration number"
-      />
+      /> */}
       <TextFormField
         name="limitedCompany.primaryContactName"
         control={control}
         label="Primary contact name"
       />
-      <TextFormField name="limitedCompany.email" control={control} label="Email" />
+      <TextFormField
+        name="limitedCompany.email"
+        control={control}
+        label="Primary contact email"
+      />
       <StyledPhoneFormField
         name="limitedCompany.phoneNumber"
         control={control}
-        label="Phone number"
+        label="Primary phone number"
+      />
+      <TextFormField
+        name="limitedCompany.publicWebsite"
+        control={control}
+        label="Business website"
       />
       <WrapperCheckbox>
         <CheckBox
           label="This is a director"
-          onClick={() => setIsDirector(!isDirector)}
+          onChange={() => setIsDirector(!isDirector)}
           checked={isDirector}
         />
       </WrapperCheckbox>

@@ -110,7 +110,12 @@ const TextInput: React.FunctionComponent<TextInputProps> = ({
       {leftIcon && <IconWrapper>{leftIcon()}</IconWrapper>}
       {/* @ts-ignore */}
       {mask ? (
-        <StyledInputMask mask={mask} disabled={disabled} {...rest} />
+        <StyledInputMask
+          mask={mask}
+          maskChar={null} // wrong types from developr's side
+          disabled={disabled}
+          {...rest}
+        />
       ) : (
         <Input disabled={disabled} {...rest} />
       )}

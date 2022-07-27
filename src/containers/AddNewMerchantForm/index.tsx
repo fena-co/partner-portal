@@ -11,6 +11,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import DropdownFormField from '../../components/DropdownFormField';
 import { COUNTRY_CODES } from '../../constant/countries';
 import { addMerchantSchema } from './validation';
+import { CompanyTypes } from '@fena/types';
+import Api from '../../util/api';
 
 const businessTypeItems = [
   { label: 'Sole Trader / Individual', value: 'individual' },
@@ -114,7 +116,12 @@ const addMerchantDefaultValues = {
   soleTrader: {
     utr: '',
     tradingName: '',
-    tradingAddress: '',
+    address: {
+      addressLine1: '',
+      addressLine2: '',
+      city: '',
+      zipCode: '',
+    },
     industry: { label: '', value: '' },
     contactName: '',
     email: '',
@@ -122,17 +129,28 @@ const addMerchantDefaultValues = {
       code: 'GB',
       number: '',
     },
+    publicWebsite: '',
   },
   limitedCompany: {
     crn: '',
     registeredName: '',
-    registeredAddress: '',
+    address: {
+      addressLine1: '',
+      addressLine2: '',
+      city: '',
+      zipCode: '',
+    },
     industry: {
       label: '',
       value: '',
     },
     tradingName: '',
-    tradingAddress: '',
+    tradingAddress: {
+      addressLine1: '',
+      addressLine2: '',
+      city: '',
+      zipCode: '',
+    },
     registrationNumber: '',
     primaryContactName: '',
     email: '',
@@ -140,6 +158,7 @@ const addMerchantDefaultValues = {
       code: 'GB',
       number: '',
     },
+    publicWebsite: '',
     directorContactName: '',
     directorEmail: '',
     directorPhoneNumber: {
@@ -149,7 +168,11 @@ const addMerchantDefaultValues = {
   },
 };
 
-const AddNewMerchantForm: NextPage = () => {
+interface AddMerchantFormProps {
+  setSuccess: (email: string) => void;
+}
+
+const AddNewMerchantForm: NextPage<AddMerchantFormProps> = ({ setSuccess }) => {
   const {
     handleSubmit,
     control,
@@ -172,12 +195,92 @@ const AddNewMerchantForm: NextPage = () => {
     value: el.country,
   }));
 
-  const onSubmit = (data: any) => {
+  const onSubmit = async (data: any) => {
     console.log('submittedData', data);
+    const {
+      businessType,
+      soleTrader,
+      limitedCompany,
+      provider,
+      country,
+      name,
+      identification,
+      externalAccountId,
+    } = data;
+    console.log('chosenType', businessType.value);
+    if (businessType.value === 'individual') {
+      console.log('individ');
+      const individualApiRes = await Api.createMerchant({
+        type: CompanyTypes.SOLE_TRADER,
+        name: soleTrader.contactName,
+        countryCode: country.value,
+        identifier: soleTrader.utr,
+        tradingName: soleTrader.tradingName,
+        address: {
+          addressLine1: soleTrader.address?.addressLine1,
+          addressLine2: soleTrader.address?.addressLine2,
+          city: soleTrader.address?.city,
+          zipCode: soleTrader.address?.zipCode,
+          country: country.label,
+        },
+        industry: soleTrader.industry.value,
+        publicEmail: soleTrader.email,
+        supportPhone: `${soleTrader.phoneNumber.code} ${soleTrader.phoneNumber.number}`,
+        publicWebsite: soleTrader.publicWebsite,
+        bankAccount: {
+          provider: provider.value,
+          name: name,
+          identification: identification?.replace(/-/g, ''),
+          externalAccountId: externalAccountId,
+        },
+      });
+      setSuccess(soleTrader.email);
+      console.log(individualApiRes);
+    } else {
+      console.log('limited');
+      const limitedApiRes = await Api.createMerchant({
+        type: CompanyTypes.COMPANY,
+        countryCode: country.value,
+        identifier: limitedCompany.crn,
+        name: limitedCompany.contactName,
+        address: {
+          addressLine1: limitedCompany.address?.addressLine1,
+          addressLine2: limitedCompany.address?.addressLine2,
+          city: limitedCompany.address?.city,
+          zipCode: limitedCompany.address?.zipCode,
+          country: country.label,
+        },
+        tradingAddress: {
+          addressLine1: limitedCompany.tradingAddress?.addressLine1,
+          addressLine2: limitedCompany.tradingAddress?.addressLine2,
+          city: limitedCompany.tradingAddress?.city,
+          zipCode: limitedCompany.tradingAddress?.zipCode,
+          country: country.label,
+        },
+        industry: limitedCompany.industry.value,
+        publicEmail: limitedCompany.email,
+
+        supportPhone: `${soleTrader.phoneNumber.code} ${soleTrader.phoneNumber.number}`,
+        publicWebsite: limitedCompany.publicWebsite,
+        directorsInfo: {
+          email: limitedCompany.directorEmail,
+          name: limitedCompany.directorName,
+          phone: limitedCompany.directorPhoneNumber,
+        },
+        bankAccount: {
+          provider: provider.value,
+          name: name,
+          identification: identification?.replace(/-/g, ''),
+          externalAccountId: externalAccountId,
+        },
+      });
+      setSuccess(limitedCompany.email);
+      console.log(limitedApiRes);
+    }
   };
 
   return (
-    <Content>
+    <>
       <Title variant="subtitle4">Add new merchant</Title>
       <form onSubmit={handleSubmit(onSubmit)}>
         <StyledDropdownFormField
@@ -190,6 +293,7 @@ const AddNewMerchantForm: NextPage = () => {
           items={mappedCountryCodes}
         />
         <StyledDropdownFormField
+          withoutSearch
           required
           name="businessType"
           control={control as any}
@@ -217,14 +321,20 @@ const AddNewMerchantForm: NextPage = () => {
               renderType={bankDetailsType}
             />
             <ButtonWrapper>
-              <ButtonWithChildren type="submit" variant="contained">
+              <ButtonWithChildren
+                onClick={() => {
+                  window.scrollTo({ top: 0, left: 0 });
+                }}
+                type="submit"
+                variant="contained"
+              >
                 ADD
               </ButtonWithChildren>
             </ButtonWrapper>
           </>
         )}
       </form>
-    </Content>
+    </>
   );
 };
 
