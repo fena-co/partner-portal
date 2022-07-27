@@ -31,10 +31,10 @@ import moment from 'moment';
 import ContextMenu from '../../../components/ContextMenu';
 import Paginator from '../../../components/Paginator';
 import SearchIcon from '../../../components/Icon/SearchIcon';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Preview from '../../transactions/Preview';
 import { TransactionStatus } from '@fena/types';
-
+import Api from '../../../util/api'
 const PageHeader = styled.div`
   display: flex;
   justify-content: space-between;
@@ -117,7 +117,7 @@ const overviewCards = [
   },
 ];
 
-const Analytics: React.FunctionComponent = () => {
+const Analytics: React.FunctionComponent = (companyId) => {
   const [isOpenPreview, setIsOpenPreview] = useState(false);
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -135,25 +135,34 @@ const Analytics: React.FunctionComponent = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // const getTransactions = async () => {
-  //   try {
-  //     setLoading(true);
-  //     const transactionsResult = await Api.getPaginatedTransactions(
-  //       currentPage,
-  //       limit,
-  //       statusFilter
-  //     );
-  //     setTransactions(transactionsResult.docs);
-  //     setTotal(transactionsResult.totalDocs);
-  //     setLoading(false);
-  //   } catch (e) {
-  //     console.error(e);
-  //   }
-  // };
+  const getTransactions = async () => {
+    try {
+      setLoading(true);
+      const transactionsResult = await Api.getPaginatedTransactions(
+        currentPage,
+        limit,
+        statusFilter
+      );
+      setTransactions(transactionsResult.docs);
+      setTotal(transactionsResult.totalDocs);
+      setLoading(false);
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
-  // useEffect(() => {
-  //   getTransactions();
-  // }, [currentPage, statusFilter, limit, getTransactions]);
+  const getAnalytics = async (companyId: string) => {
+    try {
+      const anal = await Api.getMerchantsTransactionsStats(companyId)
+    }
+    catch (e) {
+      console.log(e);
+    }
+  }
+
+  useEffect(() => {
+    getTransactions();
+  }, [currentPage, statusFilter, limit, getTransactions]);
 
   const setFilterRule = (status: TransactionStatus | undefined) => {
     console.log(status);
