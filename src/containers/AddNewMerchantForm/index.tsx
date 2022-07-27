@@ -1,5 +1,5 @@
 import { NextPage } from 'next';
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import Typography from '../../components/Typography';
 import ButtonWithChildren from '../../components/Button';
@@ -98,6 +98,7 @@ interface LimitedCompanyValues extends BankAccountValues {
       code: string;
       number: string;
     };
+    isDirector: boolean;
     directorContactName: string;
     directorEmail: string;
     directorPhoneNumber: {
@@ -159,10 +160,11 @@ const addMerchantDefaultValues = {
       number: '',
     },
     publicWebsite: '',
+    isDirector: false,
     directorContactName: '',
     directorEmail: '',
     directorPhoneNumber: {
-      code: '',
+      code: 'GB',
       number: '',
     },
   },
@@ -190,6 +192,26 @@ const AddNewMerchantForm: NextPage<AddMerchantFormProps> = ({ setSuccess }) => {
 
   const bankDetailsType = watch('bankDetailsType');
 
+  const isDirector = watch('limitedCompany.isDirector');
+
+  // const crn = watch('limitedCompany.crn');
+
+  // const findCompaniesHouseData = async (crn: string) => {
+  //   return await Api.getCompaniesHouseData(crn);
+  // };
+
+  // watch(('limitedCompany.crn') => {
+  //   const crn = data.limitedCompany.crn;
+  //   const chResult = findCompaniesHouseData(crn);
+  //   console.log('watch', crn);
+  //   console.log('', chResult);
+  // });
+
+  // const chResult = Api.getCompaniesHouseData(crn);
+  // console.log('ch:', chResult);
+
+  // console.log('crn:', crn);
+
   const mappedCountryCodes = COUNTRY_CODES.map((el) => ({
     label: el.countryName,
     value: el.country,
@@ -198,6 +220,7 @@ const AddNewMerchantForm: NextPage<AddMerchantFormProps> = ({ setSuccess }) => {
   const onSubmit = async (data: any) => {
     console.log('submittedData', data);
     const {
+      isDirector,
       businessType,
       soleTrader,
       limitedCompany,
@@ -212,10 +235,10 @@ const AddNewMerchantForm: NextPage<AddMerchantFormProps> = ({ setSuccess }) => {
       console.log('individ');
       const individualApiRes = await Api.createMerchant({
         type: CompanyTypes.SOLE_TRADER,
-        name: soleTrader.contactName,
+        name: soleTrader.tradingName,
+        contactName: soleTrader.contactName,
         countryCode: country.value,
         identifier: soleTrader.utr,
-        tradingName: soleTrader.tradingName,
         address: {
           addressLine1: soleTrader.address?.addressLine1,
           addressLine2: soleTrader.address?.addressLine2,
@@ -241,8 +264,10 @@ const AddNewMerchantForm: NextPage<AddMerchantFormProps> = ({ setSuccess }) => {
       const limitedApiRes = await Api.createMerchant({
         type: CompanyTypes.COMPANY,
         countryCode: country.value,
+        contactName: limitedCompany.primaryContactName,
         identifier: limitedCompany.crn,
-        name: limitedCompany.contactName,
+        name: limitedCompany.registeredName,
+        tradingName: limitedCompany.tradingName,
         address: {
           addressLine1: limitedCompany.address?.addressLine1,
           addressLine2: limitedCompany.address?.addressLine2,
@@ -260,12 +285,18 @@ const AddNewMerchantForm: NextPage<AddMerchantFormProps> = ({ setSuccess }) => {
         industry: limitedCompany.industry.value,
         publicEmail: limitedCompany.email,
 
-        supportPhone: `${soleTrader.phoneNumber.code} ${soleTrader.phoneNumber.number}`,
+        supportPhone: `${limitedCompany.phoneNumber.code} ${limitedCompany.phoneNumber.number}`,
         publicWebsite: limitedCompany.publicWebsite,
         directorsInfo: {
-          email: limitedCompany.directorEmail,
-          name: limitedCompany.directorName,
-          phone: limitedCompany.directorPhoneNumber,
+          email: isDirector
+            ? limitedCompany.email
+            : limitedCompany.directorEmail,
+          name: isDirector
+            ? limitedCompany.primaryContactName
+            : limitedCompany.directorContactName,
+          phone: isDirector
+            ? `${limitedCompany.phoneNumber.code} ${limitedCompany.phoneNumber.number}`
+            : `${limitedCompany.directorPhoneNumber.code} ${limitedCompany.directorPhoneNumber.number}`,
         },
         bankAccount: {
           provider: provider.value,
@@ -312,6 +343,7 @@ const AddNewMerchantForm: NextPage<AddMerchantFormProps> = ({ setSuccess }) => {
             )}
             {businessType.value === 'limited' && (
               <AddNewMerchantLimitedCompanyForm
+                isDirector={isDirector}
                 countryData={countryData}
                 control={control as any}
               />

@@ -202,13 +202,37 @@ const Merchants: NextPage = () => {
               setIsPreviewOpen(true);
             },
           },
+          // {
+          //   label: 'Analytics',
+          //   onClick: () => {
+          //     setSelectedMerchantId(item._id);
+          //     router.push('/merchants/analytics/id');
+          //   },
+          // },
           {
-            label: 'Analytics',
+            color: '#EF6355',
+            label: 'Disable',
             onClick: () => {
-              setSelectedMerchantId(item._id);
-              router.push('/merchants/analytics/id');
+              handlerDisable(item._id);
             },
           },
+        ];
+      default:
+        return [
+          {
+            label: 'Details',
+            onClick: () => {
+              setSelectedMerchantId(item._id);
+              setIsPreviewOpen(true);
+            },
+          },
+          // {
+          //   label: 'Analytics',
+          //   onClick: () => {
+          //     setSelectedMerchantId(item._id);
+          //     router.push('/merchants/analytics/id');
+          //   },
+          // },
           {
             color: '#EF6355',
             label: 'Disable',
@@ -294,7 +318,7 @@ const Merchants: NextPage = () => {
                             {item.tradingName}
                           </StyledTableBodyCell>
                           <ContactCell>
-                            <ContactItem>{item.name}</ContactItem>
+                            <ContactItem>{item.contactName}</ContactItem>
                             <ContactItem> {item.publicEmail} </ContactItem>
                           </ContactCell>
                           <StyledTableBodyCell>
@@ -315,8 +339,8 @@ const Merchants: NextPage = () => {
                             </StatusWrapper>
                           </StyledTableBodyCell>
                           <StyledTableBodyCell>
-                            {item.lastActivity
-                              ? moment(item.lastActivity).format('MM/DD/YYYY')
+                            {item.last_activity
+                              ? moment(item.last_activity).format('DD/MM/YYYY')
                               : 'None'}
                           </StyledTableBodyCell>
                           <StyledTableBodyCell>{item._id}</StyledTableBodyCell>

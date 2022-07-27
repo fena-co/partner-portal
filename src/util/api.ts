@@ -247,30 +247,30 @@ class Api {
       headers: this.defaultHeaders,
     });
     return await result.json();
-  } 
+  }
 
-  async getMerchantsTransactionsStats(date?:string ,merchantId?:string) {
-
-    const url = new URL(this.mainUrl + `partner/companies/transactions-stats?dateFrom=${date}`);
+  async getMerchantsTransactionsStats(date?: string, merchantId?: string) {
+    const url = new URL(
+      this.mainUrl + `partner/companies/transactions-stats?dateFrom=${date}`
+    );
     const result = await this.fetcher(url.toString(), {
       method: 'GET',
       headers: this.defaultHeaders,
     });
     return await result.json();
-  } 
+  }
 
   async getAllMerchantsTransactions() {
-
     const url = new URL(this.mainUrl + `partner/transactions/list`);
     const result = await this.fetcher(url.toString(), {
       method: 'GET',
       headers: this.defaultHeaders,
     });
     return await result.json();
-  } 
+  }
 
   async getPaginatedTransactionsBySingleMerchant(
-    merchantId :string, //companyId
+    merchantId: string, //companyId
     page: number,
     limit?: number,
     status?: string,
@@ -283,7 +283,9 @@ class Api {
       ...customFilter,
     });
     console.log(queryString);
-    const url = new URL(`${this.mainUrl}partner/companies/${merchantId}/transactions/list?${queryString}`);
+    const url = new URL(
+      `${this.mainUrl}partner/companies/${merchantId}/transactions/list?${queryString}`
+    );
     const result = await this.fetcher(url.toString(), {
       method: 'GET',
       headers: this.defaultHeaders,
@@ -293,14 +295,23 @@ class Api {
   }
 
   async getAllMerchantsActivityStats() {
-
     const url = new URL(this.mainUrl + `partner/companies/activity-stats`);
     const result = await this.fetcher(url.toString(), {
       method: 'GET',
       headers: this.defaultHeaders,
     });
     return await result.json();
-  } 
+  }
+
+  async getCompaniesHouseData(crn: string) {
+    const url = new URL(this.mainUrl + 'partner/ch/get');
+    url.searchParams.set('q', crn);
+    const result = await this.fetcher(url.toString(), {
+      method: 'GET',
+    });
+    const data = await result.json();
+    return data.data;
+  }
 }
 
 export default new Api(apiUrl);

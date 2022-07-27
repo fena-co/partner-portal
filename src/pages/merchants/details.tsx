@@ -145,8 +145,6 @@ const company = {
   },
 };
 
-
-
 const Details: React.FunctionComponent<DetailsProps> = ({
   handleClose,
   itemId,
@@ -212,9 +210,7 @@ const Details: React.FunctionComponent<DetailsProps> = ({
                 </DetailsContainer>
                 <DetailsContainer>
                   <Title variant="body5">Registered name</Title>
-                  <Typography variant="lightBody">
-                    {company.registeredName}
-                  </Typography>
+                  <Typography variant="lightBody">{data?.name}</Typography>
                 </DetailsContainer>
                 <DetailsContainer>
                   <Title variant="body5">Registered address</Title>
@@ -274,7 +270,7 @@ const Details: React.FunctionComponent<DetailsProps> = ({
               <Typography variant="lightBody">{data.publicEmail}</Typography>
               <Typography variant="lightBody">{data.supportPhone}</Typography>
             </DetailsContainer>
-            {data?.type === CompanyTypes.COMPANY && (
+            {/* {data?.type === CompanyTypes.COMPANY && (
               <DetailsContainer>
                 <Title variant="body5">Director details</Title>
                 <Typography variant="lightBody">
@@ -285,7 +281,7 @@ const Details: React.FunctionComponent<DetailsProps> = ({
                 <Typography variant="lightBody">{user.supportEmail}</Typography>
                 <Typography variant="lightBody">{user.supportPhone}</Typography>
               </DetailsContainer>
-            )}
+            )} */}
           </DetailsWrapper>
         )}
 

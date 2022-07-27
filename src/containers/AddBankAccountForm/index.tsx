@@ -82,7 +82,7 @@ const AddBankAccountForm: NextPage<AddBankAccountProps> = ({
   return (
     <>
       <Title variant="subtitle4">Add bank account</Title>
-      <StyledRadioButton
+      {/* <StyledRadioButton
         name="bankDetailsType"
         value="manual"
         control={control}
@@ -93,10 +93,30 @@ const AddBankAccountForm: NextPage<AddBankAccountProps> = ({
         value="ask"
         control={control}
         label="Ask merchant to add their bank account using online banking"
-      />
+      /> */}
 
       <ConnectBankAccount>
-        {renderType === 'manual' ? (
+        <StyledDropdownFormField
+          name="provider"
+          control={control}
+          placeholder="Choose bank"
+          label="Select bank"
+          items={providers}
+        />
+        <TextFormField name="name" control={control} label="Account name" />
+        <TextFormField
+          name="identification"
+          control={control}
+          label="Sort code"
+          mask="99-99-99"
+        />
+        <TextFormField
+          name="externalAccountId"
+          control={control}
+          label="Account number"
+          mask="99999999"
+        />
+        {/* {renderType === 'manual' ? (
           <>
             <StyledDropdownFormField
               name="provider"
@@ -126,11 +146,11 @@ const AddBankAccountForm: NextPage<AddBankAccountProps> = ({
               <Email>{` `}isaac@gmai.com</Email>
             </Typography>
           </Banner>
-        )}
+        )} */}
 
-        <ShareWrapper>
+        {/* <ShareWrapper>
           <ShareVerificationLink />
-        </ShareWrapper>
+        </ShareWrapper> */}
       </ConnectBankAccount>
     </>
   );

@@ -98,26 +98,80 @@ export const limitedCompanySchema = yup.object({
       zipCode: yup.string().required('This field is required'),
     }),
     registrationNumber: yup.string(),
-    primaryContactName: yup.string(),
-    email: yup.string().email('Email must be valid'),
-    phoneNumber: yup.object({
-      code: yup.string().required(),
-      number: yup
-        .string()
-        .nullable()
-        .transform((o, c) => (o === '' ? null : c))
-        .matches(/^[0-9]+$/, 'Phone number is not valid')
-        .matches(/^(0?\d{9}|\d{8})$/, 'Phone number is not valid'),
+    primaryContactName: yup.string().when('isDirector', {
+      is: true,
+      then: yup.string().required('This field is required'),
     }),
+    email: yup
+      .string()
+      .email('Email must be valid')
+      .when('isDirector', {
+        is: true,
+        then: yup
+          .string()
+          .email('Email must be valid')
+          .required('This field is required'),
+      }),
+    phoneNumber: yup.object().when('isDirector', {
+      is: (isDirector: boolean) => isDirector,
+      then: yup.object().shape({
+        code: yup.string().required(),
+        number: yup
+          .string()
+          .required('This field is required')
+          .matches(/^[0-9]+$/, 'Phone number is not valid')
+          .matches(/^(0?\d{9}|\d{8})$/, 'Phone number is not valid'),
+      }),
+      otherwise: yup.object().shape({
+        code: yup.string(),
+        number: yup
+          .string()
+          .nullable()
+          .transform((o, c) => (o === '' ? null : c))
+          .matches(/^[0-9]+$/, 'Phone number is not valid')
+          .matches(/^(0?\d{9}|\d{8})$/, 'Phone number is not valid'),
+      }),
+    }),
+    // phoneNumber: yup.object({
+    //   code: yup.string().required(),
+    //   number: yup
+    //     .string()
+    //     .nullable()
+    //     .transform((o, c) => (o === '' ? null : c))
+    //     .matches(/^[0-9]+$/, 'Phone number is not valid')
+    //     .matches(/^(0?\d{9}|\d{8})$/, 'Phone number is not valid'),
+    // }),
     publicWebsite: yup.string().url('Enter correct url'),
-    directorContactName: yup.string().required('This field is required'),
-    directorEmail: yup.string().email('Email must be valid'),
-    directorPhoneNumber: yup.object({
-      code: yup.string().required(),
-      number: yup
-        .string()
-        .matches(/^[0-9]+$/, 'Phone number is not valid')
-        .matches(/^(0?\d{9}|\d{8})$/, 'Phone number is not valid'),
+    isDirector: yup.boolean(),
+    directorContactName: yup.string().when('isDirector', {
+      is: false,
+      then: yup.string().required('This field is required'),
+    }),
+    directorEmail: yup
+      .string()
+      .email('Email must be valid')
+      .when('isDirector', {
+        is: false,
+        then: yup
+          .string()
+          .email('Email must be valid')
+          .required('This field is required'),
+      }),
+
+    directorPhoneNumber: yup.object().when('isDirector', {
+      is: (isDirector: boolean) => !isDirector,
+      then: yup.object().shape({
+        code: yup.string().required(),
+        number: yup
+          .string()
+          .required('This field is required')
+          .matches(/^[0-9]+$/, 'Phone number is not valid')
+          .matches(/^(0?\d{9}|\d{8})$/, 'Phone number is not valid'),
+      }),
+      otherwise: yup.object().shape({
+        code: yup.string(),
+        number: yup.string(),
+      }),
     }),
   }),
 });
