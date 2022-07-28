@@ -139,7 +139,8 @@ const Details: React.FunctionComponent<DetailsProps> = ({
     const result = await Api.getMerchant(itemId);
     setData(result);
     const linksRes = await Api.getVerificationLinks(itemId);
-    setVerificationData(linksRes);
+    setVerificationData(linksRes.data);
+    console.log(linksRes.data);
     // setLoading(false);
   };
 

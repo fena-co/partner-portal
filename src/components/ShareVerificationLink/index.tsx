@@ -42,7 +42,7 @@ const LinkP = styled(Typography)`
   padding-bottom: 10px;
 `;
 interface ShareVerificationLinkProps {
-  verificationData: {
+  verificationData?: {
     director: string;
     verificationLink: string;
   }[];
@@ -72,18 +72,29 @@ const ShareVerificationLink: React.FunctionComponent<
             </tr>
           </thead>
           <tbody>
-            {verificationData.map((item) => {
-              return (
-                <tr key={item.verificationLink}>
-                  <TableCell>
-                    <Typography>{item.director}</Typography>
-                  </TableCell>
-                  <TableCell>
-                    <UrlWrapper>{item.verificationLink}</UrlWrapper>
-                  </TableCell>
-                </tr>
-              );
-            })}
+            {verificationData?.length ? (
+              verificationData?.map((item) => {
+                return (
+                  <tr key={item.verificationLink}>
+                    <TableCell>
+                      <Typography>{item.director}</Typography>
+                    </TableCell>
+                    <TableCell>
+                      <UrlWrapper>{item.verificationLink}</UrlWrapper>
+                    </TableCell>
+                  </tr>
+                );
+              })
+            ) : (
+              <tr>
+                <TableCell>
+                  <Typography>N/A</Typography>
+                </TableCell>
+                <TableCell>
+                  <UrlWrapper>N/A</UrlWrapper>
+                </TableCell>
+              </tr>
+            )}
           </tbody>
         </Table>
         {/* <CopyInput value="https://app.fena.com/r/mw0" /> */}
