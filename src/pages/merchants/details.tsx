@@ -120,39 +120,17 @@ interface DetailsProps {
   handleClose: () => void;
 }
 
-const user = {
-  firstName: 'Gosia',
-  lastName: 'Furmanik',
-  email: 'gosia@fena.co',
-  phoneNumber: '+44 5677 8907',
-  supportPhone: '+44 5677 8908',
-  supportEmail: 'isaac@fena.co',
-};
-
-const company = {
-  identifier: '123456789',
-  type: 'company',
-  registeredName: 'Allies Computing Ltd',
-  address: {
-    addressLine1: 'Manor Farm Barns',
-    addressLine2: 'Fox Road',
-    city: 'NORWICH',
-    zipCode: 'E1 0FD',
-  },
-  tradingName: '10 Downing Street',
-  tradingAddress: {
-    addressLine1: '1High Street, Weybridje - 45 Address KT13',
-  },
-};
-
-
-
 const Details: React.FunctionComponent<DetailsProps> = ({
   handleClose,
   itemId,
 }) => {
   const [activePage, setActivePage] = useState<string>('company');
   const [data, setData] = useState<any>(null);
+  const [verificationData, setVerificationData] = useState([
+    // { director: 'Big Boss', verificationLink: 'http://verify.com' },
+    // { director: 'Big Boss', verificationLink: 'http://verify.com' },
+    // { director: 'Big Boss', verificationLink: 'http://verify.com' },
+  ]);
 
   console.log('details', data);
 
@@ -160,6 +138,8 @@ const Details: React.FunctionComponent<DetailsProps> = ({
     // setLoading(true);
     const result = await Api.getMerchant(itemId);
     setData(result);
+    const linksRes = await Api.getVerificationLinks(itemId);
+    setVerificationData(linksRes);
     // setLoading(false);
   };
 
@@ -212,9 +192,7 @@ const Details: React.FunctionComponent<DetailsProps> = ({
                 </DetailsContainer>
                 <DetailsContainer>
                   <Title variant="body5">Registered name</Title>
-                  <Typography variant="lightBody">
-                    {company.registeredName}
-                  </Typography>
+                  <Typography variant="lightBody">{data?.name}</Typography>
                 </DetailsContainer>
                 <DetailsContainer>
                   <Title variant="body5">Registered address</Title>
@@ -274,7 +252,7 @@ const Details: React.FunctionComponent<DetailsProps> = ({
               <Typography variant="lightBody">{data.publicEmail}</Typography>
               <Typography variant="lightBody">{data.supportPhone}</Typography>
             </DetailsContainer>
-            {data?.type === CompanyTypes.COMPANY && (
+            {/* {data?.type === CompanyTypes.COMPANY && (
               <DetailsContainer>
                 <Title variant="body5">Director details</Title>
                 <Typography variant="lightBody">
@@ -285,7 +263,7 @@ const Details: React.FunctionComponent<DetailsProps> = ({
                 <Typography variant="lightBody">{user.supportEmail}</Typography>
                 <Typography variant="lightBody">{user.supportPhone}</Typography>
               </DetailsContainer>
-            )}
+            )} */}
           </DetailsWrapper>
         )}
 
@@ -346,7 +324,7 @@ const Details: React.FunctionComponent<DetailsProps> = ({
                   </Tbody>
                 </Table>
               </TableWrapper>
-              <ShareVerificationLink />
+              <ShareVerificationLink verificationData={verificationData} />
             </VerificationContainer>
           </DetailsWrapper>
         )}

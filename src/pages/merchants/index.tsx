@@ -13,7 +13,6 @@ import { LoadingBlock } from '../../components/LoadingBlock';
 import Paginator from '../../components/Paginator';
 import SearchBox from '../../components/SearchBox';
 import {
-  AmmountCell,
   BodyWrapper,
   ButtonCreation,
   Container,
@@ -35,6 +34,7 @@ import { ROUTES } from '../../constant/route';
 import { MerchantStatus } from '../../types/api';
 import Api from '../../util/api';
 import Details from './details';
+import Arrow from 'image/icon/arrow-down.svg';
 
 const StyledTableBodyCell = styled(TableBodyCell)`
   line-height: 25px;
@@ -45,9 +45,26 @@ const ContactCell = styled(StyledTableBodyCell)`
   line-height: 25px;
 `;
 
-const ContactItem = styled.div``;
+const ClickableTableHeaderCell = styled(TableHeaderCell)`
+  transition: 200ms;
+  &:hover {
+    background-color: #f2f2f2;
+    cursor: pointer;
+  }
+`;
 
-const Link = styled.a``;
+const LabelAndIcon = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+const ArrowIcon = styled(Arrow)`
+  margin-left: 10px;
+  transform: ${(props) =>
+    props[`aria-expanded`] ? `rotate(180deg)` : `rotateZ(0deg)`};
+`;
+
+const ContactItem = styled.div``;
 
 const menus = [
   {
@@ -89,14 +106,15 @@ const Merchants: NextPage = () => {
   const [isSortAscending, setSortAscending] = useState(false);
   const sortDirection = isSortAscending ? 'DESC' : 'ASC';
   const [sortConfig, setSortConfig] = useState({
-    sort: 'completedAt',
+    sort: 'createdAt',
     sortDirection: 'DESC',
   });
 
   const [toggleSortArrow, setToggleSortArrow] = useState({
-    completed: false,
-    amount: false,
-    created: false,
+    contact: false,
+    name: false,
+    activity: false,
+    id: false,
   });
 
   const getMerchants = async () => {
@@ -108,8 +126,8 @@ const Merchants: NextPage = () => {
         statusFilter,
         {
           searchKeyword: get(searchConfig, 'searchKeyword'),
-          // sort: get(sortConfig, 'sort'),
-          // sortDirection: get(sortConfig, 'sortDirection'),
+          sort: get(sortConfig, 'sort'),
+          sortDirection: get(sortConfig, 'sortDirection'),
         }
       );
       console.log(merchantsResult);
@@ -136,11 +154,64 @@ const Merchants: NextPage = () => {
     setCurrentPage(1);
   };
 
-  const handlerDisable = (id: string) => {
-    console.log('disabled:', id);
-    const res = Api.disableMerchant(id);
-    getMerchants();
-    console.log(res);
+  const onNameSort = () => {
+    setSortAscending(!isSortAscending);
+    setSortConfig({
+      sort: 'tradingName',
+      sortDirection: sortDirection,
+    });
+    setToggleSortArrow({
+      ...toggleSortArrow,
+      name: !toggleSortArrow.name,
+      contact: false,
+      activity: false,
+      id: false,
+    });
+  };
+
+  const onContactSort = () => {
+    setSortAscending(!isSortAscending);
+    setSortConfig({
+      sort: 'publicEmail',
+      sortDirection: sortDirection,
+    });
+    setToggleSortArrow({
+      ...toggleSortArrow,
+      name: false,
+      contact: !toggleSortArrow.contact,
+      activity: false,
+      id: false,
+    });
+  };
+
+  const onActivitySort = () => {
+    setSortAscending(!isSortAscending);
+    setSortConfig({
+      sort: 'last_activity',
+      sortDirection: sortDirection,
+    });
+    setToggleSortArrow({
+      ...toggleSortArrow,
+      name: false,
+      contact: false,
+      activity: !toggleSortArrow.activity,
+      id: false,
+    });
+  };
+
+  const onIdSort = () => {
+    setSortAscending(!isSortAscending);
+    setSortConfig({
+      sort: '_id',
+      sortDirection: sortDirection,
+    });
+    setToggleSortArrow({
+      ...toggleSortArrow,
+      name: false,
+      contact: false,
+      activity: false,
+      id: !toggleSortArrow.id,
+    });
   };
 
   const renderEmpty = () => {
@@ -183,13 +254,13 @@ const Merchants: NextPage = () => {
               setIsPreviewOpen(true);
             },
           },
-          {
-            label: 'Analytics',
-            onClick: () => {
-              setSelectedMerchantId(item._id);
-              router.push('/merchants/analytics/id');
-            },
-          },
+          // {
+          //   label: 'Analytics',
+          //   onClick: () => {
+          //     setSelectedMerchantId(item._id);
+          //     router.push('/merchants/analytics/id');
+          //   },
+          // },
         ];
       case MerchantStatus.ACTIVE:
       case MerchantStatus.PENDING:
@@ -202,18 +273,44 @@ const Merchants: NextPage = () => {
               setIsPreviewOpen(true);
             },
           },
-          {
-            label: 'Analytics',
-            onClick: () => {
-              setSelectedMerchantId(item._id);
-              router.push('/merchants/analytics/id');
-            },
-          },
+          // {
+          //   label: 'Analytics',
+          //   onClick: () => {
+          //     setSelectedMerchantId(item._id);
+          //     router.push('/merchants/analytics/id');
+          //   },
+          // },
           {
             color: '#EF6355',
             label: 'Disable',
             onClick: () => {
-              handlerDisable(item._id);
+              const res = Api.disableMerchant(item._id);
+              getMerchants();
+            },
+          },
+        ];
+      default:
+        return [
+          {
+            label: 'Details',
+            onClick: () => {
+              setSelectedMerchantId(item._id);
+              setIsPreviewOpen(true);
+            },
+          },
+          // {
+          //   label: 'Analytics',
+          //   onClick: () => {
+          //     setSelectedMerchantId(item._id);
+          //     router.push('/merchants/analytics/id');
+          //   },
+          // },
+          {
+            color: '#EF6355',
+            label: 'Disable',
+            onClick: () => {
+              const res = Api.disableMerchant(item._id);
+              getMerchants();
             },
           },
         ];
@@ -271,13 +368,42 @@ const Merchants: NextPage = () => {
                   <Table>
                     <TableHeader>
                       <tr>
-                        <TableHeaderCell>Merchant Name</TableHeaderCell>
-                        <TableHeaderCell>Contact</TableHeaderCell>
-                        <TableHeaderCell>phone number</TableHeaderCell>
+                        <ClickableTableHeaderCell
+                          width={150}
+                          onClick={onNameSort}
+                        >
+                          <LabelAndIcon>
+                            Merchant Name
+                            <ArrowIcon aria-expanded={toggleSortArrow.name} />
+                          </LabelAndIcon>
+                        </ClickableTableHeaderCell>
+                        <ClickableTableHeaderCell onClick={onContactSort}>
+                          <LabelAndIcon>
+                            Contact
+                            <ArrowIcon
+                              aria-expanded={toggleSortArrow.contact}
+                            />
+                          </LabelAndIcon>
+                        </ClickableTableHeaderCell>
+                        <TableHeaderCell width={150}>
+                          Phone number
+                        </TableHeaderCell>
                         <TableHeaderCell>Website</TableHeaderCell>
-                        <TableHeaderCell>STATUS</TableHeaderCell>
-                        <TableHeaderCell>Last activity</TableHeaderCell>
-                        <TableHeaderCell>Fena ID</TableHeaderCell>
+                        <TableHeaderCell width={10}>STATUS</TableHeaderCell>
+                        <ClickableTableHeaderCell onClick={onActivitySort}>
+                          <LabelAndIcon>
+                            Last activity
+                            <ArrowIcon
+                              aria-expanded={toggleSortArrow.activity}
+                            />
+                          </LabelAndIcon>
+                        </ClickableTableHeaderCell>
+                        <ClickableTableHeaderCell onClick={onIdSort}>
+                          <LabelAndIcon>
+                            Fena ID
+                            <ArrowIcon aria-expanded={toggleSortArrow.id} />
+                          </LabelAndIcon>
+                        </ClickableTableHeaderCell>
                         <TableHeaderCell></TableHeaderCell>
                       </tr>
                     </TableHeader>
@@ -294,7 +420,7 @@ const Merchants: NextPage = () => {
                             {item.tradingName}
                           </StyledTableBodyCell>
                           <ContactCell>
-                            <ContactItem>{item.name}</ContactItem>
+                            <ContactItem>{item.contactName}</ContactItem>
                             <ContactItem> {item.publicEmail} </ContactItem>
                           </ContactCell>
                           <StyledTableBodyCell>
@@ -315,8 +441,8 @@ const Merchants: NextPage = () => {
                             </StatusWrapper>
                           </StyledTableBodyCell>
                           <StyledTableBodyCell>
-                            {item.lastActivity
-                              ? moment(item.lastActivity).format('MM/DD/YYYY')
+                            {item.last_activity
+                              ? moment(item.last_activity).format('DD/MM/YYYY')
                               : 'None'}
                           </StyledTableBodyCell>
                           <StyledTableBodyCell>{item._id}</StyledTableBodyCell>

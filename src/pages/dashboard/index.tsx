@@ -220,27 +220,27 @@ const Dashboard: NextPage = () => {
         },
       ])
 
-      const topByAvgTrAmount: Array<ChartItem> = merchantsTopList.data.topByAvgAmount.map(merchStat => {
+      const topByAvgTrAmount: Array<ChartItem> = merchantsTopList.data.topByAvgAmount.map((merchStat: any) => {
         return { company: merchStat.company.name, _id: merchStat.companyId, value: merchStat.result }
       });
 
-      const topByCount: Array<ChartItem> = merchantsTopList.data.topByCount.map(merchStat => {
+      const topByCount: Array<ChartItem> = merchantsTopList.data.topByCount.map((merchStat: any) => {
         return { company: merchStat.company.name, _id: merchStat.companyId, value: merchStat.result }
       });
 
-      const topByTotalAmount: Array<ChartItem> = merchantsTopList.data.topByTotalAmount.map(merchStat => {
+      const topByTotalAmount: Array<ChartItem> = merchantsTopList.data.topByTotalAmount.map((merchStat: any) => {
         return { company: merchStat.company.name, _id: merchStat.companyId, value: merchStat.result }
       });
 
-      const bottomByAvgAmount: Array<ChartItem> = merchantsTopList.data.bottomByAvgAmount.map(merchStat => {
+      const bottomByAvgAmount: Array<ChartItem> = merchantsTopList.data.bottomByAvgAmount.map((merchStat: any) => {
         return { company: merchStat.company.name, _id: merchStat.companyId, value: merchStat.result }
       });
 
-      const bottomByCount: Array<ChartItem> = merchantsTopList.data.bottomByCount.map(merchStat => {
+      const bottomByCount: Array<ChartItem> = merchantsTopList.data.bottomByCount.map((merchStat: any) => {
         return { company: merchStat.company.name, _id: merchStat.companyId, value: merchStat.result }
       });
 
-      const bottomByTotalAmount: Array<ChartItem> = merchantsTopList.data.bottomByTotalAmount.map(merchStat => {
+      const bottomByTotalAmount: Array<ChartItem> = merchantsTopList.data.bottomByTotalAmount.map((merchStat: any) => {
         return { company: merchStat.company.name, _id: merchStat.companyId, value: merchStat.result }
       });
 
@@ -428,7 +428,7 @@ const Dashboard: NextPage = () => {
         </Chart>
       </FourthViewport>
 
-      <FifthViewport>
+      {/* <FifthViewport>
         <CustomHeader title="Fees" description="Fees charged by fena" />
         <Body1 variant="body1">
           £0.22 per transaction (average of between 1001 and 5000 transactions
@@ -450,7 +450,7 @@ const Dashboard: NextPage = () => {
             );
           })}
         </FeeCards>
-      </FifthViewport>
+      </FifthViewport> */}
     </Layout>
   );
 };
