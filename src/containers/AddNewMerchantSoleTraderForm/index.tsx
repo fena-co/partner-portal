@@ -6,6 +6,7 @@ import PhoneFormField from '../../components/PhoneFormField';
 import TextFormField from '../../components/TextFormField';
 import { industries } from '../../constant/industries';
 import Typography from '../../components/Typography';
+import CheckboxFormField from '../../components/CheckboxFormField';
 
 const StyledDropdownFormField = styled(DropdownFormField)`
   padding-top: 20px;
@@ -19,17 +20,22 @@ const SectionLabel = styled(Typography)`
   margin-top: 20px;
 `;
 
+const WrapperCheckbox = styled.div`
+  padding-top: 20px;
+`;
+
 interface AddNewMerchantSoleTraderFormProps {
   countryData?: {
     label: string;
     value: string;
   };
   control: Control;
+  isEmailSend: boolean;
 }
 
 const AddNewMerchantSoleTraderForm: React.FunctionComponent<
   AddNewMerchantSoleTraderFormProps
-> = ({ countryData, control }) => {
+> = ({ countryData, control, isEmailSend }) => {
   const { value: countryCode } = countryData || {};
   const industriesItems = industries.map((el) => ({
     label: el.category,
@@ -111,6 +117,14 @@ const AddNewMerchantSoleTraderForm: React.FunctionComponent<
         required
         label="Postcode"
       />
+      <WrapperCheckbox>
+        <CheckboxFormField
+          name="soleTrader.sendEmail"
+          control={control}
+          label="Send email for ID verification"
+          checked={isEmailSend}
+        />
+      </WrapperCheckbox>
     </>
   );
 };

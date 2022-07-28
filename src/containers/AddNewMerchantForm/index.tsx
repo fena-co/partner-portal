@@ -1,5 +1,5 @@
 import { NextPage } from 'next';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Typography from '../../components/Typography';
 import ButtonWithChildren from '../../components/Button';
@@ -66,7 +66,12 @@ interface SoleTraderValues extends BankAccountValues {
   soleTrader: {
     utr: string;
     tradingName: string;
-    tradingAddress: string;
+    tradingAddress: {
+      addressLine1: string;
+      addressLine2: string;
+      city: string;
+      zipCode: string;
+    };
     contactName: string;
     email: string;
     industry: {
@@ -77,6 +82,7 @@ interface SoleTraderValues extends BankAccountValues {
       code: string;
       number: string;
     };
+    sendEmail: boolean;
   };
 }
 
@@ -90,7 +96,18 @@ interface LimitedCompanyValues extends BankAccountValues {
       value: string;
     };
     tradingName: string;
-    tradingAddress: string;
+    address: {
+      addressLine1: string;
+      addressLine2: string;
+      city: string;
+      zipCode: string;
+    };
+    tradingAddress: {
+      addressLine1: string;
+      addressLine2: string;
+      city: string;
+      zipCode: string;
+    };
     registrationNumber: string;
     primaryContactName: string;
     email: string;
@@ -100,6 +117,7 @@ interface LimitedCompanyValues extends BankAccountValues {
     };
     isDirector: boolean;
     sendEmail: boolean;
+    sameAsRegisteredName: boolean;
     directorContactName: string;
     directorEmail: string;
     directorPhoneNumber: {
@@ -132,6 +150,7 @@ const addMerchantDefaultValues = {
       number: '',
     },
     publicWebsite: '',
+    sendEmail: false,
   },
   limitedCompany: {
     crn: '',
@@ -163,6 +182,7 @@ const addMerchantDefaultValues = {
     publicWebsite: '',
     isDirector: true,
     sendEmail: false,
+    sameAsRegisteredName: false,
     directorContactName: '',
     directorEmail: '',
     directorPhoneNumber: {
@@ -177,10 +197,15 @@ interface AddMerchantFormProps {
 }
 
 const AddNewMerchantForm: NextPage<AddMerchantFormProps> = ({ setSuccess }) => {
+  const [sameAsRegisteredName, setSameAsRegisteredName] = useState(false);
+  const [sameAsRegisteredAddress, setSameAsRegisteredAddress] = useState(false);
+
   const {
     handleSubmit,
     control,
     watch,
+    reset,
+    setValue,
     formState: { errors },
   } = useForm<AddMerchantValues>({
     defaultValues: addMerchantDefaultValues,
@@ -198,15 +223,68 @@ const AddNewMerchantForm: NextPage<AddMerchantFormProps> = ({ setSuccess }) => {
 
   const isEmailSend = watch('limitedCompany.sendEmail');
 
+  const isSoleEmailSend = watch('soleTrader.sendEmail');
+
   const crn = watch('limitedCompany.crn');
+
+  const registeredName = watch('limitedCompany.registeredName');
+
+  const limitedCompany = watch('limitedCompany');
+
+  const limitedRegAddress = watch('limitedCompany.address');
 
   useEffect(() => {
     findCompaniesHouseData(crn);
   }, [crn]);
 
+  const onSameAsRegisteredNameChange = () => {
+    setSameAsRegisteredName(!sameAsRegisteredName);
+    if (!sameAsRegisteredName) {
+      setValue<any>('limitedCompany', {
+        ...limitedCompany,
+        tradingName: registeredName,
+      });
+    } else {
+      setValue<any>('limitedCompany', {
+        ...limitedCompany,
+        tradingName: '',
+      });
+    }
+  };
+
+  const onSameAsRegisteredAddressChange = () => {
+    setSameAsRegisteredAddress(!sameAsRegisteredAddress);
+    if (!sameAsRegisteredAddress) {
+      setValue<any>('limitedCompany', {
+        ...limitedCompany,
+        tradingAddress: limitedRegAddress,
+      });
+    } else {
+      setValue<any>('limitedCompany', {
+        ...limitedCompany,
+        tradingAddress: {
+          addressLine1: '',
+          addressLine2: '',
+          city: '',
+          zipCode: '',
+        },
+      });
+    }
+  };
+
   const findCompaniesHouseData = async (crn: string) => {
-    console.log('crn', crn);
     const chResult = await Api.getCompaniesHouseData(crn);
+    const officeAddress = chResult?.registered_office_address;
+    setValue<any>('limitedCompany', {
+      ...limitedCompany,
+      registeredName: chResult?.company_name,
+      address: {
+        addressLine1: officeAddress?.address_line_1,
+        addressLine2: officeAddress?.address_line_2,
+        city: officeAddress?.locality,
+        zipCode: officeAddress?.postal_code,
+      },
+    });
     console.log('reqResult', chResult);
   };
 
@@ -232,6 +310,7 @@ const AddNewMerchantForm: NextPage<AddMerchantFormProps> = ({ setSuccess }) => {
     if (businessType.value === 'individual') {
       console.log('individ');
       const individualApiRes = await Api.createMerchant({
+        sendEmail: soleTrader.sendEmail,
         type: CompanyTypes.SOLE_TRADER,
         name: soleTrader.tradingName,
         contactName: soleTrader.contactName,
@@ -336,12 +415,19 @@ const AddNewMerchantForm: NextPage<AddMerchantFormProps> = ({ setSuccess }) => {
           <>
             {businessType.value === 'individual' && (
               <AddNewMerchantSoleTraderForm
+                isEmailSend={isSoleEmailSend}
                 countryData={countryData}
                 control={control as any}
               />
             )}
             {businessType.value === 'limited' && (
               <AddNewMerchantLimitedCompanyForm
+                onSameAsRegisteredNameChange={onSameAsRegisteredNameChange}
+                onSameAsRegisteredAddressChange={
+                  onSameAsRegisteredAddressChange
+                }
+                sameAsRegisteredAddress={sameAsRegisteredAddress}
+                sameAsRegisteredName={sameAsRegisteredName}
                 isEmailSend={isEmailSend}
                 isDirector={isDirector}
                 countryData={countryData}
