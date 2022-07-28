@@ -61,10 +61,11 @@ export const soleTraderSchema = yup.object({
       code: yup.string().required(),
       number: yup
         .string()
-        .nullable()
-        .transform((o, c) => (o === '' ? null : c))
+        .required('This field is required')
+        // .nullable()
+        // .transform((o, c) => (o === '' ? null : c))
         .matches(/^[0-9]+$/, 'Phone number is not valid')
-        .matches(/^(0?\d{9}|\d{8})$/, 'Phone number is not valid'),
+        .matches(/^(0?\d{0,10})$/, 'Phone number length exceeded'),
     }),
     publicWebsite: yup.string().url('Enter correct url'),
   }),
@@ -120,7 +121,7 @@ export const limitedCompanySchema = yup.object({
           .string()
           .required('This field is required')
           .matches(/^[0-9]+$/, 'Phone number is not valid')
-          .matches(/^(0?\d{9}|\d{8})$/, 'Phone number is not valid'),
+          .matches(/^(0?\d{0,10})$/, 'Phone number length exceeded'),
       }),
       otherwise: yup.object().shape({
         code: yup.string(),
