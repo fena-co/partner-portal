@@ -4,6 +4,7 @@ import Cog from 'image/icon/cog.svg';
 import Person from 'image/icon/person.svg';
 import ApiKeyIcon from 'image/icon/settings/api-key.svg';
 import BusinessIcon from 'image/icon/settings/business.svg';
+import EmailIcon from 'image/icon/settings/mail.svg';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -134,6 +135,7 @@ const ContextMenuItem = styled.div`
   justify-content: flex-start;
   align-items: center;
   position: relative;
+  cursor: pointer;
 
   &:hover ${SettingsItemIcon} {
     background: linear-gradient(313.18deg, #2cd19e 19.07%, #00f3a8 87.1%);
@@ -210,6 +212,11 @@ const settingsItems = [
     title: 'API Keys',
     icon: <ApiKeyIcon />,
     route: ROUTES.API_KEYS,
+  },
+  {
+    title: 'Email Customisation',
+    icon: <EmailIcon />,
+    route: ROUTES.EMAIL_SETTINGS,
   },
 ];
 

@@ -331,7 +331,6 @@ class Api {
     });
     return await result.json();
   }
-
 }
 
 export default new Api(apiUrl);
