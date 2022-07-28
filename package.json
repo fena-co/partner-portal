@@ -14,7 +14,7 @@
     "co:login": "aws codeartifact login --tool npm --repository fena --domain repo --domain-owner 578657107977"
   },
   "dependencies": {
-    "@fena/types": "1.5.7",
+    "@fena/types": "1.5.10",
     "@hookform/resolvers": "^2.9.5",
     "@reduxjs/toolkit": "^1.7.1",
     "@svgr/webpack": "6.1.2",
