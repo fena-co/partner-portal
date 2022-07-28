@@ -322,6 +322,16 @@ class Api {
     const data = await result.json();
     return data.data;
   }
+
+  async getVerificationLinks(id: string) {
+    const url = new URL(this.mainUrl + `partner/companies/${id}/verification`);
+    const result = await this.fetcher(url.toString(), {
+      method: 'GET',
+      headers: this.defaultHeaders,
+    });
+    return await result.json();
+  }
+
 }
 
 export default new Api(apiUrl);

@@ -31,12 +31,13 @@ interface AddNewMerchantSoleTraderFormProps {
     value: string;
   };
   control: Control;
-  isDirector: any;
+  isDirector: boolean;
+  isEmailSend: boolean;
 }
 
 const AddNewMerchantLimitedCompanyForm: React.FunctionComponent<
   AddNewMerchantSoleTraderFormProps
-> = ({ countryData, control, isDirector }) => {
+> = ({ countryData, control, isDirector, isEmailSend }) => {
   const { value: countryCode } = countryData || {};
   const industriesItems = industries.map((el) => ({
     label: el.category,
@@ -184,6 +185,14 @@ const AddNewMerchantLimitedCompanyForm: React.FunctionComponent<
           />
         </>
       )}
+      <WrapperCheckbox>
+        <CheckboxFormField
+          name="limitedCompany.sendEmail"
+          control={control}
+          label="Send email for ID verification"
+          checked={isEmailSend}
+        />
+      </WrapperCheckbox>
     </>
   );
 };

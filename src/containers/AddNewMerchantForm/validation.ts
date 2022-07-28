@@ -173,6 +173,7 @@ export const limitedCompanySchema = yup.object({
         number: yup.string(),
       }),
     }),
+    sendEmail: yup.boolean(),
   }),
 });
 

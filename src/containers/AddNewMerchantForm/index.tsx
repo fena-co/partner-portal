@@ -99,6 +99,7 @@ interface LimitedCompanyValues extends BankAccountValues {
       number: string;
     };
     isDirector: boolean;
+    sendEmail: boolean;
     directorContactName: string;
     directorEmail: string;
     directorPhoneNumber: {
@@ -161,6 +162,7 @@ const addMerchantDefaultValues = {
     },
     publicWebsite: '',
     isDirector: false,
+    sendEmail: false,
     directorContactName: '',
     directorEmail: '',
     directorPhoneNumber: {
@@ -193,6 +195,8 @@ const AddNewMerchantForm: NextPage<AddMerchantFormProps> = ({ setSuccess }) => {
   const bankDetailsType = watch('bankDetailsType');
 
   const isDirector = watch('limitedCompany.isDirector');
+
+  const isEmailSend = watch('limitedCompany.sendEmail');
 
   // const crn = watch('limitedCompany.crn');
 
@@ -262,6 +266,7 @@ const AddNewMerchantForm: NextPage<AddMerchantFormProps> = ({ setSuccess }) => {
     } else {
       console.log('limited');
       const limitedApiRes = await Api.createMerchant({
+        sendEmail: limitedCompany.sendEmail,
         type: CompanyTypes.COMPANY,
         countryCode: country.value,
         contactName: limitedCompany.primaryContactName,
@@ -343,6 +348,7 @@ const AddNewMerchantForm: NextPage<AddMerchantFormProps> = ({ setSuccess }) => {
             )}
             {businessType.value === 'limited' && (
               <AddNewMerchantLimitedCompanyForm
+                isEmailSend={isEmailSend}
                 isDirector={isDirector}
                 countryData={countryData}
                 control={control as any}
