@@ -161,7 +161,7 @@ const addMerchantDefaultValues = {
       number: '',
     },
     publicWebsite: '',
-    isDirector: false,
+    isDirector: true,
     sendEmail: false,
     directorContactName: '',
     directorEmail: '',
@@ -292,17 +292,17 @@ const AddNewMerchantForm: NextPage<AddMerchantFormProps> = ({ setSuccess }) => {
 
         supportPhone: `${limitedCompany.phoneNumber.code} ${limitedCompany.phoneNumber.number}`,
         publicWebsite: limitedCompany.publicWebsite,
-        directorsInfo: {
-          email: isDirector
-            ? limitedCompany.email
-            : limitedCompany.directorEmail,
-          name: isDirector
-            ? limitedCompany.primaryContactName
-            : limitedCompany.directorContactName,
-          phone: isDirector
-            ? `${limitedCompany.phoneNumber.code} ${limitedCompany.phoneNumber.number}`
-            : `${limitedCompany.directorPhoneNumber.code} ${limitedCompany.directorPhoneNumber.number}`,
-        },
+        // directorsInfo: {
+        //   email: isDirector
+        //     ? limitedCompany.email
+        //     : limitedCompany.directorEmail,
+        //   name: isDirector
+        //     ? limitedCompany.primaryContactName
+        //     : limitedCompany.directorContactName,
+        //   phone: isDirector
+        //     ? `${limitedCompany.phoneNumber.code} ${limitedCompany.phoneNumber.number}`
+        //     : `${limitedCompany.directorPhoneNumber.code} ${limitedCompany.directorPhoneNumber.number}`,
+        // },
         bankAccount: {
           provider: provider.value,
           name: name,

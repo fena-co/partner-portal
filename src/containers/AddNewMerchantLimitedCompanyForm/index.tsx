@@ -155,7 +155,7 @@ const AddNewMerchantLimitedCompanyForm: React.FunctionComponent<
         required={isDirector}
       />
 
-      <WrapperCheckbox>
+      {/* <WrapperCheckbox>
         <CheckboxFormField
           name="limitedCompany.isDirector"
           control={control}
@@ -184,7 +184,7 @@ const AddNewMerchantLimitedCompanyForm: React.FunctionComponent<
             label="Director's phone number"
           />
         </>
-      )}
+      )} */}
       <WrapperCheckbox>
         <CheckboxFormField
           name="limitedCompany.sendEmail"
