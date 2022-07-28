@@ -199,9 +199,7 @@ class Api {
   }
 
   async getSingleTransaction(id: string) {
-    const url = new URL(
-      `${this.mainUrl}partner/transactions/${id}`
-    );
+    const url = new URL(`${this.mainUrl}partner/transactions/${id}`);
     const result = await this.fetcher(url.toString(), {
       method: 'GET',
       headers: this.defaultHeaders,
@@ -261,9 +259,10 @@ class Api {
     return await result.json();
   }
 
-  async getMerchantsTransactionsStats(date?:string ,merchantId?:string) {
-
-    const url = new URL(this.mainUrl + `partner/companies/transactions-stats?dateFrom=${date}`);
+  async getMerchantsTransactionsStats(date?: string, merchantId?: string) {
+    const url = new URL(
+      this.mainUrl + `partner/companies/transactions-stats?dateFrom=${date}`
+    );
     const result = await this.fetcher(url.toString(), {
       method: 'GET',
       headers: this.defaultHeaders,
@@ -272,7 +271,6 @@ class Api {
   }
 
   async getAllMerchantsTransactions() {
-
     const url = new URL(this.mainUrl + `partner/transactions/list`);
     const result = await this.fetcher(url.toString(), {
       method: 'GET',
@@ -282,7 +280,7 @@ class Api {
   }
 
   async getPaginatedTransactionsBySingleMerchant(
-    merchantId :string, //companyId
+    merchantId: string, //companyId
     page: number,
     limit?: number,
     status?: string,
@@ -295,7 +293,9 @@ class Api {
       ...customFilter,
     });
     console.log(queryString);
-    const url = new URL(`${this.mainUrl}partner/companies/${merchantId}/transactions/list?${queryString}`);
+    const url = new URL(
+      `${this.mainUrl}partner/companies/${merchantId}/transactions/list?${queryString}`
+    );
     const result = await this.fetcher(url.toString(), {
       method: 'GET',
       headers: this.defaultHeaders,
@@ -305,7 +305,6 @@ class Api {
   }
 
   async getAllMerchantsActivityStats() {
-
     const url = new URL(this.mainUrl + `partner/companies/activity-stats`);
     const result = await this.fetcher(url.toString(), {
       method: 'GET',
@@ -313,6 +312,26 @@ class Api {
     });
     return await result.json();
   }
+
+  async getCompaniesHouseData(crn: string) {
+    const url = new URL(this.mainUrl + 'partner/ch/get');
+    url.searchParams.set('q', crn);
+    const result = await this.fetcher(url.toString(), {
+      method: 'GET',
+    });
+    const data = await result.json();
+    return data.data;
+  }
+
+  async getVerificationLinks(id: string) {
+    const url = new URL(this.mainUrl + `partner/companies/${id}/verification`);
+    const result = await this.fetcher(url.toString(), {
+      method: 'GET',
+      headers: this.defaultHeaders,
+    });
+    return await result.json();
+  }
+
 }
 
 export default new Api(apiUrl);

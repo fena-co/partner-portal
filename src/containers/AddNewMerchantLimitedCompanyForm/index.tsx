@@ -7,6 +7,7 @@ import TextFormField from '../../components/TextFormField';
 import { industries } from '../../constant/industries';
 import CheckBox from '../../components/Checkbox';
 import Typography from '../../components/Typography';
+import CheckboxFormField from '../../components/CheckboxFormField';
 
 const StyledDropdownFormField = styled(DropdownFormField)`
   padding-top: 20px;
@@ -30,11 +31,13 @@ interface AddNewMerchantSoleTraderFormProps {
     value: string;
   };
   control: Control;
+  isDirector: boolean;
+  isEmailSend: boolean;
 }
 
 const AddNewMerchantLimitedCompanyForm: React.FunctionComponent<
   AddNewMerchantSoleTraderFormProps
-> = ({ countryData, control }) => {
+> = ({ countryData, control, isDirector, isEmailSend }) => {
   const { value: countryCode } = countryData || {};
   const industriesItems = industries.map((el) => ({
     label: el.category,
@@ -43,8 +46,6 @@ const AddNewMerchantLimitedCompanyForm: React.FunctionComponent<
       value: elem,
     })),
   }));
-
-  const [isDirector, setIsDirector] = useState(false);
 
   return (
     <>
@@ -119,6 +120,11 @@ const AddNewMerchantLimitedCompanyForm: React.FunctionComponent<
         label="Industry"
         items={industriesItems}
       />
+      <TextFormField
+        name="limitedCompany.publicWebsite"
+        control={control}
+        label="Business website"
+      />
 
       <TextFormField
         name="limitedCompany.tradingName"
@@ -134,48 +140,59 @@ const AddNewMerchantLimitedCompanyForm: React.FunctionComponent<
         name="limitedCompany.primaryContactName"
         control={control}
         label="Primary contact name"
+        required={isDirector}
       />
       <TextFormField
         name="limitedCompany.email"
         control={control}
         label="Primary contact email"
+        required={isDirector}
       />
       <StyledPhoneFormField
         name="limitedCompany.phoneNumber"
         control={control}
         label="Primary phone number"
+        required={isDirector}
       />
-      <TextFormField
-        name="limitedCompany.publicWebsite"
-        control={control}
-        label="Business website"
-      />
+
       <WrapperCheckbox>
-        <CheckBox
+        <CheckboxFormField
+          name="limitedCompany.isDirector"
+          control={control}
           label="This is a director"
-          onChange={() => setIsDirector(!isDirector)}
           checked={isDirector}
         />
       </WrapperCheckbox>
-
-      <TextFormField
-        required
-        name="limitedCompany.directorContactName"
-        control={control}
-        label="Director's contact name"
-      />
-      <TextFormField
-        required
-        name="limitedCompany.directorEmail"
-        control={control}
-        label="Director's email"
-      />
-      <StyledPhoneFormField
-        required
-        name="limitedCompany.directorPhoneNumber"
-        control={control}
-        label="Director's phone number"
-      />
+      {!isDirector && (
+        <>
+          <TextFormField
+            required
+            name="limitedCompany.directorContactName"
+            control={control}
+            label="Director's contact name"
+          />
+          <TextFormField
+            required
+            name="limitedCompany.directorEmail"
+            control={control}
+            label="Director's email"
+          />
+          <StyledPhoneFormField
+            required
+            name="limitedCompany.directorPhoneNumber"
+            control={control}
+            label="Director's phone number"
+          />
+        </>
+      )}
+      <WrapperCheckbox>
+        <CheckboxFormField
+          name="limitedCompany.sendEmail"
+          control={control}
+          label="Send email for ID verification"
+          checked={isEmailSend}
+        />
+      </WrapperCheckbox>
     </>
   );
 };
