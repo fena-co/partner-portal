@@ -198,23 +198,17 @@ const AddNewMerchantForm: NextPage<AddMerchantFormProps> = ({ setSuccess }) => {
 
   const isEmailSend = watch('limitedCompany.sendEmail');
 
-  // const crn = watch('limitedCompany.crn');
+  const crn = watch('limitedCompany.crn');
 
-  // const findCompaniesHouseData = async (crn: string) => {
-  //   return await Api.getCompaniesHouseData(crn);
-  // };
+  useEffect(() => {
+    findCompaniesHouseData(crn);
+  }, [crn]);
 
-  // watch(('limitedCompany.crn') => {
-  //   const crn = data.limitedCompany.crn;
-  //   const chResult = findCompaniesHouseData(crn);
-  //   console.log('watch', crn);
-  //   console.log('', chResult);
-  // });
-
-  // const chResult = Api.getCompaniesHouseData(crn);
-  // console.log('ch:', chResult);
-
-  // console.log('crn:', crn);
+  const findCompaniesHouseData = async (crn: string) => {
+    console.log('crn', crn);
+    const chResult = await Api.getCompaniesHouseData(crn);
+    console.log('reqResult', chResult);
+  };
 
   const mappedCountryCodes = COUNTRY_CODES.map((el) => ({
     label: el.countryName,
