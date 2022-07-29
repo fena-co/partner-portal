@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { Control } from 'react-hook-form';
 import DropdownFormField from '../../components/DropdownFormField';
@@ -161,6 +161,7 @@ const AddNewMerchantLimitedCompanyForm: React.FunctionComponent<
         control={control}
         placeholder="Choose industry"
         label="Industry"
+        required
         items={industriesItems}
       />
       <TextFormField

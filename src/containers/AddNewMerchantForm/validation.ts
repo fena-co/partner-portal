@@ -49,8 +49,8 @@ export const soleTraderSchema = yup.object({
       zipCode: yup.string().required('This field is required'),
     }),
     industry: yup.object({
-      label: yup.string(),
-      value: yup.string(),
+      label: yup.string().required('This field is required'),
+      value: yup.string().required(),
     }),
     contactName: yup.string().required('This field is required'),
     email: yup
@@ -88,8 +88,8 @@ export const limitedCompanySchema = yup.object({
       zipCode: yup.string().required('This field is required'),
     }),
     industry: yup.object({
-      label: yup.string(),
-      value: yup.string(),
+      label: yup.string().required('This field is required'),
+      value: yup.string().required(''),
     }),
     tradingName: yup.string(),
     tradingAddress: yup.object({

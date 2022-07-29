@@ -62,6 +62,7 @@ const AddNewMerchantSoleTraderForm: React.FunctionComponent<
         control={control}
         placeholder="Choose industry"
         label="Industry"
+        required
         items={industriesItems}
       />
       <TextFormField
