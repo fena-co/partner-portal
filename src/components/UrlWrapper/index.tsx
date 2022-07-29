@@ -23,7 +23,7 @@ const UrlInput = styled.input<{ white: boolean }>`
   font-family: Montserrat;
   @media (max-width: 1500px) {
     min-width: auto;
-    max-width: 100px;
+    max-width: 180px;
   }
 `;
 
