@@ -28,6 +28,7 @@ import ViewSecretModal from '../../../views/ApiKeyModals/viewModal';
 import Api from '../../../util/api';
 import { get } from 'lodash';
 import EditionModal from '../../../views/ApiKeyModals/editionModal';
+import Deletion from '../../../components/DeletionModal';
 
 const Key = styled(KeyIcon)`
   margin-right: 10px;
@@ -84,6 +85,10 @@ const ApiKeysPage: NextPage = () => {
 
   const [apiKeyId, setApiKeyId] = useState('');
 
+  const [isDisableModalOpen, setDisableModalOpen] = useState(false);
+
+  const [idForDisable, setIdForDisable] = useState('');
+
   const getApiKeys = async () => {
     try {
       const apiResult = await Api.getPaginatedApiKeys(currentPage, limit, {
@@ -130,9 +135,10 @@ const ApiKeysPage: NextPage = () => {
     getApiKeys();
   };
 
-  const handlerDisable = async (id: string) => {
-    const disableRes = await Api.disableApiKey(id);
+  const handlerDisable = async () => {
+    const disableRes = await Api.disableApiKey(idForDisable);
     getApiKeys();
+    setDisableModalOpen(false);
     console.log('disableKey', disableRes);
   };
 
@@ -211,7 +217,8 @@ const ApiKeysPage: NextPage = () => {
                         {
                           label: 'Disable',
                           onClick: () => {
-                            handlerDisable(item._id);
+                            setDisableModalOpen(true);
+                            setIdForDisable(item._id);
                           },
                           color: '#EF6355',
                         },
@@ -231,6 +238,19 @@ const ApiKeysPage: NextPage = () => {
           onPerPageChange={handleRowsPerPageChange}
         />
       </Content>
+      <Modal show={isDisableModalOpen}>
+        <ModalContent>
+          <Deletion
+            label="Disable api-key"
+            text="Are you sure you want to disable this key?"
+            buttonLabel="Disable"
+            handleCancel={() => setDisableModalOpen(false)}
+            handleDelete={() => {
+              handlerDisable();
+            }}
+          />
+        </ModalContent>
+      </Modal>
       <Modal show={isCreateApiKeyModalOpen}>
         <StyledModalContent>
           <form id="api-create" onSubmit={handleSubmit(onApiKeyCreate)}>
