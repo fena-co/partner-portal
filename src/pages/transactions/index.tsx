@@ -290,9 +290,9 @@ const Transactions: NextPage = () => {
                   <Table>
                     <TableHeader>
                       <tr>
-                        <TableHeaderCell>Fena ID</TableHeaderCell>
+                        <TableHeaderCell>Reference number</TableHeaderCell>
                         <TableHeaderCell>Amount</TableHeaderCell>
-                        <TableHeaderCell>Fee</TableHeaderCell>
+                        {/* <TableHeaderCell>Fee</TableHeaderCell> */}
                         <TableHeaderCell>Status</TableHeaderCell>
                         <TableHeaderCell>Merchant</TableHeaderCell>
                         <TableHeaderCell>Date Completed</TableHeaderCell>
@@ -308,9 +308,9 @@ const Transactions: NextPage = () => {
                             setIsOpenPreview(true);
                           }}
                         >
-                          <TableBodyCell>{item._id}</TableBodyCell>
+                          <TableBodyCell>{item.reference}</TableBodyCell>
                           <AmmountCell>£{item.amount}</AmmountCell>
-                          <AmmountCell>£{item.fee}</AmmountCell>
+                          {/* <AmmountCell>£{item.fee}</AmmountCell> */}
                           <TableBodyCell>
                             <StatusWrapper status={item.status}>
                               {item.status}
