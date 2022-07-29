@@ -8,7 +8,7 @@ const Container = styled.div`
   align-items: center;
 `;
 
-const UrlInput = styled.input<{ white: boolean }>`
+const UrlInput = styled.input<{ white: boolean; width: number }>`
   display: flex;
   padding-bottom: 10px;
   background: ${({ white }) => (white ? '#fff' : '#f4f7f9')};
@@ -16,14 +16,15 @@ const UrlInput = styled.input<{ white: boolean }>`
   border: 1px solid #dbe3eb;
   border-radius: 5px;
   text-align: center;
-  min-width: 200px;
+  width: ${({ width }) => (width ? `${width}px` : '200')};
   overflow: hidden;
   height: 36px;
   padding: 0 10px;
   font-family: Montserrat;
+
   @media (max-width: 1500px) {
     min-width: auto;
-    max-width: 180px;
+    max-width: 150px;
   }
 `;
 
@@ -44,10 +45,10 @@ const CopyButton = styled.button`
   }
 `;
 
-export default function UrlWrapper({ children, whiteBg }: any) {
+export default function UrlWrapper({ children, whiteBg, width }: any) {
   return (
     <Container>
-      <UrlInput white={whiteBg} value={children} />
+      <UrlInput width={width} white={whiteBg} value={children} />
       <ReactTooltip id="copyBtn" />
 
       <CopyButton

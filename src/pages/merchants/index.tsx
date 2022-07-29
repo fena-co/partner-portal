@@ -35,6 +35,7 @@ import { MerchantStatus } from '../../types/api';
 import Api from '../../util/api';
 import Details from './details';
 import Arrow from 'image/icon/arrow-down.svg';
+import UrlWrapper from '../../components/UrlWrapper';
 
 const StyledTableBodyCell = styled(TableBodyCell)`
   line-height: 25px;
@@ -65,6 +66,13 @@ const ArrowIcon = styled(Arrow)`
 `;
 
 const ContactItem = styled.div``;
+
+const ResponsiveTable = styled.div`
+  width: 100%;
+  @media (max-width: 1600px) {
+    overflow-x: auto;
+  }
+`;
 
 const menus = [
   {
@@ -369,10 +377,7 @@ const Merchants: NextPage = () => {
                   <Table>
                     <TableHeader>
                       <tr>
-                        <ClickableTableHeaderCell
-                          width={150}
-                          onClick={onNameSort}
-                        >
+                        <ClickableTableHeaderCell onClick={onNameSort}>
                           <LabelAndIcon>
                             Merchant Name
                             <ArrowIcon aria-expanded={toggleSortArrow.name} />
@@ -386,10 +391,8 @@ const Merchants: NextPage = () => {
                             />
                           </LabelAndIcon>
                         </ClickableTableHeaderCell>
-                        <TableHeaderCell width={150}>
-                          Phone number
-                        </TableHeaderCell>
-                        <TableHeaderCell>Website</TableHeaderCell>
+                        <TableHeaderCell>Phone number</TableHeaderCell>
+                        <TableHeaderCell width={20}>Website</TableHeaderCell>
                         <TableHeaderCell>STATUS</TableHeaderCell>
                         <ClickableTableHeaderCell onClick={onActivitySort}>
                           <LabelAndIcon>
@@ -447,7 +450,9 @@ const Merchants: NextPage = () => {
                               ? moment(item.last_activity).format('DD/MM/YYYY')
                               : 'None'}
                           </StyledTableBodyCell>
-                          <StyledTableBodyCell>{item._id}</StyledTableBodyCell>
+                          <StyledTableBodyCell>
+                            <UrlWrapper width={50}>{item._id}</UrlWrapper>
+                          </StyledTableBodyCell>
                           <StyledTableBodyCell>
                             <ContextMenu actions={getMerchantsActions(item)} />
                           </StyledTableBodyCell>
