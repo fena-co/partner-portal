@@ -38,13 +38,20 @@ const Container = styled.div<{ fullWidth?: boolean }>`
 interface SearchBoxProps {
   placeholder?: string;
   fullWidth?: boolean;
+  value?: string;
   onChangeHandler: (value: any) => void;
 }
-function SearchBox({ onChangeHandler, placeholder, ...rest }: SearchBoxProps) {
+function SearchBox({
+  onChangeHandler,
+  placeholder,
+  value,
+  ...rest
+}: SearchBoxProps) {
   return (
     <Container {...rest}>
       <SearchInput
         {...rest}
+        value={value}
         placeholder={placeholder || 'Search'}
         onChange={(e: any) =>
           onChangeHandler({ searchKeyword: e.target.value })

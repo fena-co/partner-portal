@@ -166,8 +166,6 @@ const ApiKeysPage: NextPage = () => {
           <TableHeader>
             <tr>
               <TableHeaderCell>Name</TableHeaderCell>
-
-              <TableHeaderCell>Key</TableHeaderCell>
               <TableHeaderCell>Terminal secret</TableHeaderCell>
               <TableHeaderCell>Status</TableHeaderCell>
               <TableHeaderCell></TableHeaderCell>
@@ -184,10 +182,6 @@ const ApiKeysPage: NextPage = () => {
                   }}
                 >
                   <TableBodyCell>{item.name}</TableBodyCell>
-
-                  <TableBodyCell>
-                    <UrlWrapper>{item._id}</UrlWrapper>
-                  </TableBodyCell>
                   <TableBodyCell>
                     <Hypertext
                       onClick={() => {

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { FocusEventHandler } from 'react';
 import styled from 'styled-components';
 import { Control } from 'react-hook-form';
 import DropdownFormField from '../../components/DropdownFormField';
@@ -35,6 +35,7 @@ interface AddNewMerchantSoleTraderFormProps {
   };
   onSameAsRegisteredNameChange: () => void;
   onSameAsRegisteredAddressChange: () => void;
+  onFocus: FocusEventHandler<HTMLInputElement>;
   control: Control;
   isDirector: boolean;
   isEmailSend: boolean;
@@ -53,6 +54,7 @@ const AddNewMerchantLimitedCompanyForm: React.FunctionComponent<
   isEmailSend,
   sameAsRegisteredName,
   sameAsRegisteredAddress,
+  onFocus,
 }) => {
   const { value: countryCode } = countryData || {};
   const industriesItems = industries.map((el) => ({
@@ -81,6 +83,22 @@ const AddNewMerchantLimitedCompanyForm: React.FunctionComponent<
         required
         label="Registered name"
       />
+      <TextFormField
+        name="limitedCompany.tradingName"
+        control={control}
+        label="Trading name"
+      />
+      <WrapperSameCheckbox>
+        <CheckboxFormField
+          name=""
+          control={control}
+          label="Same as registered"
+          onChange={() => {
+            onSameAsRegisteredNameChange();
+          }}
+          checked={sameAsRegisteredName}
+        />
+      </WrapperSameCheckbox>
       <SectionLabel variant="subtitle5">Registered address</SectionLabel>
       <TextFormField
         name="limitedCompany.address.addressLine1"
@@ -105,22 +123,6 @@ const AddNewMerchantLimitedCompanyForm: React.FunctionComponent<
         required
         label="Postcode"
       />
-      <TextFormField
-        name="limitedCompany.tradingName"
-        control={control}
-        label="Trading name"
-      />
-      <WrapperSameCheckbox>
-        <CheckboxFormField
-          name=""
-          control={control}
-          label="Same as registered"
-          onChange={() => {
-            onSameAsRegisteredNameChange();
-          }}
-          checked={sameAsRegisteredName}
-        />
-      </WrapperSameCheckbox>
       <SectionLabel variant="subtitle5">Trading address</SectionLabel>
       <TextFormField
         name="limitedCompany.tradingAddress.addressLine1"
@@ -167,6 +169,7 @@ const AddNewMerchantLimitedCompanyForm: React.FunctionComponent<
       <TextFormField
         name="limitedCompany.publicWebsite"
         control={control}
+        onFocus={onFocus}
         label="Business website"
       />
       {/* <TextFormField

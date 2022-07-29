@@ -100,8 +100,7 @@ const Merchants: NextPage = () => {
     undefined
   );
 
-  const [filterConfig, setFilterConfig] = useState({});
-  const [searchConfig, setSearchConfig] = useState({});
+  const [searchConfig, setSearchConfig] = useState({ searchKeyword: '' });
 
   const [isSortAscending, setSortAscending] = useState(false);
   const sortDirection = isSortAscending ? 'DESC' : 'ASC';
@@ -254,13 +253,13 @@ const Merchants: NextPage = () => {
               setIsPreviewOpen(true);
             },
           },
-          // {
-          //   label: 'Analytics',
-          //   onClick: () => {
-          //     setSelectedMerchantId(item._id);
-          //     router.push('/merchants/analytics/id');
-          //   },
-          // },
+          {
+            label: 'Analytics',
+            onClick: () => {
+              setSelectedMerchantId(item._id);
+              router.push('/merchants/analytics/id');
+            },
+          },
         ];
       case MerchantStatus.ACTIVE:
       case MerchantStatus.PENDING:
@@ -273,13 +272,13 @@ const Merchants: NextPage = () => {
               setIsPreviewOpen(true);
             },
           },
-          // {
-          //   label: 'Analytics',
-          //   onClick: () => {
-          //     setSelectedMerchantId(item._id);
-          //     router.push('/merchants/analytics/id');
-          //   },
-          // },
+          {
+            label: 'Analytics',
+            onClick: () => {
+              setSelectedMerchantId(item._id);
+              router.push('/merchants/analytics/id');
+            },
+          },
           {
             color: '#EF6355',
             label: 'Disable',
@@ -298,13 +297,13 @@ const Merchants: NextPage = () => {
               setIsPreviewOpen(true);
             },
           },
-          // {
-          //   label: 'Analytics',
-          //   onClick: () => {
-          //     setSelectedMerchantId(item._id);
-          //     router.push('/merchants/analytics/id');
-          //   },
-          // },
+          {
+            label: 'Analytics',
+            onClick: () => {
+              setSelectedMerchantId(item._id);
+              router.push('/merchants/analytics/id');
+            },
+          },
           {
             color: '#EF6355',
             label: 'Disable',
@@ -345,10 +344,12 @@ const Merchants: NextPage = () => {
             <HeaderWrapper>
               <HeaderLeft>
                 <Typography variant="subtitle4">Merchants</Typography>
-                <SearchBox onChangeHandler={handleSearchChange} />
+                <SearchBox
+                  value={searchConfig.searchKeyword}
+                  onChangeHandler={handleSearchChange}
+                />
               </HeaderLeft>
               <HeaderButtons>
-                {/* <Filter /> */}
                 <ButtonCreation
                   variant="contained"
                   onClick={() => {
@@ -389,7 +390,7 @@ const Merchants: NextPage = () => {
                           Phone number
                         </TableHeaderCell>
                         <TableHeaderCell>Website</TableHeaderCell>
-                        <TableHeaderCell width={10}>STATUS</TableHeaderCell>
+                        <TableHeaderCell>STATUS</TableHeaderCell>
                         <ClickableTableHeaderCell onClick={onActivitySort}>
                           <LabelAndIcon>
                             Last activity
@@ -417,7 +418,7 @@ const Merchants: NextPage = () => {
                           }}
                         >
                           <StyledTableBodyCell>
-                            {item.tradingName}
+                            {item.tradingName ? item.tradingName : item.name}
                           </StyledTableBodyCell>
                           <ContactCell>
                             <ContactItem>{item.contactName}</ContactItem>
@@ -435,7 +436,8 @@ const Merchants: NextPage = () => {
                           </StyledTableBodyCell>
                           <StyledTableBodyCell>
                             <StatusWrapper status={item.status}>
-                              {item.status === 'pending_verification'
+                              {item.status === 'pending_verification' ||
+                              item.status === 'manual_review_required'
                                 ? 'pending'
                                 : item.status}
                             </StatusWrapper>

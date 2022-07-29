@@ -34,6 +34,8 @@ export const soleTraderSchema = yup.object({
   ...businessInfoSchema,
   ...addBankAccountSchema,
   soleTrader: yup.object({
+    tin: yup
+      .string(),
     utr: yup
       .string()
       .matches(/^[0-9]*$/, 'UTR cannot include letters')

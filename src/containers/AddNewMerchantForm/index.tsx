@@ -149,7 +149,7 @@ const addMerchantDefaultValues = {
       code: 'GB',
       number: '',
     },
-    publicWebsite: 'http://',
+    publicWebsite: '',
     sendEmail: false,
   },
   limitedCompany: {
@@ -179,7 +179,7 @@ const addMerchantDefaultValues = {
       code: 'GB',
       number: '',
     },
-    publicWebsite: 'http://',
+    publicWebsite: '',
     isDirector: true,
     sendEmail: false,
     sameAsRegisteredName: false,
@@ -193,7 +193,7 @@ const addMerchantDefaultValues = {
 };
 
 interface AddMerchantFormProps {
-  setSuccess: (email: string) => void;
+  setSuccess: (data: { email: string; sendEmail: boolean }) => void;
 }
 
 const AddNewMerchantForm: NextPage<AddMerchantFormProps> = ({ setSuccess }) => {
@@ -204,7 +204,6 @@ const AddNewMerchantForm: NextPage<AddMerchantFormProps> = ({ setSuccess }) => {
     handleSubmit,
     control,
     watch,
-    reset,
     setValue,
     formState: { errors },
   } = useForm<AddMerchantValues>({
@@ -230,6 +229,8 @@ const AddNewMerchantForm: NextPage<AddMerchantFormProps> = ({ setSuccess }) => {
   const registeredName = watch('limitedCompany.registeredName');
 
   const limitedCompany = watch('limitedCompany');
+
+  const soleTrader = watch('soleTrader');
 
   const limitedRegAddress = watch('limitedCompany.address');
 
@@ -315,7 +316,8 @@ const AddNewMerchantForm: NextPage<AddMerchantFormProps> = ({ setSuccess }) => {
         name: soleTrader.tradingName,
         contactName: soleTrader.contactName,
         countryCode: country.value,
-        identifier: soleTrader.utr,
+        identifier:
+          countryData.value === 'GB' ? soleTrader.utr : soleTrader.tin,
         address: {
           addressLine1: soleTrader.address?.addressLine1,
           addressLine2: soleTrader.address?.addressLine2,
@@ -334,7 +336,7 @@ const AddNewMerchantForm: NextPage<AddMerchantFormProps> = ({ setSuccess }) => {
           externalAccountId: externalAccountId,
         },
       });
-      setSuccess(soleTrader.email);
+      setSuccess({ email: soleTrader.email, sendEmail: soleTrader.sendEmail });
       console.log(individualApiRes);
     } else {
       console.log('limited');
@@ -383,7 +385,10 @@ const AddNewMerchantForm: NextPage<AddMerchantFormProps> = ({ setSuccess }) => {
           externalAccountId: externalAccountId,
         },
       });
-      setSuccess(limitedCompany.email);
+      setSuccess({
+        email: limitedCompany.email,
+        sendEmail: limitedCompany.sendEmail,
+      });
       console.log(limitedApiRes);
     }
   };
@@ -415,6 +420,12 @@ const AddNewMerchantForm: NextPage<AddMerchantFormProps> = ({ setSuccess }) => {
           <>
             {businessType.value === 'individual' && (
               <AddNewMerchantSoleTraderForm
+                onFocus={() => {
+                  setValue<any>('soleTrader', {
+                    ...soleTrader,
+                    publicWebsite: 'https://',
+                  });
+                }}
                 isEmailSend={isSoleEmailSend}
                 countryData={countryData}
                 control={control as any}
@@ -422,6 +433,12 @@ const AddNewMerchantForm: NextPage<AddMerchantFormProps> = ({ setSuccess }) => {
             )}
             {businessType.value === 'limited' && (
               <AddNewMerchantLimitedCompanyForm
+                onFocus={() => {
+                  setValue<any>('limitedCompany', {
+                    ...limitedCompany,
+                    publicWebsite: 'https://',
+                  });
+                }}
                 onSameAsRegisteredNameChange={onSameAsRegisteredNameChange}
                 onSameAsRegisteredAddressChange={
                   onSameAsRegisteredAddressChange
