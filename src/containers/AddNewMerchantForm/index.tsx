@@ -149,7 +149,7 @@ const addMerchantDefaultValues = {
       code: 'GB',
       number: '',
     },
-    publicWebsite: '',
+    publicWebsite: 'http://',
     sendEmail: false,
   },
   limitedCompany: {
@@ -179,7 +179,7 @@ const addMerchantDefaultValues = {
       code: 'GB',
       number: '',
     },
-    publicWebsite: '',
+    publicWebsite: 'http://',
     isDirector: true,
     sendEmail: false,
     sameAsRegisteredName: false,
