@@ -198,6 +198,13 @@ const ProfileMenuItem = styled(Typography)`
   }
 `;
 
+const menus = [
+  {
+    name: 'Dashboard',
+    pathName: ROUTES.DASHBOARD,
+  },
+];
+
 const ProfileHolder = styled(Typography)`
   margin-bottom: 10px;
 `;
@@ -230,7 +237,7 @@ const Header = ({ variant }: { variant: 'home' | 'dashboard' }) => {
   const isMenuActive = (pathName: any) => {
     const isActiveMenu = router.pathname
       .replace('/', '')
-      .includes(pathName.replace('/', ''));
+      .includes(pathName?.replace('/', ''));
     if (pathName !== '/') {
       return isActiveMenu;
     }
@@ -238,14 +245,14 @@ const Header = ({ variant }: { variant: 'home' | 'dashboard' }) => {
     return router.pathname === '/';
   };
 
-  // const handleClickMenuItem = (pathName: any) => {
-  //   if (pathName === ROUTES.PAYMENT) {
-  //     router.push(ROUTES.PAYMENT_INVOICE);
-  //     return;
-  //   }
+  const handleClickMenuItem = (pathName: any) => {
+    if (pathName === ROUTES.DASHBOARD) {
+      router.push(ROUTES.DASHBOARD);
+      return;
+    }
 
-  //   router.push(pathName);
-  // };
+    router.push(pathName);
+  };
 
   const handlerLogOut = async () => {
     await Auth.signOut();
@@ -259,103 +266,114 @@ const Header = ({ variant }: { variant: 'home' | 'dashboard' }) => {
       <LogoContainer>
         <Logo />
       </LogoContainer>
-      <MenuList moveRight={variant === 'home'}></MenuList>
-      {variant === 'dashboard' && (
-        <HeaderButtonContainer>
-          <HeaderButton>
-            <Bell />
-          </HeaderButton>
-          <HeaderButton
-            onClick={(e) => {
-              e.stopPropagation();
-              setSettingOpen(!settingOpen);
-            }}
-          >
-            <Cog />
-            {settingOpen && (
-              <ContextMenuOverlay
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setSettingOpen(false);
-                }}
-              >
-                <ContextMenuContainer width={300}>
-                  <ContextMenuHeader>Settings</ContextMenuHeader>
-                  <SettingsMenuItemContainer>
-                    {settingsItems.map((item) => {
-                      return (
-                        <ContextMenuItem
-                          key={item.title}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            item.route && router.push(item.route);
-                          }}
-                        >
-                          <SettingsItemIcon>{item.icon}</SettingsItemIcon>
-                          <SettingsItemText>{item.title}</SettingsItemText>
-                        </ContextMenuItem>
-                      );
-                    })}
-                  </SettingsMenuItemContainer>
-                </ContextMenuContainer>
-              </ContextMenuOverlay>
-            )}
-          </HeaderButton>
-          <HeaderButton
-            onClick={(e) => {
-              e.stopPropagation();
-              setProfileOpen(!profileOpen);
-            }}
-          >
-            <Person />
-            {profileOpen && (
-              <ContextMenuOverlay
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setProfileOpen(false);
-                }}
-              >
-                <ContextMenuContainer width={300}>
-                  <ProfileMenuContainer>
-                    <ProfileMenuHeader>
-                      <ProfileHolder variant="body5">
-                        {user.firstName}
-                        {` `}
-                        {user.lastName}
-                      </ProfileHolder>
-                      <Typography variant="grayBody">
-                        {user.role === 'admin' ? 'Administrator' : user.role}
-                      </Typography>
-                    </ProfileMenuHeader>
-                    <ProfileMenuContent>
-                      <ProfileMenuItemWrapper>
-                        <ProfileMenuItem variant="body4">
-                          Profile
-                        </ProfileMenuItem>
-                      </ProfileMenuItemWrapper>
+      <MenuList moveRight={variant === 'home'}>
+        {' '}
+        {variant === 'dashboard' &&
+          menus.map((menu: any) => (
+            <MenuItem
+              active={isMenuActive(menu.pathName)}
+              key={menu.name}
+              onClick={() => handleClickMenuItem(menu.pathName)}
+            >
+              {menu.name}
+            </MenuItem>
+          ))}
+      </MenuList>
 
-                      <ProfileMenuItemWrapper>
-                        <ProfileMenuItem variant="body4">
-                          Switch to business portal
-                        </ProfileMenuItem>
-                      </ProfileMenuItemWrapper>
+      <HeaderButtonContainer>
+        <HeaderButton>
+          <Bell />
+        </HeaderButton>
+        <HeaderButton
+          onClick={(e) => {
+            e.stopPropagation();
+            setSettingOpen(!settingOpen);
+          }}
+        >
+          <Cog />
+          {settingOpen && (
+            <ContextMenuOverlay
+              onClick={(e) => {
+                e.stopPropagation();
+                setSettingOpen(false);
+              }}
+            >
+              <ContextMenuContainer width={300}>
+                <ContextMenuHeader>Settings</ContextMenuHeader>
+                <SettingsMenuItemContainer>
+                  {settingsItems.map((item) => {
+                    return (
+                      <ContextMenuItem
+                        key={item.title}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          item.route && router.push(item.route);
+                        }}
+                      >
+                        <SettingsItemIcon>{item.icon}</SettingsItemIcon>
+                        <SettingsItemText>{item.title}</SettingsItemText>
+                      </ContextMenuItem>
+                    );
+                  })}
+                </SettingsMenuItemContainer>
+              </ContextMenuContainer>
+            </ContextMenuOverlay>
+          )}
+        </HeaderButton>
+        <HeaderButton
+          onClick={(e) => {
+            e.stopPropagation();
+            setProfileOpen(!profileOpen);
+          }}
+        >
+          <Person />
+          {profileOpen && (
+            <ContextMenuOverlay
+              onClick={(e) => {
+                e.stopPropagation();
+                setProfileOpen(false);
+              }}
+            >
+              <ContextMenuContainer width={300}>
+                <ProfileMenuContainer>
+                  <ProfileMenuHeader>
+                    <ProfileHolder variant="body5">
+                      {user.firstName}
+                      {` `}
+                      {user.lastName}
+                    </ProfileHolder>
+                    <Typography variant="grayBody">
+                      {user.role === 'admin' ? 'Administrator' : user.role}
+                    </Typography>
+                  </ProfileMenuHeader>
+                  <ProfileMenuContent>
+                    <ProfileMenuItemWrapper>
+                      <ProfileMenuItem variant="body4">Profile</ProfileMenuItem>
+                    </ProfileMenuItemWrapper>
 
-                      <ProfileMenuItemWrapper>
-                        <ProfileMenuItem
-                          variant="body4"
-                          onClick={handlerLogOut}
-                        >
-                          Sign out
-                        </ProfileMenuItem>
-                      </ProfileMenuItemWrapper>
-                    </ProfileMenuContent>
-                  </ProfileMenuContainer>
-                </ContextMenuContainer>
-              </ContextMenuOverlay>
-            )}
-          </HeaderButton>
-        </HeaderButtonContainer>
-      )}
+                    <ProfileMenuItemWrapper>
+                      <ProfileMenuItem
+                        variant="body4"
+                        onClick={() =>
+                          router.push('https://business.staging.fena.co/')
+                        }
+                      >
+                        Switch to business portal
+                      </ProfileMenuItem>
+                    </ProfileMenuItemWrapper>
+
+                    <ProfileMenuItemWrapper>
+                      <ProfileMenuItem variant="body4" onClick={handlerLogOut}>
+                        Sign out
+                      </ProfileMenuItem>
+                    </ProfileMenuItemWrapper>
+                  </ProfileMenuContent>
+                </ProfileMenuContainer>
+              </ContextMenuContainer>
+            </ContextMenuOverlay>
+          )}
+        </HeaderButton>
+      </HeaderButtonContainer>
     </HeaderContainer>
   );
 };
