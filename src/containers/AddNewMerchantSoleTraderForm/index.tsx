@@ -68,7 +68,7 @@ const AddNewMerchantSoleTraderForm: React.FunctionComponent<
         name="soleTrader.contactName"
         control={control}
         required
-        label="Contact name"
+        label="Full legal name"
       />
       <TextFormField
         name="soleTrader.email"
