@@ -190,7 +190,7 @@ const Preview = ({ handleClose, transactionId }: any) => {
               </tr>
               <tr>
                 <DetailsHeader>Beneficiary Name: </DetailsHeader>
-                <DetailsCell>{providerData?.beneficiaryName || 'None'}</DetailsCell>
+                <DetailsCell>{providerData?.owner.name || 'None'}</DetailsCell>
               </tr>
               <tr>
                 <DetailsHeader>Beneficiary Bank Account: </DetailsHeader>

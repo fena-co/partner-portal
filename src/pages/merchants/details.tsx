@@ -94,11 +94,19 @@ const Title = styled(Typography)`
   margin-bottom: 10px;
 `;
 
+const BankAccounts = styled.div`
+  border-top: 1px solid #dbe3eb;
+`;
+
 const BankAccountCardWrapper = styled.div`
   display: flex;
   flex-wrap: wrap;
-  border-top: 1px solid #dbe3eb;
-  padding: 50px 0;
+
+  padding: 10px 0 20px 0;
+`;
+
+const StyledButtonCreation = styled(ButtonCreation)`
+  margin-top: 20px;
 `;
 
 const VerificationContainer = styled.div`
@@ -191,6 +199,13 @@ const Details: React.FunctionComponent<DetailsProps> = ({
     console.log(response);
     getData();
     setAddBankAccountModalOpen(false);
+    setLoading(false);
+    reset({
+      name: '',
+      provider: { label: '', value: '' },
+      identification: '',
+      externalAccountId: '',
+    });
   };
   return (
     <>
@@ -327,16 +342,17 @@ const Details: React.FunctionComponent<DetailsProps> = ({
         )}
 
         {activePage === 'bankAccounts' && (
-          <BankAccountCardWrapper>
-            {!data.bankAccounts.length ? (
-              <ButtonCreation
-                variant="contained"
-                onClick={() => setAddBankAccountModalOpen(true)}
-              >
-                Add bank account
-              </ButtonCreation>
-            ) : (
-              data.bankAccounts.map((acc: any) => {
+          <BankAccounts>
+            <StyledButtonCreation
+              variant="contained"
+              onClick={() => setAddBankAccountModalOpen(true)}
+            >
+              {!data.bankAccounts.length
+                ? 'Add bank account'
+                : 'Update bank account'}
+            </StyledButtonCreation>
+            <BankAccountCardWrapper>
+              {data.bankAccounts.map((acc: any) => {
                 return (
                   <BankAccountCard
                     key={acc._id}
@@ -355,9 +371,9 @@ const Details: React.FunctionComponent<DetailsProps> = ({
                     }}
                   />
                 );
-              })
-            )}
-          </BankAccountCardWrapper>
+              })}
+            </BankAccountCardWrapper>
+          </BankAccounts>
         )}
 
         {activePage === 'verification' && (
