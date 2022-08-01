@@ -174,6 +174,18 @@ class Api {
     return await result.json();
   }
 
+  async createAccount(accountData: any, id: string) {
+    const url = new URL(
+      `${this.mainUrl}partner/companies/${id}/bank-accounts/create`
+    );
+    const result = await this.fetcher(url.toString(), {
+      method: 'POST',
+      headers: this.defaultHeaders,
+      body: JSON.stringify(accountData),
+    });
+    return await result.json();
+  }
+
   async getPaginatedTransactions(
     page: number,
     limit?: number,
@@ -314,7 +326,6 @@ class Api {
   }
 
   async getCompaniesHouseData(crn: string) {
-    console.log('fromApiCrn', crn);
     const url = new URL(this.mainUrl + 'ch/get');
     url.searchParams.set('q', crn);
     const result = await this.fetcher(url.toString(), {

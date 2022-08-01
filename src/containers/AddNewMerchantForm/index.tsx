@@ -274,19 +274,22 @@ const AddNewMerchantForm: NextPage<AddMerchantFormProps> = ({ setSuccess }) => {
   };
 
   const findCompaniesHouseData = async (crn: string) => {
-    const chResult = await Api.getCompaniesHouseData(crn);
-    const officeAddress = chResult?.registered_office_address;
-    setValue<any>('limitedCompany', {
-      ...limitedCompany,
-      registeredName: chResult?.company_name,
-      address: {
-        addressLine1: officeAddress?.address_line_1,
-        addressLine2: officeAddress?.address_line_2,
-        city: officeAddress?.locality,
-        zipCode: officeAddress?.postal_code,
-      },
-    });
-    console.log('reqResult', chResult);
+    try {
+      const chResult = await Api.getCompaniesHouseData(crn);
+      const officeAddress = chResult?.registered_office_address;
+      setValue<any>('limitedCompany', {
+        ...limitedCompany,
+        registeredName: chResult?.company_name,
+        address: {
+          addressLine1: officeAddress?.address_line_1,
+          addressLine2: officeAddress?.address_line_2,
+          city: officeAddress?.locality,
+          zipCode: officeAddress?.postal_code,
+        },
+      });
+    } catch (e) {
+      console.log('err', e);
+    }
   };
 
   const mappedCountryCodes = COUNTRY_CODES.map((el) => ({
@@ -329,12 +332,15 @@ const AddNewMerchantForm: NextPage<AddMerchantFormProps> = ({ setSuccess }) => {
         publicEmail: soleTrader.email,
         supportPhone: `${soleTrader.phoneNumber.code} ${soleTrader.phoneNumber.number}`,
         publicWebsite: soleTrader.publicWebsite,
-        bankAccount: {
-          provider: provider.value,
-          name: name,
-          identification: identification?.replace(/-/g, ''),
-          externalAccountId: externalAccountId,
-        },
+        bankAccount:
+          provider.value && name && identification && externalAccountId
+            ? {
+                provider: provider.value,
+                name: name,
+                identification: identification?.replace(/-/g, ''),
+                externalAccountId: externalAccountId,
+              }
+            : undefined,
       });
       setSuccess({ email: soleTrader.email, sendEmail: soleTrader.sendEmail });
       console.log(individualApiRes);
@@ -378,12 +384,15 @@ const AddNewMerchantForm: NextPage<AddMerchantFormProps> = ({ setSuccess }) => {
         //     ? `${limitedCompany.phoneNumber.code} ${limitedCompany.phoneNumber.number}`
         //     : `${limitedCompany.directorPhoneNumber.code} ${limitedCompany.directorPhoneNumber.number}`,
         // },
-        bankAccount: {
-          provider: provider.value,
-          name: name,
-          identification: identification?.replace(/-/g, ''),
-          externalAccountId: externalAccountId,
-        },
+        bankAccount:
+          provider.value && name && identification && externalAccountId
+            ? {
+                provider: provider.value,
+                name: name,
+                identification: identification?.replace(/-/g, ''),
+                externalAccountId: externalAccountId,
+              }
+            : undefined,
       });
       setSuccess({
         email: limitedCompany.email,

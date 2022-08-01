@@ -6,6 +6,32 @@ import BankAccountCard from '../../components/BankAccountCard';
 import ShareVerificationLink from '../../components/ShareVerificationLink';
 import Api from '../../util/api';
 import { CompanyTypes } from '@fena/types';
+import {
+  ButtonCreation,
+  Modal,
+  ModalContent,
+} from '../../components/StyledComponents';
+import AddBankAccountModal from './AddBankAccount';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
+
+const addBaSchema = yup.object({
+  provider: yup.object({
+    label: yup.string().required('This field is required'),
+    value: yup.string().required(),
+  }),
+  name: yup.string().required('This field is required'),
+  identification: yup
+    .string()
+    .required('This field is required')
+    .matches(/\d{2}-\d{2}-\d{2}/, 'Sort code is invalid'),
+  externalAccountId: yup
+    .string()
+    .required('This field is required')
+    .min(8, 'Account number must be 8 digits')
+    .max(8, 'Account number must be 8 digits'),
+});
 
 const BackButton = styled.div`
   display: flex;
@@ -68,11 +94,19 @@ const Title = styled(Typography)`
   margin-bottom: 10px;
 `;
 
+const BankAccounts = styled.div`
+  border-top: 1px solid #dbe3eb;
+`;
+
 const BankAccountCardWrapper = styled.div`
   display: flex;
   flex-wrap: wrap;
-  border-top: 1px solid #dbe3eb;
-  padding: 50px 0;
+
+  padding: 10px 0 20px 0;
+`;
+
+const StyledButtonCreation = styled(ButtonCreation)`
+  margin-top: 20px;
 `;
 
 const VerificationContainer = styled.div`
@@ -124,10 +158,17 @@ const Details: React.FunctionComponent<DetailsProps> = ({
   handleClose,
   itemId,
 }) => {
+  const { handleSubmit, control, reset } = useForm({
+    mode: 'onChange',
+    resolver: yupResolver(addBaSchema),
+  });
+
   const [activePage, setActivePage] = useState<string>('company');
   const [data, setData] = useState<any>(null);
   const [verificationData, setVerificationData] = useState([]);
-
+  const [isAddBankAccountModalOpen, setAddBankAccountModalOpen] =
+    useState(false);
+  const [loading, setLoading] = useState(false);
   console.log('details', data);
 
   const getData = async () => {
@@ -143,6 +184,29 @@ const Details: React.FunctionComponent<DetailsProps> = ({
   useEffect(() => {
     getData();
   }, []);
+
+  const onBankCreate = async (data: any) => {
+    setLoading(true);
+    const response = await Api.createAccount(
+      {
+        name: data.name,
+        provider: data.provider.value,
+        identification: data.identification?.replace(/-/g, ''),
+        externalAccountId: data.externalAccountId,
+      },
+      itemId
+    );
+    console.log(response);
+    getData();
+    setAddBankAccountModalOpen(false);
+    setLoading(false);
+    reset({
+      name: '',
+      provider: { label: '', value: '' },
+      identification: '',
+      externalAccountId: '',
+    });
+  };
   return (
     <>
       <BackButton onClick={() => handleClose()}>
@@ -278,28 +342,38 @@ const Details: React.FunctionComponent<DetailsProps> = ({
         )}
 
         {activePage === 'bankAccounts' && (
-          <BankAccountCardWrapper>
-            {data.bankAccounts.map((acc: any) => {
-              return (
-                <BankAccountCard
-                  key={acc._id}
-                  account={{
-                    accountName: acc.name,
-                    accountNumber: acc.externalAccountId,
-                    bankImg: acc.provider.logo,
-                    sortCode: acc.identification,
-                    title: acc.provider.name,
-                    status: acc.status,
-                    accId: acc._id,
-                    companyId: data._id,
-                  }}
-                  getBankAccounts={() => {
-                    getData();
-                  }}
-                />
-              );
-            })}
-          </BankAccountCardWrapper>
+          <BankAccounts>
+            <StyledButtonCreation
+              variant="contained"
+              onClick={() => setAddBankAccountModalOpen(true)}
+            >
+              {!data.bankAccounts.length
+                ? 'Add bank account'
+                : 'Update bank account'}
+            </StyledButtonCreation>
+            <BankAccountCardWrapper>
+              {data.bankAccounts.map((acc: any) => {
+                return (
+                  <BankAccountCard
+                    key={acc._id}
+                    account={{
+                      accountName: acc.name,
+                      accountNumber: acc.externalAccountId,
+                      bankImg: acc.provider.logo,
+                      sortCode: acc.identification,
+                      title: acc.provider.name,
+                      status: acc.status,
+                      accId: acc._id,
+                      companyId: data._id,
+                    }}
+                    getBankAccounts={() => {
+                      getData();
+                    }}
+                  />
+                );
+              })}
+            </BankAccountCardWrapper>
+          </BankAccounts>
         )}
 
         {activePage === 'verification' && (
@@ -338,6 +412,17 @@ const Details: React.FunctionComponent<DetailsProps> = ({
             </VerificationContainer>
           </DetailsWrapper>
         )}
+        <Modal show={isAddBankAccountModalOpen}>
+          <ModalContent>
+            <form onSubmit={handleSubmit(onBankCreate)}>
+              <AddBankAccountModal
+                loading={loading}
+                control={control}
+                handleClose={() => setAddBankAccountModalOpen(false)}
+              />
+            </form>
+          </ModalContent>
+        </Modal>
       </Container>
     </>
   );

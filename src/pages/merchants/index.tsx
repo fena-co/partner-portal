@@ -450,7 +450,9 @@ const Merchants: NextPage = () => {
                               ? moment(item.last_activity).format('DD/MM/YYYY')
                               : 'None'}
                           </StyledTableBodyCell>
-                          <StyledTableBodyCell>
+                          <StyledTableBodyCell
+                            onClick={(e) => e.stopPropagation()}
+                          >
                             <UrlWrapper width={50}>{item._id}</UrlWrapper>
                           </StyledTableBodyCell>
                           <StyledTableBodyCell>
