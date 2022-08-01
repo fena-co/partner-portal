@@ -326,7 +326,6 @@ class Api {
   }
 
   async getCompaniesHouseData(crn: string) {
-    console.log('fromApiCrn', crn);
     const url = new URL(this.mainUrl + 'ch/get');
     url.searchParams.set('q', crn);
     const result = await this.fetcher(url.toString(), {

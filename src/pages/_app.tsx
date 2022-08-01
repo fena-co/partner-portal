@@ -7,6 +7,7 @@ import { persistor, store } from '../store';
 import { PersistGate } from 'redux-persist/integration/react';
 import '../../styles/globals.css';
 import '../components/DayInput/datepicker.css';
+import Head from 'next/head'
 
 const config = {
   aws_project_region: process.env.REGION,
@@ -25,13 +26,20 @@ Amplify.configure(config);
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <Provider store={store}>
-      <PersistGate persistor={persistor} loading={null}>
-        <Authenticator pageProps={pageProps}>
-          <Component {...pageProps} />
-        </Authenticator>
-      </PersistGate>
-    </Provider>
+    <>
+      <Head>
+        <title>Fena Partner</title>
+        <link rel="shortcut icon" href="/favIcon.png" />
+        <meta property="og:title" content="Fena Partner" key="title" />
+      </Head>
+      <Provider store={store}>
+        <PersistGate persistor={persistor} loading={null}>
+          <Authenticator pageProps={pageProps}>
+            <Component {...pageProps} />
+          </Authenticator>
+        </PersistGate>
+      </Provider>
+    </>
   );
 }
 

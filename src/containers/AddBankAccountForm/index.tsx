@@ -8,7 +8,6 @@ import TextFormField from '../../components/TextFormField';
 import { Control } from 'react-hook-form';
 import RadioButton from '../../components/RadioButton';
 import Api from '../../util/api';
-import { ModelAttributeAuthAllow } from '@aws-amplify/datastore';
 
 const StyledDropdownFormField = styled(DropdownFormField)`
   padding-top: 20px;

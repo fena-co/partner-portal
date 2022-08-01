@@ -285,7 +285,7 @@ const Transactions: NextPage = () => {
                               {item.status}
                             </StatusWrapper>
                           </TableBodyCell>
-                          <TableBodyCell>{item.merchantName}</TableBodyCell>
+                          <TableBodyCell>{item.benefitiaryName}</TableBodyCell>
                           <TableBodyCell>
                             {item.completedOn
                               ? moment(item.completedOn).format('MM/DD/YYYY')

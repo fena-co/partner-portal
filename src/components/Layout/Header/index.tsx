@@ -210,21 +210,21 @@ const ProfileHolder = styled(Typography)`
 `;
 
 const settingsItems = [
-  {
-    title: 'Business Details',
-    icon: <BusinessIcon />,
-    route: '',
-  },
+  // {
+  //   title: 'Business Details',
+  //   icon: <BusinessIcon />,
+  //   route: '',
+  // },
   {
     title: 'API Keys',
     icon: <ApiKeyIcon />,
     route: ROUTES.API_KEYS,
   },
-  {
-    title: 'Email Customisation',
-    icon: <EmailIcon />,
-    route: ROUTES.EMAIL_SETTINGS,
-  },
+  // {
+  //   title: 'Email Customisation',
+  //   icon: <EmailIcon />,
+  //   route: ROUTES.EMAIL_SETTINGS,
+  // },
 ];
 
 const Header = ({ variant }: { variant: 'home' | 'dashboard' }) => {
@@ -347,9 +347,9 @@ const Header = ({ variant }: { variant: 'home' | 'dashboard' }) => {
                     </Typography>
                   </ProfileMenuHeader>
                   <ProfileMenuContent>
-                    <ProfileMenuItemWrapper>
+                    {/* <ProfileMenuItemWrapper>
                       <ProfileMenuItem variant="body4">Profile</ProfileMenuItem>
-                    </ProfileMenuItemWrapper>
+                    </ProfileMenuItemWrapper> */}
 
                     <ProfileMenuItemWrapper>
                       <ProfileMenuItem
