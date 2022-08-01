@@ -144,6 +144,10 @@ const Preview = ({ handleClose, transactionId }: any) => {
                 <DetailsCell>{transactionData?._id}</DetailsCell>
               </tr>
               <tr>
+                <DetailsHeader>Reference: </DetailsHeader>
+                <DetailsCell>{transactionData?.reference}</DetailsCell>
+              </tr>
+              <tr>
                 <DetailsHeader>Amount: </DetailsHeader>
                 <DetailsCell>{transactionData?.amount}</DetailsCell>
               </tr>

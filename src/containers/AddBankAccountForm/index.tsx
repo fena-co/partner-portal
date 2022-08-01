@@ -8,6 +8,7 @@ import TextFormField from '../../components/TextFormField';
 import { Control } from 'react-hook-form';
 import RadioButton from '../../components/RadioButton';
 import Api from '../../util/api';
+import { ModelAttributeAuthAllow } from '@aws-amplify/datastore';
 
 const StyledDropdownFormField = styled(DropdownFormField)`
   padding-top: 20px;
@@ -62,15 +63,24 @@ const AddBankAccountForm: NextPage<AddBankAccountProps> = ({
       label: result.name,
       value: result._id,
     }));
+
+    const fromIndex = mapped.find((el) => {
+      el.label === 'Other bank';
+    });
+    console.log(mapped);
     setProviders(
       mapped.sort(function (a, b) {
-        if (a.label < b.label) {
-          return -1;
+        if (a.label !== 'Other bank') {
+          if (a.label < b.label) {
+            return -1;
+          }
+          if (a.label > b.label) {
+            return 1;
+          }
+          return 0;
+        } else {
+          return 0;
         }
-        if (a.label > b.label) {
-          return 1;
-        }
-        return 0;
       })
     );
   };

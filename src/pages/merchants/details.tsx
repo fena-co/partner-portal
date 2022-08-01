@@ -126,11 +126,7 @@ const Details: React.FunctionComponent<DetailsProps> = ({
 }) => {
   const [activePage, setActivePage] = useState<string>('company');
   const [data, setData] = useState<any>(null);
-  const [verificationData, setVerificationData] = useState([
-    // { director: 'Big Boss', verificationLink: 'http://verify.com' },
-    // { director: 'Big Boss', verificationLink: 'http://verify.com' },
-    // { director: 'Big Boss', verificationLink: 'http://verify.com' },
-  ]);
+  const [verificationData, setVerificationData] = useState([]);
 
   console.log('details', data);
 
@@ -188,7 +184,9 @@ const Details: React.FunctionComponent<DetailsProps> = ({
               <>
                 <DetailsContainer>
                   <Title variant="body5">Company number</Title>
-                  <Typography variant="lightBody">{data?._id}</Typography>
+                  <Typography variant="lightBody">
+                    {data?.identifier}
+                  </Typography>
                   <Typography variant="lightBody">company</Typography>
                 </DetailsContainer>
                 <DetailsContainer>
@@ -213,10 +211,13 @@ const Details: React.FunctionComponent<DetailsProps> = ({
               </>
             )}
 
-            <DetailsContainer>
-              <Title variant="body5">Trading name</Title>
-              <Typography variant="lightBody">{data?.tradingName}</Typography>
-            </DetailsContainer>
+            {data?.tradingName && (
+              <DetailsContainer>
+                <Title variant="body5">Trading name</Title>
+                <Typography variant="lightBody">{data?.tradingName}</Typography>
+              </DetailsContainer>
+            )}
+
             <DetailsContainer>
               <Title variant="body5">Trading address</Title>
               <Typography variant="lightBody">
@@ -242,6 +243,14 @@ const Details: React.FunctionComponent<DetailsProps> = ({
                 </Typography>
               </Typography>
             </DetailsContainer>
+            {data?.type === CompanyTypes.SOLE_TRADER && (
+              <DetailsContainer>
+                <Title variant="body5">
+                  {data?.countryCode === 'GB' ? 'UTR' : 'TIN'}
+                </Title>
+                <Typography variant="lightBody">{data.identifier}</Typography>
+              </DetailsContainer>
+            )}
           </DetailsWrapper>
         )}
 
@@ -249,7 +258,7 @@ const Details: React.FunctionComponent<DetailsProps> = ({
           <DetailsWrapper>
             <DetailsContainer>
               <Title variant="body5">Primary contact details</Title>
-              <Typography variant="lightBody">{data.name}</Typography>
+              <Typography variant="lightBody">{data.contactName}</Typography>
               <Typography variant="lightBody">{data.publicEmail}</Typography>
               <Typography variant="lightBody">{data.supportPhone}</Typography>
             </DetailsContainer>

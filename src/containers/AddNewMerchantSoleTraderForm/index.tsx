@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { FocusEventHandler } from 'react';
 import styled from 'styled-components';
 import { Control } from 'react-hook-form';
 import DropdownFormField from '../../components/DropdownFormField';
@@ -6,6 +6,7 @@ import PhoneFormField from '../../components/PhoneFormField';
 import TextFormField from '../../components/TextFormField';
 import { industries } from '../../constant/industries';
 import Typography from '../../components/Typography';
+import CheckboxFormField from '../../components/CheckboxFormField';
 
 const StyledDropdownFormField = styled(DropdownFormField)`
   padding-top: 20px;
@@ -19,17 +20,23 @@ const SectionLabel = styled(Typography)`
   margin-top: 20px;
 `;
 
+const WrapperCheckbox = styled.div`
+  padding-top: 20px;
+`;
+
 interface AddNewMerchantSoleTraderFormProps {
   countryData?: {
     label: string;
     value: string;
   };
   control: Control;
+  isEmailSend: boolean;
+  onFocus: FocusEventHandler<HTMLInputElement>;
 }
 
 const AddNewMerchantSoleTraderForm: React.FunctionComponent<
   AddNewMerchantSoleTraderFormProps
-> = ({ countryData, control }) => {
+> = ({ countryData, control, isEmailSend, onFocus }) => {
   const { value: countryCode } = countryData || {};
   const industriesItems = industries.map((el) => ({
     label: el.category,
@@ -41,28 +48,33 @@ const AddNewMerchantSoleTraderForm: React.FunctionComponent<
 
   return (
     <>
-      <TextFormField
-        name="soleTrader.utr"
-        control={control}
-        required={countryCode !== 'GB'}
-        label={
-          countryCode !== 'GB'
-            ? 'Taxpayer identification number (TIN)'
-            : 'Unique Taxpayer Reference (UTR)'
-        }
-      />
+      {countryCode === 'GB' ? (
+        <TextFormField
+          name="soleTrader.utr"
+          control={control}
+          label="Unique Taxpayer Reference (UTR)"
+        />
+      ) : (
+        <TextFormField
+          name="soleTrader.tin"
+          control={control}
+          label="Taxpayer identification number (TIN)"
+        />
+      )}
+
       <StyledDropdownFormField
         name="soleTrader.industry"
         control={control}
         placeholder="Choose industry"
         label="Industry"
+        required
         items={industriesItems}
       />
       <TextFormField
         name="soleTrader.contactName"
         control={control}
         required
-        label="Contact name"
+        label="Full legal name"
       />
       <TextFormField
         name="soleTrader.email"
@@ -79,6 +91,7 @@ const AddNewMerchantSoleTraderForm: React.FunctionComponent<
       <TextFormField
         name="soleTrader.publicWebsite"
         control={control}
+        onFocus={onFocus}
         label="Business website"
       />
       <TextFormField
@@ -111,6 +124,14 @@ const AddNewMerchantSoleTraderForm: React.FunctionComponent<
         required
         label="Postcode"
       />
+      <WrapperCheckbox>
+        <CheckboxFormField
+          name="soleTrader.sendEmail"
+          control={control}
+          label="Send email for ID verification"
+          checked={isEmailSend}
+        />
+      </WrapperCheckbox>
     </>
   );
 };

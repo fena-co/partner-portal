@@ -7,6 +7,9 @@ const ShareSection = styled.div`
   display: flex;
   flex-direction: column;
   flex-basis: 40%;
+  @media (max-width: 1500px) {
+    flex-basis: 50%;
+  }
 `;
 
 const Title = styled(Typography)`
@@ -80,7 +83,9 @@ const ShareVerificationLink: React.FunctionComponent<
                       <Typography>{item.director}</Typography>
                     </TableCell>
                     <TableCell>
-                      <UrlWrapper>{item.verificationLink}</UrlWrapper>
+                      <UrlWrapper width={200}>
+                        {item.verificationLink}
+                      </UrlWrapper>
                     </TableCell>
                   </tr>
                 );
@@ -91,7 +96,7 @@ const ShareVerificationLink: React.FunctionComponent<
                   <Typography>N/A</Typography>
                 </TableCell>
                 <TableCell>
-                  <UrlWrapper>N/A</UrlWrapper>
+                  <UrlWrapper width={200}>N/A</UrlWrapper>
                 </TableCell>
               </tr>
             )}

@@ -33,7 +33,10 @@ const Content = styled.section`
 `;
 
 const CreateMerchantPage: NextPage = () => {
-  const [email, setEmail] = useState('');
+  const [successEmail, setSuccessEmail] = useState({
+    email: '',
+    sendEmail: true,
+  });
   return (
     <Layout>
       <Header>
@@ -41,10 +44,13 @@ const CreateMerchantPage: NextPage = () => {
         <HeaderText>Add new merchant</HeaderText>
       </Header>
       <Content>
-        {!email ? (
-          <AddNewMerchantForm setSuccess={setEmail} />
+        {!successEmail?.email ? (
+          <AddNewMerchantForm setSuccess={setSuccessEmail} />
         ) : (
-          <SuccessContainer email={email} />
+          <SuccessContainer
+            email={successEmail?.email}
+            sendEmail={successEmail.sendEmail}
+          />
         )}
       </Content>
     </Layout>

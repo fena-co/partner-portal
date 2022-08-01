@@ -44,10 +44,12 @@ const Tick = styled.img``;
 
 interface SuccessContainer {
   email: string;
+  sendEmail: boolean;
 }
 
 const SuccessContainer: React.FunctionComponent<SuccessContainer> = ({
   email,
+  sendEmail,
 }) => {
   return (
     <Container>
@@ -55,10 +57,12 @@ const SuccessContainer: React.FunctionComponent<SuccessContainer> = ({
         <Tick src="/image/icon/tick.svg" alt="tick" />
       </Circle>
       <Title variant="subtitle5">Success</Title>
-      <Text>
-        KYC verification was successfully sent to your email address:
-        <Hypertext>&nbsp;{email}</Hypertext>
-      </Text>
+      {sendEmail && (
+        <Text>
+          KYC verification was successfully sent to your email address:
+          <Hypertext>&nbsp;{email}</Hypertext>
+        </Text>
+      )}
 
       <ButtonWithChildren
         onClick={() => router.push(ROUTES.MERCHANTS)}

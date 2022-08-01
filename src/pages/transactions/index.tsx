@@ -5,7 +5,6 @@ import { NextPage } from 'next';
 import { useState, useEffect } from 'react';
 import ContextMenu from '../../components/ContextMenu';
 import Filter from '../../components/Filter';
-import Hypertext from '../../components/Hypertext';
 import SearchIcon from '../../components/Icon/SearchIcon';
 import Layout from '../../components/Layout';
 import LinkMenu from '../../components/LinkMenu';
@@ -60,40 +59,7 @@ const Transactions: NextPage = () => {
   const [isOpenPreview, setIsOpenPreview] = useState(false);
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [transactions, setTransactions] = useState<any>([
-    // {
-    //   amount: '1200',
-    //   fee: '0.10',
-    //   merchantName: 'Amazon',
-    //   completedOn: '04.01.2022, 14:21',
-    //   status: 'pending',
-    //   _id: '1234567',
-    // },
-    // {
-    //   amount: '1200',
-    //   fee: '0.10',
-    //   merchantName: 'Amazon',
-    //   completedOn: '04.01.2022, 14:21',
-    //   status: 'completed',
-    //   _id: '1234567',
-    // },
-    // {
-    //   amount: '1200',
-    //   fee: '0.10',
-    //   merchantName: 'Amazon',
-    //   completedOn: '04.01.2022, 14:21',
-    //   status: 'rejected',
-    //   _id: '1234567',
-    // },
-    // {
-    //   amount: '1200',
-    //   fee: '0.10',
-    //   merchantName: 'Amazon',
-    //   completedOn: '04.01.2022, 14:21',
-    //   status: 'refund',
-    //   _id: '1234567',
-    // },
-  ]);
+  const [transactions, setTransactions] = useState<any>([]);
   const [limit, setLimit] = useState(25);
   const [total, setTotal] = useState(0);
   const [selectedTransactionId, setSelectedTransactionId] = useState<
@@ -105,7 +71,7 @@ const Transactions: NextPage = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [filterConfig, setFilterConfig] = useState({});
-  const [searchConfig, setSearchConfig] = useState({});
+  const [searchConfig, setSearchConfig] = useState({ searchKeyword: '' });
 
   const [isSortAscending, setSortAscending] = useState(false);
   const sortDirection = isSortAscending ? 'DESC' : 'ASC';
@@ -277,7 +243,10 @@ const Transactions: NextPage = () => {
             <HeaderWrapper>
               <HeaderLeft>
                 <Typography variant="subtitle4">Transactions</Typography>
-                <SearchBox onChangeHandler={handleSearchChange} />
+                <SearchBox
+                  value={searchConfig.searchKeyword}
+                  onChangeHandler={handleSearchChange}
+                />
               </HeaderLeft>
               <HeaderButtons>
                 <Filter transactions onChange={handleFilterChange} />
@@ -290,9 +259,9 @@ const Transactions: NextPage = () => {
                   <Table>
                     <TableHeader>
                       <tr>
-                        <TableHeaderCell>Fena ID</TableHeaderCell>
+                        <TableHeaderCell>Reference number</TableHeaderCell>
                         <TableHeaderCell>Amount</TableHeaderCell>
-                        <TableHeaderCell>Fee</TableHeaderCell>
+                        {/* <TableHeaderCell>Fee</TableHeaderCell> */}
                         <TableHeaderCell>Status</TableHeaderCell>
                         <TableHeaderCell>Merchant</TableHeaderCell>
                         <TableHeaderCell>Date Completed</TableHeaderCell>
@@ -308,9 +277,9 @@ const Transactions: NextPage = () => {
                             setIsOpenPreview(true);
                           }}
                         >
-                          <TableBodyCell>{item._id}</TableBodyCell>
+                          <TableBodyCell>{item.reference}</TableBodyCell>
                           <AmmountCell>£{item.amount}</AmmountCell>
-                          <AmmountCell>£{item.fee}</AmmountCell>
+                          {/* <AmmountCell>£{item.fee}</AmmountCell> */}
                           <TableBodyCell>
                             <StatusWrapper status={item.status}>
                               {item.status}

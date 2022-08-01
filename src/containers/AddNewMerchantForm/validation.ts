@@ -34,6 +34,7 @@ export const soleTraderSchema = yup.object({
   ...businessInfoSchema,
   ...addBankAccountSchema,
   soleTrader: yup.object({
+    tin: yup.string(),
     utr: yup
       .string()
       .matches(/^[0-9]*$/, 'UTR cannot include letters')
@@ -49,22 +50,43 @@ export const soleTraderSchema = yup.object({
       zipCode: yup.string().required('This field is required'),
     }),
     industry: yup.object({
-      label: yup.string(),
-      value: yup.string(),
+      label: yup.string().required('This field is required'),
+      value: yup.string().required(),
     }),
     contactName: yup.string().required('This field is required'),
     email: yup
       .string()
       .required('This field is required')
       .email('Email must be valid'),
+    // phoneNumber: yup.object().when('...businessInfoSchema', {
+    //   is: ({ ...businessInfoSchema }) =>
+    //     businessInfoSchema?.country?.value === 'GB',
+    //   then: yup.object().shape({
+    //     code: yup.string().required(),
+    //     number: yup
+    //       .string()
+    //       .required('This field is required')
+    //       // .nullable()
+    //       // .transform((o, c) => (o === '' ? null : c))
+    //       .matches(/^[0-9]+$/, 'Phone number is not valid')
+    //       .matches(/^(0?\d{0,10})$/, 'Phone number length exceeded'),
+    //   }),
+    //   otherwise: yup.object().shape({
+    //     code: yup.string(),
+    //     number: yup.string(),
+    //     // .required('This field is required')
+    //     // .matches(/^[0-9]+$/, 'Phone number is not valid'),
+    //   }),
+    // }),
     phoneNumber: yup.object({
       code: yup.string().required(),
       number: yup
         .string()
-        .nullable()
-        .transform((o, c) => (o === '' ? null : c))
+        .required('This field is required')
+        // .nullable()
+        // .transform((o, c) => (o === '' ? null : c))
         .matches(/^[0-9]+$/, 'Phone number is not valid')
-        .matches(/^(0?\d{9}|\d{8})$/, 'Phone number is not valid'),
+        .matches(/^(0?\d{0,10})$/, 'Phone number length exceeded'),
     }),
     publicWebsite: yup.string().url('Enter correct url'),
   }),
@@ -87,8 +109,8 @@ export const limitedCompanySchema = yup.object({
       zipCode: yup.string().required('This field is required'),
     }),
     industry: yup.object({
-      label: yup.string(),
-      value: yup.string(),
+      label: yup.string().required('This field is required'),
+      value: yup.string().required(''),
     }),
     tradingName: yup.string(),
     tradingAddress: yup.object({
@@ -120,7 +142,7 @@ export const limitedCompanySchema = yup.object({
           .string()
           .required('This field is required')
           .matches(/^[0-9]+$/, 'Phone number is not valid')
-          .matches(/^(0?\d{9}|\d{8})$/, 'Phone number is not valid'),
+          .matches(/^(0?\d{0,10})$/, 'Phone number length exceeded'),
       }),
       otherwise: yup.object().shape({
         code: yup.string(),
