@@ -134,7 +134,8 @@ const addMerchantDefaultValues = {
   businessType: { label: '', value: '' },
   bankDetailsType: 'manual',
   soleTrader: {
-    utr: '',
+    utr: undefined,
+    tin: undefined,
     tradingName: '',
     address: {
       addressLine1: '',
@@ -205,6 +206,7 @@ const AddNewMerchantForm: NextPage<AddMerchantFormProps> = ({ setSuccess }) => {
     control,
     watch,
     setValue,
+    setError,
     formState: { errors },
   } = useForm<AddMerchantValues>({
     defaultValues: addMerchantDefaultValues,
@@ -235,7 +237,9 @@ const AddNewMerchantForm: NextPage<AddMerchantFormProps> = ({ setSuccess }) => {
   const limitedRegAddress = watch('limitedCompany.address');
 
   useEffect(() => {
-    findCompaniesHouseData(crn);
+    if (crn.length === 8) {
+      findCompaniesHouseData(crn);
+    }
   }, [crn]);
 
   const onSameAsRegisteredNameChange = () => {
@@ -288,7 +292,10 @@ const AddNewMerchantForm: NextPage<AddMerchantFormProps> = ({ setSuccess }) => {
         },
       });
     } catch (e) {
-      console.log('err', e);
+      setError('limitedCompany.crn', {
+        type: 'focus',
+        message: 'Company not found',
+      });
     }
   };
 
