@@ -87,7 +87,6 @@ const Preview = ({ handleClose, transactionId }: any) => {
     useState<TransactionApiType | null>(null);
   const [activePage, setActivePage] = useState<string>('details');
   const [providerData, setProviderData] = useState<any>(null);
-  console.log(providerData);
 
   const getTransaction = async () => {
     const result = await api.getSingleTransaction(transactionId);
