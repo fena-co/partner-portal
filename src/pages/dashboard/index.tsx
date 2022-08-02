@@ -67,6 +67,7 @@ const FilterDropdown = styled.div`
   align-items: center;
   width: 25%;
   max-height: 2rem;
+  display: none;
 `;
 
 const Period = styled(Typography)`
@@ -108,24 +109,23 @@ const FifthViewport = styled(FirstViewport)`
   border-radius: 10px;
 `;
 interface Card {
-  label: string,
-  value: string,
-  totalValue?: string,
-  period?: string,
-  icon: string
+  label: string;
+  value: string;
+  totalValue?: string;
+  period?: string;
+  icon: string;
 }
 
 interface ChartData {
   name: string;
-  items: Array<ChartItem>
+  items: Array<ChartItem>;
 }
 interface ChartItem {
-  _id: string,
-  company: string,
-  value: string
+  _id: string;
+  company: string;
+  value: string;
 }
 const Dashboard: NextPage = () => {
-
   const feeCards = [
     {
       label: 'Total number of transactions',
@@ -156,11 +156,11 @@ const Dashboard: NextPage = () => {
   const getDashboardData = async () => {
     try {
       const merchantsTopList = await Api.getMerchantsTopList();
-      const date = moment().subtract(90, 'days')
+      const date = moment().subtract(90, 'days');
       const res = await Api.getMerchantsTransactionsStats(date.toString());
-      const transactionsStats  = res.data;
+      const transactionsStats = res.data;
       const merchantActivityStats = await Api.getAllMerchantsActivityStats();
-      const merchantStats=merchantActivityStats.data;
+      const merchantStats = merchantActivityStats.data;
       setOverviewCards([
         {
           label: 'Total number of transactions',
@@ -218,61 +218,92 @@ const Dashboard: NextPage = () => {
           period: 'all time',
           icon: '/image/icon/redRejection.svg',
         },
-      ])
+      ]);
 
-      const topByAvgTrAmount: Array<ChartItem> = merchantsTopList.data.topByAvgAmount.map((merchStat: any) => {
-        return { company: merchStat.company.name, _id: merchStat.companyId, value: merchStat.result }
-      });
+      const topByAvgTrAmount: Array<ChartItem> =
+        merchantsTopList.data.topByAvgAmount.map((merchStat: any) => {
+          return {
+            company: merchStat.company.name,
+            _id: merchStat.companyId,
+            value: merchStat.result,
+          };
+        });
 
-      const topByCount: Array<ChartItem> = merchantsTopList.data.topByCount.map((merchStat: any) => {
-        return { company: merchStat.company.name, _id: merchStat.companyId, value: merchStat.result }
-      });
+      const topByCount: Array<ChartItem> = merchantsTopList.data.topByCount.map(
+        (merchStat: any) => {
+          return {
+            company: merchStat.company.name,
+            _id: merchStat.companyId,
+            value: merchStat.result,
+          };
+        }
+      );
 
-      const topByTotalAmount: Array<ChartItem> = merchantsTopList.data.topByTotalAmount.map((merchStat: any) => {
-        return { company: merchStat.company.name, _id: merchStat.companyId, value: merchStat.result }
-      });
+      const topByTotalAmount: Array<ChartItem> =
+        merchantsTopList.data.topByTotalAmount.map((merchStat: any) => {
+          return {
+            company: merchStat.company.name,
+            _id: merchStat.companyId,
+            value: merchStat.result,
+          };
+        });
 
-      const bottomByAvgAmount: Array<ChartItem> = merchantsTopList.data.bottomByAvgAmount.map((merchStat: any) => {
-        return { company: merchStat.company.name, _id: merchStat.companyId, value: merchStat.result }
-      });
+      const bottomByAvgAmount: Array<ChartItem> =
+        merchantsTopList.data.bottomByAvgAmount.map((merchStat: any) => {
+          return {
+            company: merchStat.company.name,
+            _id: merchStat.companyId,
+            value: merchStat.result,
+          };
+        });
 
-      const bottomByCount: Array<ChartItem> = merchantsTopList.data.bottomByCount.map((merchStat: any) => {
-        return { company: merchStat.company.name, _id: merchStat.companyId, value: merchStat.result }
-      });
+      const bottomByCount: Array<ChartItem> =
+        merchantsTopList.data.bottomByCount.map((merchStat: any) => {
+          return {
+            company: merchStat.company.name,
+            _id: merchStat.companyId,
+            value: merchStat.result,
+          };
+        });
 
-      const bottomByTotalAmount: Array<ChartItem> = merchantsTopList.data.bottomByTotalAmount.map((merchStat: any) => {
-        return { company: merchStat.company.name, _id: merchStat.companyId, value: merchStat.result }
-      });
+      const bottomByTotalAmount: Array<ChartItem> =
+        merchantsTopList.data.bottomByTotalAmount.map((merchStat: any) => {
+          return {
+            company: merchStat.company.name,
+            _id: merchStat.companyId,
+            value: merchStat.result,
+          };
+        });
 
       setTopMerchants([
         {
           name: 'By average transaction value ',
-          items: topByAvgTrAmount
+          items: topByAvgTrAmount,
         },
         {
           name: 'By number of transactions',
-          items: topByCount
+          items: topByCount,
         },
         {
           name: 'By transaction volume',
-          items: topByTotalAmount
+          items: topByTotalAmount,
         },
-      ])
+      ]);
 
       setBottomMerchants([
         {
           name: 'By average transaction value ',
-          items: bottomByAvgAmount
+          items: bottomByAvgAmount,
         },
         {
           name: 'By number of transactions',
-          items: bottomByCount
+          items: bottomByCount,
         },
         {
           name: 'By transaction volume',
-          items: bottomByTotalAmount
+          items: bottomByTotalAmount,
         },
-      ])
+      ]);
     } catch (e) {
       console.log(e);
     }
@@ -305,7 +336,7 @@ const Dashboard: NextPage = () => {
     >
       <PageHeader>
         <H3 variant="h3">Dashboard</H3>
-        <SearchBox onChangeHandler={() => { }} />
+        {/* <SearchBox onChangeHandler={() => {}} /> */}
       </PageHeader>
       <FirstViewport>
         <CustomHeader
@@ -321,8 +352,8 @@ const Dashboard: NextPage = () => {
                 props={{
                   label: el.label,
                   value: el.value,
-                  totalValue: el.totalValue || "",
-                  period: el.period || "",
+                  totalValue: el.totalValue || '',
+                  period: el.period || '',
                   icon: el.icon,
                 }}
               />
@@ -331,7 +362,7 @@ const Dashboard: NextPage = () => {
         </Cards>
       </FirstViewport>
 
-      <SecondViewport>
+      {/* <SecondViewport>
         <CustomHeader
           title="Transactions by size"
           description=" Please filter by merchant(s) and timeframe"
@@ -340,7 +371,7 @@ const Dashboard: NextPage = () => {
         <TableWrapper>
           <TransactionsTable />
         </TableWrapper>
-      </SecondViewport>
+      </SecondViewport> */}
 
       <ThirdViewport>
         <ViewportHeader>

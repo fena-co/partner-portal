@@ -119,14 +119,14 @@ const AddNewMerchantSoleTraderForm: React.FunctionComponent<
         required
         label="Postcode"
       />
-      <WrapperCheckbox>
+      {/* <WrapperCheckbox>
         <CheckboxFormField
           name="soleTrader.sendEmail"
           control={control}
           label="Send email for ID verification"
           checked={isEmailSend}
         />
-      </WrapperCheckbox>
+      </WrapperCheckbox> */}
     </>
   );
 };

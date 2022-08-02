@@ -22,6 +22,7 @@ const FilterDropdown = styled.div`
   align-items: center;
   width: 25%;
   max-height: 2rem;
+  display: none;
 `;
 
 const Period = styled(Typography)`
@@ -41,9 +42,7 @@ const CustomHeader: React.FunctionComponent<CustomHeaderProps> = ({
     <Content>
       <ViewportHeaderContent>
         <Subtitle4 variant="subtitle4">{title}</Subtitle4>
-        <Body1 variant="body1">
-          {description}
-        </Body1>
+        <Body1 variant="body1">{description}</Body1>
       </ViewportHeaderContent>
       <FilterDropdown>
         <Period variant="body4">Period:</Period>

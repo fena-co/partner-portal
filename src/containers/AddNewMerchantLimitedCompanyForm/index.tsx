@@ -226,14 +226,14 @@ const AddNewMerchantLimitedCompanyForm: React.FunctionComponent<
           />
         </>
       )} */}
-      <WrapperCheckbox>
+      {/* <WrapperCheckbox>
         <CheckboxFormField
           name="limitedCompany.sendEmail"
           control={control}
           label="Send email for ID verification"
           checked={isEmailSend}
         />
-      </WrapperCheckbox>
+      </WrapperCheckbox> */}
     </>
   );
 };
