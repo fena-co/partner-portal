@@ -83,9 +83,8 @@ const HeaderMenuItem = styled(Typography)<{ active?: boolean }>`
 `;
 
 const Preview = ({ handleClose, transactionId }: any) => {
-  const [transactionData, setTransactionData] = useState<TransactionApiType | null>(
-    null
-  );
+  const [transactionData, setTransactionData] =
+    useState<TransactionApiType | null>(null);
   const [activePage, setActivePage] = useState<string>('details');
   const [providerData, setProviderData] = useState<any>(null);
 
@@ -97,7 +96,7 @@ const Preview = ({ handleClose, transactionId }: any) => {
         setProviderData(fromProvider.data.payment);
     }
     setTransactionData(result);
-  }
+  };
 
   useEffect(() => {
     getTransaction();
@@ -159,13 +158,17 @@ const Preview = ({ handleClose, transactionId }: any) => {
               </tr>
               <tr>
                 <DetailsHeader>Merchant Payment ID: </DetailsHeader>
-                <DetailsCell>{providerData?.customerPaymentId || 'None'}</DetailsCell>
+                <DetailsCell>
+                  {providerData?.customerPaymentId || 'None'}
+                </DetailsCell>
               </tr>
               <tr>
                 <DetailsHeader>FPS Reference: </DetailsHeader>
-                <DetailsCell>{providerData?.id
-                  ? providerData.id.replaceAll('-', '').substring(0, 18)
-                  : 'None'}</DetailsCell>
+                <DetailsCell>
+                  {providerData?.id
+                    ? providerData.id.replaceAll('-', '').substring(0, 18)
+                    : 'None'}
+                </DetailsCell>
               </tr>
               <tr>
                 <DetailsHeader>FPPS Reference:: </DetailsHeader>
@@ -183,22 +186,30 @@ const Preview = ({ handleClose, transactionId }: any) => {
                 <DetailsHeader>Payment Completed At: </DetailsHeader>
                 <DetailsCell>
                   {' '}
-                  {transactionData?.completedAt ? moment(transactionData?.completedAt).format(
-                    'DD/MM/YYYY hh:mm:ss'
-                  ) : 'None'}
+                  {transactionData?.completedAt
+                    ? moment(transactionData?.completedAt).format(
+                        'DD/MM/YYYY hh:mm:ss'
+                      )
+                    : 'None'}
                 </DetailsCell>
               </tr>
               <tr>
                 <DetailsHeader>Beneficiary Name: </DetailsHeader>
-                <DetailsCell>{providerData?.owner.name || 'None'}</DetailsCell>
+                <DetailsCell>
+                  {providerData?.beneficiaryName || 'None'}
+                </DetailsCell>
               </tr>
               <tr>
                 <DetailsHeader>Beneficiary Bank Account: </DetailsHeader>
-                <DetailsCell>{providerData?.beneficiaryAccountNumber || 'None'}</DetailsCell>
+                <DetailsCell>
+                  {providerData?.beneficiaryAccountNumber || 'None'}
+                </DetailsCell>
               </tr>
               <tr>
                 <DetailsHeader>Beneficiary Bank Sort Code: </DetailsHeader>
-                <DetailsCell>{providerData?.beneficiarySortCode || 'None'}</DetailsCell>
+                <DetailsCell>
+                  {providerData?.beneficiarySortCode || 'None'}
+                </DetailsCell>
               </tr>
             </Details>
           </DetailsWrapper>
