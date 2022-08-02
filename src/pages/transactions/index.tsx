@@ -287,8 +287,8 @@ const Transactions: NextPage = () => {
                           </TableBodyCell>
                           <TableBodyCell>{item.owner.name}</TableBodyCell>
                           <TableBodyCell>
-                            {item.completedOn
-                              ? moment(item.completedOn).format('MM/DD/YYYY')
+                            {item.completedAt
+                              ? moment(item.completedAt).format('MM/DD/YYYY')
                               : 'None'}
                           </TableBodyCell>
                           <TableBodyCell>
