@@ -7,6 +7,8 @@ import TextFormField from '../../components/TextFormField';
 import { industries } from '../../constant/industries';
 import Typography from '../../components/Typography';
 import CheckboxFormField from '../../components/CheckboxFormField';
+import QuestionIcon from 'image/icon/question.svg';
+import ReactTooltip from 'react-tooltip';
 
 const StyledDropdownFormField = styled(DropdownFormField)`
   padding-top: 20px;
@@ -64,18 +66,27 @@ const AddNewMerchantLimitedCompanyForm: React.FunctionComponent<
       value: el.category,
     })),
   }));
-
+  const questionMark = (
+    <>
+      <span>
+        Company registration number (CRN){' '}
+        <a
+          data-place="top"
+          data-tip="Add your company registration number, and we’ll auto-populate your registered name and address"
+        >
+          <QuestionIcon />
+        </a>
+        <ReactTooltip place="top" effect="solid" backgroundColor="#2cd19e" />
+      </span>
+    </>
+  );
   return (
     <>
       <TextFormField
         name="limitedCompany.crn"
         control={control}
         required
-        label={
-          countryCode !== 'GB'
-            ? 'Registration number'
-            : 'Company registration number (CRN)'
-        }
+        label={countryCode !== 'GB' ? 'Registration number' : questionMark}
       />
       <TextFormField
         name="limitedCompany.registeredName"
