@@ -64,6 +64,7 @@ interface BankAccountValues extends BusinessInfoValues {
 
 interface SoleTraderValues extends BankAccountValues {
   soleTrader: {
+    countryCode?: string;
     utr: string;
     tradingName: string;
     tradingAddress: {
@@ -88,6 +89,7 @@ interface SoleTraderValues extends BankAccountValues {
 
 interface LimitedCompanyValues extends BankAccountValues {
   limitedCompany: {
+    countryCode?: string;
     crn: string;
     registeredName: string;
     registeredAddress: string;
@@ -134,8 +136,8 @@ const addMerchantDefaultValues = {
   businessType: { label: '', value: '' },
   bankDetailsType: 'manual',
   soleTrader: {
-    utr: undefined,
-    tin: undefined,
+    countryCode: '',
+    utr: '',
     tradingName: '',
     address: {
       addressLine1: '',
@@ -154,6 +156,7 @@ const addMerchantDefaultValues = {
     sendEmail: false,
   },
   limitedCompany: {
+    countryCode: '',
     crn: '',
     registeredName: '',
     address: {
@@ -241,6 +244,17 @@ const AddNewMerchantForm: NextPage<AddMerchantFormProps> = ({ setSuccess }) => {
       findCompaniesHouseData(crn);
     }
   }, [crn]);
+
+  useEffect(() => {
+    setValue('limitedCompany', {
+      ...limitedCompany,
+      countryCode: countryData.value,
+    });
+    setValue('soleTrader', {
+      ...soleTrader,
+      countryCode: countryData.value,
+    })
+  }, [countryData])
 
   const onSameAsRegisteredNameChange = () => {
     setSameAsRegisteredName(!sameAsRegisteredName);
