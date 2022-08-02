@@ -35,18 +35,17 @@ export const soleTraderSchema = yup.object({
   ...addBankAccountSchema,
   soleTrader: yup.object({
     countryCode: yup.string(),
-    tin: yup.string(),
-    utr: yup
-      .string().when('countryCode', {
-        is: 'GB',
-        then: yup.string()
-          .matches(/^[0-9]*$/, 'UTR cannot include letters')
-          .nullable()
-          .transform((o, c) => (o === '' ? null : c))
-          .min(10, 'Enter valid UTR')
-          .max(10, 'Enter valid UTR'),
-        otherwise: yup.string(),
-      }),
+    utr: yup.string().when('countryCode', {
+      is: 'GB',
+      then: yup
+        .string()
+        .matches(/^[0-9]*$/, 'UTR cannot include letters')
+        .nullable()
+        .transform((o, c) => (o === '' ? null : c))
+        .min(10, 'Enter valid UTR')
+        .max(10, 'Enter valid UTR'),
+      otherwise: yup.string(),
+    }),
     tradingName: yup.string().required('This field is required'),
     address: yup.object({
       addressLine1: yup.string().required('This field is required'),
@@ -93,7 +92,9 @@ export const soleTraderSchema = yup.object({
         .matches(/^[0-9]+$/, 'Phone number is not valid')
         .when('code', {
           is: '+44',
-          then: yup.string().matches(/^(0?\d{9}|\d{8})$/, 'Phone number is not valid'),
+          then: yup
+            .string()
+            .matches(/^(0?\d{0,10})$/, 'Phone number length exceeded'),
         }),
     }),
     publicWebsite: yup.string().url('Enter correct url'),
@@ -105,15 +106,15 @@ export const limitedCompanySchema = yup.object({
   ...addBankAccountSchema,
   limitedCompany: yup.object({
     countryCode: yup.string(),
-    crn: yup
-      .string()
-      .when('countryCode', {
-        is: 'GB',
-        then: yup.string().min(8, 'Enter valid CRN')
-          .max(8, 'Enter valid CRN')
-          .matches(/[a-zA-Z]{2}[0-9]{6}|[0-9]{8}/, 'Enter valid CRN'),
-        otherwise: yup.string(),
-      }),
+    crn: yup.string().when('countryCode', {
+      is: 'GB',
+      then: yup
+        .string()
+        .min(8, 'Enter valid CRN')
+        .max(8, 'Enter valid CRN')
+        .matches(/[a-zA-Z]{2}[0-9]{6}|[0-9]{8}/, 'Enter valid CRN'),
+      otherwise: yup.string(),
+    }),
     registeredName: yup.string().required('This field is required'),
     address: yup.object({
       addressLine1: yup.string().required('This field is required'),
@@ -157,8 +158,10 @@ export const limitedCompanySchema = yup.object({
           .matches(/^[0-9]+$/, 'Phone number is not valid')
           .when('code', {
             is: '+44',
-            then: yup.string().matches(/^(0?\d{0,10})$/, 'Phone number length exceeded')
-          })
+            then: yup
+              .string()
+              .matches(/^(0?\d{0,10})$/, 'Phone number length exceeded'),
+          }),
       }),
       otherwise: yup.object().shape({
         code: yup.string(),
@@ -169,7 +172,9 @@ export const limitedCompanySchema = yup.object({
           .matches(/^[0-9]+$/, 'Phone number is not valid')
           .when('code', {
             is: '+44',
-            then: yup.string().matches(/^(0?\d{9}|\d{8})$/, 'Phone number is not valid'),
+            then: yup
+              .string()
+              .matches(/^(0?\d{0,10})$/, 'Phone number is not valid'),
           }),
       }),
     }),
@@ -207,7 +212,7 @@ export const limitedCompanySchema = yup.object({
           .string()
           .required('This field is required')
           .matches(/^[0-9]+$/, 'Phone number is not valid')
-          .matches(/^(0?\d{9}|\d{8})$/, 'Phone number is not valid'),
+          .matches(/^(0?\d{0,10})$/, 'Phone number is not valid'),
       }),
       otherwise: yup.object().shape({
         code: yup.string(),
