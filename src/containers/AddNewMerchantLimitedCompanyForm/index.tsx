@@ -61,7 +61,7 @@ const AddNewMerchantLimitedCompanyForm: React.FunctionComponent<
     label: el.category,
     items: el.specifics.map((elem) => ({
       label: elem,
-      value: elem,
+      value: el.category,
     })),
   }));
 

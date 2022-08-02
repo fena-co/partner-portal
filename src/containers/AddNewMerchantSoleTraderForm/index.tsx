@@ -42,26 +42,21 @@ const AddNewMerchantSoleTraderForm: React.FunctionComponent<
     label: el.category,
     items: el.specifics.map((elem) => ({
       label: elem,
-      value: elem,
+      value: el.category,
     })),
   }));
 
   return (
     <>
-      {countryCode === 'GB' ? (
-        <TextFormField
-          name="soleTrader.utr"
-          control={control}
-          label="Unique Taxpayer Reference (UTR)"
-        />
-      ) : (
-        <TextFormField
-          name="soleTrader.tin"
-          control={control}
-          label="Taxpayer identification number (TIN)"
-        />
-      )}
-
+      <TextFormField
+        name="soleTrader.utr"
+        control={control}
+        label={
+          countryCode === 'GB'
+            ? 'Unique Taxpayer Reference (UTR)'
+            : 'Taxpayer identification number (TIN)'
+        }
+      />
       <StyledDropdownFormField
         name="soleTrader.industry"
         control={control}

@@ -137,7 +137,7 @@ const addMerchantDefaultValues = {
   bankDetailsType: 'manual',
   soleTrader: {
     countryCode: '',
-    utr: '',
+    utr: undefined,
     tradingName: '',
     address: {
       addressLine1: '',
@@ -209,6 +209,7 @@ const AddNewMerchantForm: NextPage<AddMerchantFormProps> = ({ setSuccess }) => {
     control,
     watch,
     setValue,
+    setError,
     formState: { errors },
   } = useForm<AddMerchantValues>({
     defaultValues: addMerchantDefaultValues,
@@ -238,8 +239,14 @@ const AddNewMerchantForm: NextPage<AddMerchantFormProps> = ({ setSuccess }) => {
 
   const limitedRegAddress = watch('limitedCompany.address');
 
+  const industry = watch('soleTrader.industry');
+
+  console.log(industry);
+
   useEffect(() => {
-    findCompaniesHouseData(crn);
+    if (crn.length === 8) {
+      findCompaniesHouseData(crn);
+    }
   }, [crn]);
 
   useEffect(() => {
@@ -250,8 +257,8 @@ const AddNewMerchantForm: NextPage<AddMerchantFormProps> = ({ setSuccess }) => {
     setValue('soleTrader', {
       ...soleTrader,
       countryCode: countryData.value,
-    })
-  }, [countryData])
+    });
+  }, [countryData]);
 
   const onSameAsRegisteredNameChange = () => {
     setSameAsRegisteredName(!sameAsRegisteredName);
@@ -303,7 +310,10 @@ const AddNewMerchantForm: NextPage<AddMerchantFormProps> = ({ setSuccess }) => {
         },
       });
     } catch (e) {
-      console.log('err', e);
+      setError('limitedCompany.crn', {
+        type: 'focus',
+        message: 'Company not found',
+      });
     }
   };
 
@@ -334,8 +344,7 @@ const AddNewMerchantForm: NextPage<AddMerchantFormProps> = ({ setSuccess }) => {
         name: soleTrader.tradingName,
         contactName: soleTrader.contactName,
         countryCode: country.value,
-        identifier:
-          countryData.value === 'GB' ? soleTrader.utr : soleTrader.tin,
+        identifier: soleTrader.utr || undefined,
         address: {
           addressLine1: soleTrader.address?.addressLine1,
           addressLine2: soleTrader.address?.addressLine2,
@@ -343,7 +352,7 @@ const AddNewMerchantForm: NextPage<AddMerchantFormProps> = ({ setSuccess }) => {
           zipCode: soleTrader.address?.zipCode,
           country: country.label,
         },
-        industry: soleTrader.industry.value,
+        industry: `${soleTrader.industry.value}/${soleTrader.industry.label}`,
         publicEmail: soleTrader.email,
         supportPhone: `${soleTrader.phoneNumber.code} ${soleTrader.phoneNumber.number}`,
         publicWebsite: soleTrader.publicWebsite,
@@ -383,7 +392,7 @@ const AddNewMerchantForm: NextPage<AddMerchantFormProps> = ({ setSuccess }) => {
           zipCode: limitedCompany.tradingAddress?.zipCode,
           country: country.label,
         },
-        industry: limitedCompany.industry.value,
+        industry: `${limitedCompany.industry.value}/${limitedCompany.industry.label}`,
         publicEmail: limitedCompany.email,
 
         supportPhone: `${limitedCompany.phoneNumber.code} ${limitedCompany.phoneNumber.number}`,
