@@ -239,12 +239,8 @@ const AddNewMerchantForm: NextPage<AddMerchantFormProps> = ({ setSuccess }) => {
 
   const limitedRegAddress = watch('limitedCompany.address');
 
-  const industry = watch('soleTrader.industry');
-
-  console.log(industry);
-
   useEffect(() => {
-    if (crn.length === 8) {
+    if (crn.length === 8 && countryData.value === 'GB') {
       findCompaniesHouseData(crn);
     }
   }, [crn]);
