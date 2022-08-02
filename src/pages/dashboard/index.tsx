@@ -1,7 +1,7 @@
 import GreenArrowUp from 'image/icon/greenArrowUp.svg';
 import RedArrowDown from 'image/icon/redArrowDown.svg';
 import { NextPage } from 'next';
-import { ChangeEvent } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import FeeCard from '../../components/FeeCard';
 import Layout from '../../components/Layout';
@@ -14,6 +14,8 @@ import Typography from '../../components/Typography';
 import { ROUTES } from '../../constant/route';
 import SearchBox from '../../components/SearchBox';
 import CustomHeader from '../../components/ViewportHeader';
+import Api from '../../util/api';
+import moment from 'moment';
 
 const PageHeader = styled.div`
   display: flex;
@@ -65,6 +67,7 @@ const FilterDropdown = styled.div`
   align-items: center;
   width: 25%;
   max-height: 2rem;
+  display: none;
 `;
 
 const Period = styled(Typography)`
@@ -105,101 +108,24 @@ const FifthViewport = styled(FirstViewport)`
   background-color: #f4f7f9;
   border-radius: 10px;
 `;
+interface Card {
+  label: string;
+  value: string;
+  totalValue?: string;
+  period?: string;
+  icon: string;
+}
 
-
+interface ChartData {
+  name: string;
+  items: Array<ChartItem>;
+}
+interface ChartItem {
+  _id: string;
+  company: string;
+  value: string;
+}
 const Dashboard: NextPage = () => {
-  const overviewCards = [
-    {
-      label: 'Total number of transactions',
-      value: '984',
-      totalValue: '8,760',
-      period: 'all time',
-      icon: '/image/icon/graySum.svg',
-    },
-    {
-      label: 'Total transaction value',
-      value: '£1,000,400',
-      totalValue: '£15,800,540',
-      period: 'all time',
-      icon: '/image/icon/greenDollar.svg',
-    },
-    {
-      label: 'Average transaction value',
-      value: '£650.00',
-      totalValue: '£683.00',
-      period: 'all time',
-      icon: '/image/icon/blueSum.svg',
-    },
-    {
-      label: 'Average number of transactions',
-      value: '74',
-      totalValue: '72',
-      period: 'all time',
-      icon: '/image/icon/blueSum.svg',
-    },
-    {
-      label: 'Average transaction volume',
-      value: '£48,100',
-      totalValue: '£62,100',
-      period: 'all time',
-      icon: '/image/icon/yellowDollar.svg',
-    },
-    {
-      label: 'Fees charged by Fena',
-      value: '£216.48',
-      totalValue: '£1,927.20',
-      period: 'all time',
-      icon: '/image/icon/grayPerсent.svg',
-    },
-    {
-      label: 'Number of active merchants',
-      value: '1200',
-      totalValue: '1200',
-      period: 'all time',
-      icon: '/image/icon/greenAcception.svg',
-    },
-    {
-      label: 'Number of inactive merchants',
-      value: '12',
-      totalValue: '30',
-      period: 'all time',
-      icon: '/image/icon/redRejection.svg',
-    },
-  ];
-
-  const transactionChartData = [
-    {
-      name: 'By average transaction value ',
-      items: [
-        { company: 'Allies Computing Ltd.', value: '1,450' },
-        { company: 'Anglo American Plc.', value: '1,380' },
-        { company: 'Antofagasta Plc.', value: '1,100' },
-        { company: 'Ashtead Group Plc.', value: '1,050' },
-        { company: 'Antofagasta Plc.', value: '980' },
-      ],
-    },
-    {
-      name: 'By number of transactions',
-      items: [
-        { company: 'Cineworld Group Plc', value: '1,987' },
-        { company: 'CNH Industrial NV', value: '1,899' },
-        { company: 'GlaxoSmithKline Plc', value: '1,100' },
-        { company: 'HSBC Holdings Plc', value: '1,050' },
-        { company: 'Antofagasta Plc.', value: '550' },
-      ],
-    },
-    {
-      name: 'By transaction volume',
-      items: [
-        { company: 'IHS Markit Ltd.', value: '21,489' },
-        { company: 'Imperial Brands Plc', value: '20,786' },
-        { company: 'Marks & Spencer Group Plc', value: '11,987' },
-        { company: 'Nationwide Building Society', value: '10,500' },
-        { company: 'NatWest Group Plc', value: '9,654' },
-      ],
-    },
-  ];
-
   const feeCards = [
     {
       label: 'Total number of transactions',
@@ -224,6 +150,169 @@ const Dashboard: NextPage = () => {
     },
   ];
 
+  const [overviewCards, setOverviewCards] = useState<Array<Card>>([]);
+  const [topMerchants, setTopMerchants] = useState<Array<ChartData>>([]);
+  const [bottomMerchants, setBottomMerchants] = useState<Array<ChartData>>([]);
+  const getDashboardData = async () => {
+    try {
+      const merchantsTopList = await Api.getMerchantsTopList();
+      const date = moment().subtract(90, 'days');
+      const res = await Api.getMerchantsTransactionsStats(date.toString());
+      const transactionsStats = res.data;
+      const merchantActivityStats = await Api.getAllMerchantsActivityStats();
+      const merchantStats = merchantActivityStats.data;
+      setOverviewCards([
+        {
+          label: 'Total number of transactions',
+          value: transactionsStats.trCountByDate,
+          totalValue: transactionsStats.trCount,
+          period: 'all time',
+          icon: '/image/icon/graySum.svg',
+        },
+        {
+          label: 'Total transaction value',
+          value: '£' + transactionsStats.trTotalAmountByDate,
+          totalValue: '£' + transactionsStats.trTotalAmount,
+          period: 'all time',
+          icon: '/image/icon/greenDollar.svg',
+        },
+        {
+          label: 'Average transaction value',
+          value: '£' + transactionsStats.trAvgAmountByDate,
+          totalValue: '£' + transactionsStats.trAvgAmount,
+          period: 'all time',
+          icon: '/image/icon/blueSum.svg',
+        },
+        {
+          label: 'Average number of transactions',
+          value: transactionsStats.trAvgCountByDate,
+          totalValue: transactionsStats.trAvgCount,
+          period: 'all time',
+          icon: '/image/icon/blueSum.svg',
+        },
+        {
+          label: 'Average transaction volume',
+          value: '£' + transactionsStats.trAvgVolumeByDate,
+          totalValue: '£' + transactionsStats.trAvgVolume,
+          period: 'all time',
+          icon: '/image/icon/yellowDollar.svg',
+        },
+        // {
+        //   label: 'Fees charged by Fena',
+        //   value: '£216.48',
+        //   totalValue: '£1,927.20',
+        //   period: 'all time',
+        //   icon: '/image/icon/grayPerсent.svg',
+        // },
+        {
+          label: 'Number of active merchants',
+          value: merchantStats.activeMerchantsByDate,
+          totalValue: merchantStats.activeMerchants,
+          period: 'all time',
+          icon: '/image/icon/greenAcception.svg',
+        },
+        {
+          label: 'Number of inactive merchants',
+          value: merchantStats.inactiveMerchantsByDate,
+          totalValue: merchantStats.inactiveMerchants,
+          period: 'all time',
+          icon: '/image/icon/redRejection.svg',
+        },
+      ]);
+
+      const topByAvgTrAmount: Array<ChartItem> =
+        merchantsTopList.data.topByAvgAmount.map((merchStat: any) => {
+          return {
+            company: merchStat.company.name,
+            _id: merchStat.companyId,
+            value: merchStat.result,
+          };
+        });
+
+      const topByCount: Array<ChartItem> = merchantsTopList.data.topByCount.map(
+        (merchStat: any) => {
+          return {
+            company: merchStat.company.name,
+            _id: merchStat.companyId,
+            value: merchStat.result,
+          };
+        }
+      );
+
+      const topByTotalAmount: Array<ChartItem> =
+        merchantsTopList.data.topByTotalAmount.map((merchStat: any) => {
+          return {
+            company: merchStat.company.name,
+            _id: merchStat.companyId,
+            value: merchStat.result,
+          };
+        });
+
+      const bottomByAvgAmount: Array<ChartItem> =
+        merchantsTopList.data.bottomByAvgAmount.map((merchStat: any) => {
+          return {
+            company: merchStat.company.name,
+            _id: merchStat.companyId,
+            value: merchStat.result,
+          };
+        });
+
+      const bottomByCount: Array<ChartItem> =
+        merchantsTopList.data.bottomByCount.map((merchStat: any) => {
+          return {
+            company: merchStat.company.name,
+            _id: merchStat.companyId,
+            value: merchStat.result,
+          };
+        });
+
+      const bottomByTotalAmount: Array<ChartItem> =
+        merchantsTopList.data.bottomByTotalAmount.map((merchStat: any) => {
+          return {
+            company: merchStat.company.name,
+            _id: merchStat.companyId,
+            value: merchStat.result,
+          };
+        });
+
+      setTopMerchants([
+        {
+          name: 'By average transaction value ',
+          items: topByAvgTrAmount,
+        },
+        {
+          name: 'By number of transactions',
+          items: topByCount,
+        },
+        {
+          name: 'By transaction volume',
+          items: topByTotalAmount,
+        },
+      ]);
+
+      setBottomMerchants([
+        {
+          name: 'By average transaction value ',
+          items: bottomByAvgAmount,
+        },
+        {
+          name: 'By number of transactions',
+          items: bottomByCount,
+        },
+        {
+          name: 'By transaction volume',
+          items: bottomByTotalAmount,
+        },
+      ]);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  useEffect(() => {
+    getDashboardData();
+  }, []);
+
   const onItemChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
     console.log(e.target.value);
   };
@@ -247,7 +336,7 @@ const Dashboard: NextPage = () => {
     >
       <PageHeader>
         <H3 variant="h3">Dashboard</H3>
-        <SearchBox />
+        {/* <SearchBox onChangeHandler={() => {}} /> */}
       </PageHeader>
       <FirstViewport>
         <CustomHeader
@@ -263,8 +352,8 @@ const Dashboard: NextPage = () => {
                 props={{
                   label: el.label,
                   value: el.value,
-                  totalValue: el.totalValue,
-                  period: el.period,
+                  totalValue: el.totalValue || '',
+                  period: el.period || '',
                   icon: el.icon,
                 }}
               />
@@ -273,13 +362,16 @@ const Dashboard: NextPage = () => {
         </Cards>
       </FirstViewport>
 
-      <SecondViewport>
-        <CustomHeader title='Transactions by size' description=' Please filter by merchant(s) and timeframe'/>
-        <SearchBox />
+      {/* <SecondViewport>
+        <CustomHeader
+          title="Transactions by size"
+          description=" Please filter by merchant(s) and timeframe"
+        />
+        <SearchBox onChangeHandler={() => { }} />
         <TableWrapper>
           <TransactionsTable />
         </TableWrapper>
-      </SecondViewport>
+      </SecondViewport> */}
 
       <ThirdViewport>
         <ViewportHeader>
@@ -304,7 +396,7 @@ const Dashboard: NextPage = () => {
         </ViewportHeader>
 
         <Chart>
-          {transactionChartData.map((el) => (
+          {topMerchants.map((el) => (
             <ChartColumns key={el.name}>
               <Subtitle5 variant="subtitle5" key={el.name}>
                 {el.name}
@@ -347,7 +439,7 @@ const Dashboard: NextPage = () => {
           </FilterDropdown>
         </ViewportHeader>
         <Chart>
-          {transactionChartData.map((el) => (
+          {bottomMerchants.map((el) => (
             <ChartColumns key={el.name}>
               <Subtitle5 variant="subtitle5" key={el.name}>
                 {el.name}
@@ -367,12 +459,12 @@ const Dashboard: NextPage = () => {
         </Chart>
       </FourthViewport>
 
-      <FifthViewport>
-      <CustomHeader title='Fees' description='Fees charged by fena' />
-          <Body1 variant="body1">
-              £0.22 per transaction (average of between 1001 and 5000
-              transactions per month)
-            </Body1>
+      {/* <FifthViewport>
+        <CustomHeader title="Fees" description="Fees charged by fena" />
+        <Body1 variant="body1">
+          £0.22 per transaction (average of between 1001 and 5000 transactions
+          per month)
+        </Body1>
         <FeeCards>
           {feeCards.map((el) => {
             return (
@@ -389,9 +481,17 @@ const Dashboard: NextPage = () => {
             );
           })}
         </FeeCards>
-      </FifthViewport>
+      </FifthViewport> */}
     </Layout>
   );
 };
+
+export async function getStaticProps(context: any) {
+  return {
+    props: {
+      protected: true,
+    },
+  };
+}
 
 export default Dashboard;

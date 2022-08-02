@@ -44,6 +44,7 @@ interface DeepItem {
   items: Item[];
 }
 interface DropdownFormFieldProps {
+  withoutSearch?: boolean;
   items: (Item | DeepItem)[];
   leftIcon?: () => JSX.Element;
   name: string;
@@ -65,6 +66,7 @@ const CountryFlagIcon: React.FunctionComponent<{
   ) : null;
 
 const DropdownFormField: FC<DropdownFormFieldProps> = ({
+  withoutSearch,
   items,
   label,
   name,
@@ -88,6 +90,7 @@ const DropdownFormField: FC<DropdownFormFieldProps> = ({
           )}
           <Dropdown
             items={items}
+            withoutSearch={withoutSearch}
             withCountryFlags={withCountryFlags}
             leftIcon={
               withCountryFlags

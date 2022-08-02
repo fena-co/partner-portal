@@ -29,7 +29,7 @@ const MetaText = styled.div`
 `;
 
 const Pages = styled.div`
-  margin: 20px 20px 0;
+  margin: 0 20px 0;
 `;
 
 const PageButton = styled.button<{ active?: boolean }>`

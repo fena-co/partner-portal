@@ -3,8 +3,8 @@ import moment from 'moment';
 import { useEffect, useState } from 'react';
 import styled, { css } from 'styled-components';
 import Typography from '../../components/Typography';
-import { Transaction } from '../../types/api';
-// import api from '../../../util/api';
+import api from '../../util/api';
+import { TransactionApiType } from '../../types/api';
 
 const Container = styled.div`
   margin-top: 25px;
@@ -83,18 +83,24 @@ const HeaderMenuItem = styled(Typography)<{ active?: boolean }>`
 `;
 
 const Preview = ({ handleClose, transactionId }: any) => {
-  const [transactionData, setTransactionData] = useState<Transaction | null>(
-    null
-  );
-
+  const [transactionData, setTransactionData] =
+    useState<TransactionApiType | null>(null);
   const [activePage, setActivePage] = useState<string>('details');
+  const [providerData, setProviderData] = useState<any>(null);
 
-  // useEffect(() => {
-  //   api.getTransaction(transactionId).then((res) => {
-  //     console.log(res);
-  //     setTransactionData(res);
-  //   });
-  // }, [transactionId]);
+  const getTransaction = async () => {
+    const result = await api.getSingleTransaction(transactionId);
+    if (result.rawData) {
+      const fromProvider = JSON.parse(result.rawData);
+      if (fromProvider.data?.payment)
+        setProviderData(fromProvider.data.payment);
+    }
+    setTransactionData(result);
+  };
+
+  useEffect(() => {
+    getTransaction();
+  }, [transactionId]);
 
   return (
     <>
@@ -113,7 +119,7 @@ const Preview = ({ handleClose, transactionId }: any) => {
             >
               Transaction Details
             </HeaderMenuItem>
-            <HeaderMenuItem
+            {/*<HeaderMenuItem
               onClick={() => setActivePage('remitter')}
               active={activePage === 'remitter'}
             >
@@ -124,7 +130,7 @@ const Preview = ({ handleClose, transactionId }: any) => {
               active={activePage === 'delivery'}
             >
               Delivery Address
-            </HeaderMenuItem>
+            </HeaderMenuItem>*/}
           </HeaderMenu>
           {/* Hiding the button for now */}
           {/* <ButtonCreation variant="contained">Download Receipt</ButtonCreation> */}
@@ -137,12 +143,12 @@ const Preview = ({ handleClose, transactionId }: any) => {
                 <DetailsCell>{transactionData?._id}</DetailsCell>
               </tr>
               <tr>
-                <DetailsHeader>Amount: </DetailsHeader>
-                <DetailsCell>{transactionData?.amount}</DetailsCell>
+                <DetailsHeader>Reference: </DetailsHeader>
+                <DetailsCell>{transactionData?.reference}</DetailsCell>
               </tr>
               <tr>
-                <DetailsHeader>Terminal: </DetailsHeader>
-                <DetailsCell>{'-'}</DetailsCell>
+                <DetailsHeader>Amount: </DetailsHeader>
+                <DetailsCell>{transactionData?.amount}</DetailsCell>
               </tr>
               <tr>
                 <DetailsHeader>Status: </DetailsHeader>
@@ -152,48 +158,58 @@ const Preview = ({ handleClose, transactionId }: any) => {
               </tr>
               <tr>
                 <DetailsHeader>Merchant Payment ID: </DetailsHeader>
-                <DetailsCell>{'None'}</DetailsCell>
+                <DetailsCell>
+                  {providerData?.customerPaymentId || 'None'}
+                </DetailsCell>
               </tr>
               <tr>
                 <DetailsHeader>FPS Reference: </DetailsHeader>
-                <DetailsCell>{'None'}</DetailsCell>
+                <DetailsCell>
+                  {providerData?.id
+                    ? providerData.id.replaceAll('-', '').substring(0, 18)
+                    : 'None'}
+                </DetailsCell>
               </tr>
               <tr>
                 <DetailsHeader>FPPS Reference:: </DetailsHeader>
-                <DetailsCell>{'None'}</DetailsCell>
+                <DetailsCell>{providerData?.id || 'None'}</DetailsCell>
               </tr>
               <tr>
                 <DetailsHeader>Created At: </DetailsHeader>
                 <DetailsCell>
-                  {moment(transactionData?.createdOn).format(
+                  {moment(transactionData?.createdAt).format(
                     'DD/MM/YYYY hh:mm:ss'
                   )}
                 </DetailsCell>
-              </tr>
-              <tr>
-                <DetailsHeader>Updated At: </DetailsHeader>
-                <DetailsCell>{'None'}</DetailsCell>
               </tr>
               <tr>
                 <DetailsHeader>Payment Completed At: </DetailsHeader>
                 <DetailsCell>
                   {' '}
-                  {moment(transactionData?.completedOn).format(
-                    'DD/MM/YYYY hh:mm:ss'
-                  )}
+                  {transactionData?.completedAt
+                    ? moment(transactionData?.completedAt).format(
+                        'DD/MM/YYYY hh:mm:ss'
+                      )
+                    : 'None'}
                 </DetailsCell>
               </tr>
               <tr>
                 <DetailsHeader>Beneficiary Name: </DetailsHeader>
-                <DetailsCell>{'None'}</DetailsCell>
+                <DetailsCell>
+                  {providerData?.beneficiaryName || 'None'}
+                </DetailsCell>
               </tr>
               <tr>
                 <DetailsHeader>Beneficiary Bank Account: </DetailsHeader>
-                <DetailsCell>{'None'}</DetailsCell>
+                <DetailsCell>
+                  {providerData?.beneficiaryAccountNumber || 'None'}
+                </DetailsCell>
               </tr>
               <tr>
                 <DetailsHeader>Beneficiary Bank Sort Code: </DetailsHeader>
-                <DetailsCell>{'None'}</DetailsCell>
+                <DetailsCell>
+                  {providerData?.beneficiarySortCode || 'None'}
+                </DetailsCell>
               </tr>
             </Details>
           </DetailsWrapper>

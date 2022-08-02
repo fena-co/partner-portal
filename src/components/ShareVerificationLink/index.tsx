@@ -1,11 +1,15 @@
 import styled from 'styled-components';
 import CopyInput from '../CopyInput';
 import Typography from '../Typography';
+import UrlWrapper from '../UrlWrapper';
 
 const ShareSection = styled.div`
   display: flex;
   flex-direction: column;
   flex-basis: 40%;
+  @media (max-width: 1500px) {
+    flex-basis: 50%;
+  }
 `;
 
 const Title = styled(Typography)`
@@ -16,7 +20,40 @@ const CopyInputWrapper = styled.div`
   margin-top: 15px;
 `;
 
-const ShareVerificationLink: React.FunctionComponent = () => {
+const Table = styled.table`
+  width: 100%;
+`;
+
+const DirectorHead = styled.th`
+  width: 200px;
+`;
+
+const LinkHead = styled.th``;
+
+const DirectorP = styled(Typography)`
+  text-align: start;
+  padding-bottom: 10px;
+`;
+
+const TableCell = styled.td`
+  padding: 10px 0;
+  border-bottom: 1px solid #dbe3eb;
+`;
+
+const LinkP = styled(Typography)`
+  text-align: start;
+  padding-bottom: 10px;
+`;
+interface ShareVerificationLinkProps {
+  verificationData?: {
+    director: string;
+    verificationLink: string;
+  }[];
+}
+
+const ShareVerificationLink: React.FunctionComponent<
+  ShareVerificationLinkProps
+> = ({ verificationData }) => {
   return (
     <ShareSection>
       <Title variant="subtitle5">Share verification link</Title>
@@ -26,7 +63,46 @@ const ShareVerificationLink: React.FunctionComponent = () => {
         whatsapp or any other messaging service
       </Typography>
       <CopyInputWrapper>
-        <CopyInput value="https://app.fena.com/r/mw0" />
+        <Table>
+          <thead>
+            <tr>
+              <DirectorHead>
+                <DirectorP>Director</DirectorP>
+              </DirectorHead>
+              <LinkHead>
+                <LinkP>Link</LinkP>
+              </LinkHead>
+            </tr>
+          </thead>
+          <tbody>
+            {verificationData?.length ? (
+              verificationData?.map((item) => {
+                return (
+                  <tr key={item.verificationLink}>
+                    <TableCell>
+                      <Typography>{item.director}</Typography>
+                    </TableCell>
+                    <TableCell>
+                      <UrlWrapper width={200}>
+                        {item.verificationLink}
+                      </UrlWrapper>
+                    </TableCell>
+                  </tr>
+                );
+              })
+            ) : (
+              <tr>
+                <TableCell>
+                  <Typography>N/A</Typography>
+                </TableCell>
+                <TableCell>
+                  <UrlWrapper width={200}>N/A</UrlWrapper>
+                </TableCell>
+              </tr>
+            )}
+          </tbody>
+        </Table>
+        {/* <CopyInput value="https://app.fena.com/r/mw0" /> */}
       </CopyInputWrapper>
     </ShareSection>
   );

@@ -18,13 +18,17 @@ import KeyIcon from 'image/icon/key.svg';
 import Typography from '../../../components/Typography';
 import styled from 'styled-components';
 import ContextMenu from '../../../components/ContextMenu';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import UrlWrapper from '../../../components/UrlWrapper';
 import Paginator from '../../../components/Paginator';
 import Hypertext from '../../../components/Hypertext';
 import { Control, useForm } from 'react-hook-form';
 import CreationModal from '../../../views/ApiKeyModals/creationModal';
 import ViewSecretModal from '../../../views/ApiKeyModals/viewModal';
+import Api from '../../../util/api';
+import { get } from 'lodash';
+import EditionModal from '../../../views/ApiKeyModals/editionModal';
+import Deletion from '../../../components/DeletionModal';
 
 const Key = styled(KeyIcon)`
   margin-right: 10px;
@@ -36,41 +40,106 @@ const StyledModalContent = styled(ModalContent)`
   top: 20%;
 `;
 
+const ApiKeyStatus = styled.div<{ status: boolean }>`
+  font-style: normal;
+  font-weight: 600;
+  font-size: 13px;
+  line-height: 16px;
+  text-align: center;
+  padding: 9px 18px;
+  border-radius: 5px;
+  width: 100px;
+  box-sizing: border-box;
+  color: ${({ status }) => (status ? '#2CD19E' : '#6C6C8A')};
+  background-color: ${({ status }) => (status ? '#E8F5E9' : '#E6E9ED')};
+`;
+
 const ApiKeysPage: NextPage = () => {
-  const { handleSubmit, control } = useForm({
+  const { handleSubmit, control, reset } = useForm({
     mode: 'onChange',
   });
 
-  const [apiKeys, setApiKeys] = useState([
-    {
-      name: 'Data-application-fena',
-      key: '2ff114b3925b595879v83de9dc15d40a',
-      terminalSecret: '342ffll34234mmj3l3n33995',
-    },
-    {
-      name: 'API Key created by john on 2022-07-01',
-      key: '62b488ae6ba2cb6a040b1e46',
-      terminalSecret: '342ffll34234mmj3l3n33990',
-    },
-  ]);
+  const {
+    handleSubmit: editHandleSubmit,
+    control: editControl,
+    reset: editReset,
+  } = useForm({
+    mode: 'onChange',
+  });
+
+  const [apiKeys, setApiKeys] = useState([]);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [limit, setLimit] = useState(25);
   const [total, setTotal] = useState(0);
 
   const [isCreateApiKeyModalOpen, setIsCreateApiKeyModalOpen] = useState(false);
-
+  const [isEditApiKeyModalOpen, setIsEditApiKeyModalOpen] = useState(false);
   const [isSecretShowModalOpen, setIsSecretShowModalOpen] = useState(false);
 
   const [itemSecretData, setItemSecretData] = useState('');
+  const [searchConfig, setSearchConfig] = useState({});
+
+  const [newSecretKey, setNewSecretKey] = useState('');
+  const [isKeyCreated, setIsKeyCreated] = useState(false);
+
+  const [apiKeyId, setApiKeyId] = useState('');
+
+  const [isDisableModalOpen, setDisableModalOpen] = useState(false);
+
+  const [idForDisable, setIdForDisable] = useState('');
+
+  const getApiKeys = async () => {
+    try {
+      const apiResult = await Api.getPaginatedApiKeys(currentPage, limit, {
+        searchKeyword: get(searchConfig, 'searchKeyword'),
+      });
+      console.log(apiResult);
+      setApiKeys(apiResult.docs);
+      setTotal(apiResult.totalDocs);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  useEffect(() => {
+    getApiKeys();
+  }, [currentPage, limit, searchConfig]);
 
   const handleRowsPerPageChange = async (val: number) => {
     setLimit(val);
     setCurrentPage(1);
   };
 
-  const onApiCreate = (data: any) => {
-    console.log(data);
+  const handleSearchChange = (filterValues: any) => {
+    setSearchConfig(filterValues);
+    setCurrentPage(1);
+  };
+
+  const onApiKeyCreate = async (data: any) => {
+    const response = await Api.createApiKey({ name: data.keyName });
+    console.log(response);
+    setNewSecretKey(response.result.secretKey);
+    console.log('triggered');
+    setIsKeyCreated(true);
+    getApiKeys();
+  };
+
+  const onApiKeyEdit = async (data: any) => {
+    const updateResponse = await Api.updateApiKey(
+      { name: data.newKeyName },
+      apiKeyId
+    );
+    console.log('update', updateResponse);
+    setIsEditApiKeyModalOpen(false);
+    getApiKeys();
+  };
+
+  const handlerDisable = async () => {
+    const disableRes = await Api.disableApiKey(idForDisable);
+    getApiKeys();
+    setDisableModalOpen(false);
+    console.log('disableKey', disableRes);
   };
 
   return (
@@ -78,7 +147,7 @@ const ApiKeysPage: NextPage = () => {
       <HeaderWrapper>
         <HeaderLeft>
           <Typography variant="subtitle4">API keys</Typography>
-          <SearchBox />
+          <SearchBox onChangeHandler={handleSearchChange} />
         </HeaderLeft>
         <HeaderButtons>
           <ButtonCreation
@@ -97,8 +166,8 @@ const ApiKeysPage: NextPage = () => {
           <TableHeader>
             <tr>
               <TableHeaderCell>Name</TableHeaderCell>
-              <TableHeaderCell>Key</TableHeaderCell>
               <TableHeaderCell>Terminal secret</TableHeaderCell>
+              <TableHeaderCell>Status</TableHeaderCell>
               <TableHeaderCell></TableHeaderCell>
             </tr>
           </TableHeader>
@@ -114,35 +183,36 @@ const ApiKeysPage: NextPage = () => {
                 >
                   <TableBodyCell>{item.name}</TableBodyCell>
                   <TableBodyCell>
-                    <UrlWrapper>{item.key}</UrlWrapper>
-                  </TableBodyCell>
-                  <TableBodyCell>
                     <Hypertext
                       onClick={() => {
-                        setItemSecretData(item.terminalSecret);
+                        setItemSecretData(item.secretKey);
                         setIsSecretShowModalOpen(true);
                       }}
                     >
                       Show
                     </Hypertext>
                   </TableBodyCell>
-
+                  <TableBodyCell>
+                    <ApiKeyStatus status={item.isActive}>
+                      {item.isActive ? 'Enabled' : 'Disabled'}
+                    </ApiKeyStatus>
+                  </TableBodyCell>
                   <TableBodyCell>
                     <ContextMenu
                       actions={[
                         {
                           label: 'Edit',
                           onClick: () => {
-                            // setCurrentTerminalData(item);
-                            setIsCreateApiKeyModalOpen(true);
+                            setApiKeyId(item._id);
+                            editReset({ newKeyName: item.name });
+                            setIsEditApiKeyModalOpen(true);
                           },
                         },
                         {
-                          label: 'Delete',
+                          label: 'Disable',
                           onClick: () => {
-                            // setIsDeleteOpen(true);
-                            // setTerminalIdForDeletion(item._id);
-                            // setTerminalName(item.name);
+                            setDisableModalOpen(true);
+                            setIdForDisable(item._id);
                           },
                           color: '#EF6355',
                         },
@@ -162,12 +232,48 @@ const ApiKeysPage: NextPage = () => {
           onPerPageChange={handleRowsPerPageChange}
         />
       </Content>
+      <Modal show={isDisableModalOpen}>
+        <ModalContent>
+          <Deletion
+            label="Disable api-key"
+            text="Are you sure you want to disable this key?"
+            buttonLabel="Disable"
+            handleCancel={() => setDisableModalOpen(false)}
+            handleDelete={() => {
+              handlerDisable();
+            }}
+          />
+        </ModalContent>
+      </Modal>
       <Modal show={isCreateApiKeyModalOpen}>
         <StyledModalContent>
-          <form onSubmit={handleSubmit(onApiCreate)}>
+          <form id="api-create" onSubmit={handleSubmit(onApiKeyCreate)}>
             <CreationModal
-              handleClose={() => setIsCreateApiKeyModalOpen(false)}
+              toggleCreation={() => {
+                setIsKeyCreated(false);
+                reset({ keyName: '' });
+              }}
+              handleClose={() => {
+                setIsCreateApiKeyModalOpen(false);
+                setIsKeyCreated(false);
+                reset({ keyName: '' });
+              }}
               control={control as Control}
+              secretKey={newSecretKey}
+              isKeyCreated={isKeyCreated}
+            />
+          </form>
+        </StyledModalContent>
+      </Modal>
+      <Modal show={isEditApiKeyModalOpen}>
+        <StyledModalContent>
+          <form id="api-edit" onSubmit={editHandleSubmit(onApiKeyEdit)}>
+            <EditionModal
+              handleClose={() => {
+                setIsEditApiKeyModalOpen(false);
+                reset({ newKeyName: '' });
+              }}
+              control={editControl as Control}
             />
           </form>
         </StyledModalContent>
@@ -183,5 +289,13 @@ const ApiKeysPage: NextPage = () => {
     </Layout>
   );
 };
+
+export async function getStaticProps(context: any) {
+  return {
+    props: {
+      protected: true,
+    },
+  };
+}
 
 export default ApiKeysPage;

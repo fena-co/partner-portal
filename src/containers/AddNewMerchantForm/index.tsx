@@ -1,5 +1,5 @@
 import { NextPage } from 'next';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Typography from '../../components/Typography';
 import ButtonWithChildren from '../../components/Button';
@@ -11,6 +11,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import DropdownFormField from '../../components/DropdownFormField';
 import { COUNTRY_CODES } from '../../constant/countries';
 import { addMerchantSchema } from './validation';
+import { CompanyTypes } from '@fena/types';
+import Api from '../../util/api';
 
 const businessTypeItems = [
   { label: 'Sole Trader / Individual', value: 'individual' },
@@ -62,9 +64,15 @@ interface BankAccountValues extends BusinessInfoValues {
 
 interface SoleTraderValues extends BankAccountValues {
   soleTrader: {
+    countryCode?: string;
     utr: string;
     tradingName: string;
-    tradingAddress: string;
+    tradingAddress: {
+      addressLine1: string;
+      addressLine2: string;
+      city: string;
+      zipCode: string;
+    };
     contactName: string;
     email: string;
     industry: {
@@ -75,11 +83,13 @@ interface SoleTraderValues extends BankAccountValues {
       code: string;
       number: string;
     };
+    sendEmail: boolean;
   };
 }
 
 interface LimitedCompanyValues extends BankAccountValues {
   limitedCompany: {
+    countryCode?: string;
     crn: string;
     registeredName: string;
     registeredAddress: string;
@@ -88,7 +98,18 @@ interface LimitedCompanyValues extends BankAccountValues {
       value: string;
     };
     tradingName: string;
-    tradingAddress: string;
+    address: {
+      addressLine1: string;
+      addressLine2: string;
+      city: string;
+      zipCode: string;
+    };
+    tradingAddress: {
+      addressLine1: string;
+      addressLine2: string;
+      city: string;
+      zipCode: string;
+    };
     registrationNumber: string;
     primaryContactName: string;
     email: string;
@@ -96,6 +117,9 @@ interface LimitedCompanyValues extends BankAccountValues {
       code: string;
       number: string;
     };
+    isDirector: boolean;
+    sendEmail: boolean;
+    sameAsRegisteredName: boolean;
     directorContactName: string;
     directorEmail: string;
     directorPhoneNumber: {
@@ -112,9 +136,15 @@ const addMerchantDefaultValues = {
   businessType: { label: '', value: '' },
   bankDetailsType: 'manual',
   soleTrader: {
-    utr: '',
+    countryCode: '',
+    utr: undefined,
     tradingName: '',
-    tradingAddress: '',
+    address: {
+      addressLine1: '',
+      addressLine2: '',
+      city: '',
+      zipCode: '',
+    },
     industry: { label: '', value: '' },
     contactName: '',
     email: '',
@@ -122,17 +152,30 @@ const addMerchantDefaultValues = {
       code: 'GB',
       number: '',
     },
+    publicWebsite: '',
+    sendEmail: false,
   },
   limitedCompany: {
+    countryCode: '',
     crn: '',
     registeredName: '',
-    registeredAddress: '',
+    address: {
+      addressLine1: '',
+      addressLine2: '',
+      city: '',
+      zipCode: '',
+    },
     industry: {
       label: '',
       value: '',
     },
     tradingName: '',
-    tradingAddress: '',
+    tradingAddress: {
+      addressLine1: '',
+      addressLine2: '',
+      city: '',
+      zipCode: '',
+    },
     registrationNumber: '',
     primaryContactName: '',
     email: '',
@@ -140,20 +183,33 @@ const addMerchantDefaultValues = {
       code: 'GB',
       number: '',
     },
+    publicWebsite: '',
+    isDirector: true,
+    sendEmail: false,
+    sameAsRegisteredName: false,
     directorContactName: '',
     directorEmail: '',
     directorPhoneNumber: {
-      code: '',
+      code: 'GB',
       number: '',
     },
   },
 };
 
-const AddNewMerchantForm: NextPage = () => {
+interface AddMerchantFormProps {
+  setSuccess: (data: { email: string; sendEmail: boolean }) => void;
+}
+
+const AddNewMerchantForm: NextPage<AddMerchantFormProps> = ({ setSuccess }) => {
+  const [sameAsRegisteredName, setSameAsRegisteredName] = useState(false);
+  const [sameAsRegisteredAddress, setSameAsRegisteredAddress] = useState(false);
+
   const {
     handleSubmit,
     control,
     watch,
+    setValue,
+    setError,
     formState: { errors },
   } = useForm<AddMerchantValues>({
     defaultValues: addMerchantDefaultValues,
@@ -167,17 +223,207 @@ const AddNewMerchantForm: NextPage = () => {
 
   const bankDetailsType = watch('bankDetailsType');
 
+  const isDirector = watch('limitedCompany.isDirector');
+
+  const isEmailSend = watch('limitedCompany.sendEmail');
+
+  const isSoleEmailSend = watch('soleTrader.sendEmail');
+
+  const crn = watch('limitedCompany.crn');
+
+  const registeredName = watch('limitedCompany.registeredName');
+
+  const limitedCompany = watch('limitedCompany');
+
+  const soleTrader = watch('soleTrader');
+
+  const limitedRegAddress = watch('limitedCompany.address');
+
+  useEffect(() => {
+    if (crn.length === 8 && countryData.value === 'GB') {
+      findCompaniesHouseData(crn);
+    }
+  }, [crn]);
+
+  useEffect(() => {
+    setValue('limitedCompany', {
+      ...limitedCompany,
+      countryCode: countryData.value,
+    });
+    setValue('soleTrader', {
+      ...soleTrader,
+      countryCode: countryData.value,
+    });
+  }, [countryData]);
+
+  const onSameAsRegisteredNameChange = () => {
+    setSameAsRegisteredName(!sameAsRegisteredName);
+    if (!sameAsRegisteredName) {
+      setValue<any>('limitedCompany', {
+        ...limitedCompany,
+        tradingName: registeredName,
+      });
+    } else {
+      setValue<any>('limitedCompany', {
+        ...limitedCompany,
+        tradingName: '',
+      });
+    }
+  };
+
+  const onSameAsRegisteredAddressChange = () => {
+    setSameAsRegisteredAddress(!sameAsRegisteredAddress);
+    if (!sameAsRegisteredAddress) {
+      setValue<any>('limitedCompany', {
+        ...limitedCompany,
+        tradingAddress: limitedRegAddress,
+      });
+    } else {
+      setValue<any>('limitedCompany', {
+        ...limitedCompany,
+        tradingAddress: {
+          addressLine1: '',
+          addressLine2: '',
+          city: '',
+          zipCode: '',
+        },
+      });
+    }
+  };
+
+  const findCompaniesHouseData = async (crn: string) => {
+    try {
+      const chResult = await Api.getCompaniesHouseData(crn);
+      const officeAddress = chResult?.registered_office_address;
+      setValue<any>('limitedCompany', {
+        ...limitedCompany,
+        registeredName: chResult?.company_name,
+        address: {
+          addressLine1: officeAddress?.address_line_1,
+          addressLine2: officeAddress?.address_line_2,
+          city: officeAddress?.locality,
+          zipCode: officeAddress?.postal_code,
+        },
+      });
+    } catch (e) {
+      setError('limitedCompany.crn', {
+        type: 'focus',
+        message: 'Company not found',
+      });
+    }
+  };
+
   const mappedCountryCodes = COUNTRY_CODES.map((el) => ({
     label: el.countryName,
     value: el.country,
   }));
 
-  const onSubmit = (data: any) => {
+  const onSubmit = async (data: any) => {
     console.log('submittedData', data);
+    const {
+      isDirector,
+      businessType,
+      soleTrader,
+      limitedCompany,
+      provider,
+      country,
+      name,
+      identification,
+      externalAccountId,
+    } = data;
+    console.log('chosenType', businessType.value);
+    if (businessType.value === 'individual') {
+      console.log('individ');
+      const individualApiRes = await Api.createMerchant({
+        sendEmail: soleTrader.sendEmail,
+        type: CompanyTypes.SOLE_TRADER,
+        name: soleTrader.tradingName,
+        contactName: soleTrader.contactName,
+        countryCode: country.value,
+        identifier: soleTrader.utr || undefined,
+        address: {
+          addressLine1: soleTrader.address?.addressLine1,
+          addressLine2: soleTrader.address?.addressLine2,
+          city: soleTrader.address?.city,
+          zipCode: soleTrader.address?.zipCode,
+          country: country.label,
+        },
+        industry: `${soleTrader.industry.value}/${soleTrader.industry.label}`,
+        publicEmail: soleTrader.email,
+        supportPhone: `${soleTrader.phoneNumber.code} ${soleTrader.phoneNumber.number}`,
+        publicWebsite: soleTrader.publicWebsite,
+        bankAccount:
+          provider.value && name && identification && externalAccountId
+            ? {
+                provider: provider.value,
+                name: name,
+                identification: identification?.replace(/-/g, ''),
+                externalAccountId: externalAccountId,
+              }
+            : undefined,
+      });
+      setSuccess({ email: soleTrader.email, sendEmail: soleTrader.sendEmail });
+      console.log(individualApiRes);
+    } else {
+      console.log('limited');
+      const limitedApiRes = await Api.createMerchant({
+        sendEmail: limitedCompany.sendEmail,
+        type: CompanyTypes.COMPANY,
+        countryCode: country.value,
+        contactName: limitedCompany.primaryContactName,
+        identifier: limitedCompany.crn,
+        name: limitedCompany.registeredName,
+        tradingName: limitedCompany.tradingName,
+        address: {
+          addressLine1: limitedCompany.address?.addressLine1,
+          addressLine2: limitedCompany.address?.addressLine2,
+          city: limitedCompany.address?.city,
+          zipCode: limitedCompany.address?.zipCode,
+          country: country.label,
+        },
+        tradingAddress: {
+          addressLine1: limitedCompany.tradingAddress?.addressLine1,
+          addressLine2: limitedCompany.tradingAddress?.addressLine2,
+          city: limitedCompany.tradingAddress?.city,
+          zipCode: limitedCompany.tradingAddress?.zipCode,
+          country: country.label,
+        },
+        industry: `${limitedCompany.industry.value}/${limitedCompany.industry.label}`,
+        publicEmail: limitedCompany.email,
+
+        supportPhone: `${limitedCompany.phoneNumber.code} ${limitedCompany.phoneNumber.number}`,
+        publicWebsite: limitedCompany.publicWebsite,
+        // directorsInfo: {
+        //   email: isDirector
+        //     ? limitedCompany.email
+        //     : limitedCompany.directorEmail,
+        //   name: isDirector
+        //     ? limitedCompany.primaryContactName
+        //     : limitedCompany.directorContactName,
+        //   phone: isDirector
+        //     ? `${limitedCompany.phoneNumber.code} ${limitedCompany.phoneNumber.number}`
+        //     : `${limitedCompany.directorPhoneNumber.code} ${limitedCompany.directorPhoneNumber.number}`,
+        // },
+        bankAccount:
+          provider.value && name && identification && externalAccountId
+            ? {
+                provider: provider.value,
+                name: name,
+                identification: identification?.replace(/-/g, ''),
+                externalAccountId: externalAccountId,
+              }
+            : undefined,
+      });
+      setSuccess({
+        email: limitedCompany.email,
+        sendEmail: limitedCompany.sendEmail,
+      });
+      console.log(limitedApiRes);
+    }
   };
 
   return (
-    <Content>
+    <>
       <Title variant="subtitle4">Add new merchant</Title>
       <form onSubmit={handleSubmit(onSubmit)}>
         <StyledDropdownFormField
@@ -190,6 +436,7 @@ const AddNewMerchantForm: NextPage = () => {
           items={mappedCountryCodes}
         />
         <StyledDropdownFormField
+          withoutSearch
           required
           name="businessType"
           control={control as any}
@@ -202,12 +449,33 @@ const AddNewMerchantForm: NextPage = () => {
           <>
             {businessType.value === 'individual' && (
               <AddNewMerchantSoleTraderForm
+                onFocus={() => {
+                  setValue<any>('soleTrader', {
+                    ...soleTrader,
+                    publicWebsite: 'https://',
+                  });
+                }}
+                isEmailSend={isSoleEmailSend}
                 countryData={countryData}
                 control={control as any}
               />
             )}
             {businessType.value === 'limited' && (
               <AddNewMerchantLimitedCompanyForm
+                onFocus={() => {
+                  setValue<any>('limitedCompany', {
+                    ...limitedCompany,
+                    publicWebsite: 'https://',
+                  });
+                }}
+                onSameAsRegisteredNameChange={onSameAsRegisteredNameChange}
+                onSameAsRegisteredAddressChange={
+                  onSameAsRegisteredAddressChange
+                }
+                sameAsRegisteredAddress={sameAsRegisteredAddress}
+                sameAsRegisteredName={sameAsRegisteredName}
+                isEmailSend={isEmailSend}
+                isDirector={isDirector}
                 countryData={countryData}
                 control={control as any}
               />
@@ -217,14 +485,20 @@ const AddNewMerchantForm: NextPage = () => {
               renderType={bankDetailsType}
             />
             <ButtonWrapper>
-              <ButtonWithChildren type="submit" variant="contained">
+              <ButtonWithChildren
+                onClick={() => {
+                  window.scrollTo({ top: 0, left: 0 });
+                }}
+                type="submit"
+                variant="contained"
+              >
                 ADD
               </ButtonWithChildren>
             </ButtonWrapper>
           </>
         )}
       </form>
-    </Content>
+    </>
   );
 };
 

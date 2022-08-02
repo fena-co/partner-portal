@@ -1,9 +1,10 @@
+import { TransactionStatus } from '@fena/types';
+import { get } from 'lodash';
 import moment from 'moment';
 import { NextPage } from 'next';
 import { useState, useEffect } from 'react';
 import ContextMenu from '../../components/ContextMenu';
 import Filter from '../../components/Filter';
-import Hypertext from '../../components/Hypertext';
 import SearchIcon from '../../components/Icon/SearchIcon';
 import Layout from '../../components/Layout';
 import LinkMenu from '../../components/LinkMenu';
@@ -28,7 +29,7 @@ import {
 } from '../../components/StyledComponents';
 import Typography from '../../components/Typography';
 import { ROUTES } from '../../constant/route';
-import { TransactionStatus } from '../../types/api';
+import Api from '../../util/api';
 import Preview from './Preview';
 
 const menus = [
@@ -58,40 +59,7 @@ const Transactions: NextPage = () => {
   const [isOpenPreview, setIsOpenPreview] = useState(false);
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [transactions, setTransactions] = useState<any>([
-    {
-      amount: '1200',
-      fee: '0.10',
-      merchantName: 'Amazon',
-      completedOn: '04.01.2022, 14:21',
-      status: 'pending',
-      _id: '1234567',
-    },
-    {
-      amount: '1200',
-      fee: '0.10',
-      merchantName: 'Amazon',
-      completedOn: '04.01.2022, 14:21',
-      status: 'completed',
-      _id: '1234567',
-    },
-    {
-      amount: '1200',
-      fee: '0.10',
-      merchantName: 'Amazon',
-      completedOn: '04.01.2022, 14:21',
-      status: 'rejected',
-      _id: '1234567',
-    },
-    {
-      amount: '1200',
-      fee: '0.10',
-      merchantName: 'Amazon',
-      completedOn: '04.01.2022, 14:21',
-      status: 'refund',
-      _id: '1234567',
-    },
-  ]);
+  const [transactions, setTransactions] = useState<any>([]);
   const [limit, setLimit] = useState(25);
   const [total, setTotal] = useState(0);
   const [selectedTransactionId, setSelectedTransactionId] = useState<
@@ -102,31 +70,114 @@ const Transactions: NextPage = () => {
   >(undefined);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [filterConfig, setFilterConfig] = useState({});
+  const [searchConfig, setSearchConfig] = useState({ searchKeyword: '' });
 
-  // const getTransactions = async () => {
-  //   try {
-  //     setLoading(true);
-  //     const transactionsResult = await Api.getPaginatedTransactions(
-  //       currentPage,
-  //       limit,
-  //       statusFilter
-  //     );
-  //     setTransactions(transactionsResult.docs);
-  //     setTotal(transactionsResult.totalDocs);
-  //     setLoading(false);
-  //   } catch (e) {
-  //     console.error(e);
-  //   }
-  // };
+  const [isSortAscending, setSortAscending] = useState(false);
+  const sortDirection = isSortAscending ? 'DESC' : 'ASC';
+  const [sortConfig, setSortConfig] = useState({
+    sort: 'completedAt',
+    sortDirection: 'DESC',
+  });
 
-  // useEffect(() => {
-  //   getTransactions();
-  // }, [currentPage, statusFilter, limit, getTransactions]);
+  const [toggleSortArrow, setToggleSortArrow] = useState({
+    completed: false,
+    amount: false,
+    created: false,
+  });
+
+  const getTransactions = async () => {
+    try {
+      setLoading(true);
+      const transactionsResult = await Api.getPaginatedTransactions(
+        currentPage,
+        limit,
+        statusFilter,
+        {
+          from: get(filterConfig, 'created.from'),
+          to: get(filterConfig, 'created.to'),
+          completedFrom: get(filterConfig, 'dueDate.from'),
+          completedTo: get(filterConfig, 'dueDate.to'),
+          amountFrom: get(filterConfig, 'amount.from'),
+          amountTo: get(filterConfig, 'amount.to'),
+          searchKeyword: get(searchConfig, 'searchKeyword'),
+          sort: get(sortConfig, 'sort'),
+          sortDirection: get(sortConfig, 'sortDirection'),
+        }
+      );
+      console.log(transactionsResult);
+      setTransactions(transactionsResult.docs);
+      setTotal(transactionsResult.totalDocs);
+      setLoading(false);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  useEffect(() => {
+    getTransactions();
+  }, [
+    currentPage,
+    statusFilter,
+    limit,
+    filterConfig,
+    searchConfig,
+    sortConfig,
+  ]);
 
   const setFilterRule = (status: TransactionStatus | undefined) => {
     console.log(status);
     setStatusFilter(status);
     setCurrentPage(1);
+  };
+
+  const handleFilterChange = (filterValues: any) => {
+    setFilterConfig(filterValues);
+  };
+
+  const handleSearchChange = (filterValues: any) => {
+    setSearchConfig(filterValues);
+    setCurrentPage(1);
+  };
+
+  const onCompletedSort = () => {
+    setSortAscending(!isSortAscending);
+    setSortConfig({
+      sort: 'completedAt',
+      sortDirection: sortDirection,
+    });
+    setToggleSortArrow({
+      ...toggleSortArrow,
+      completed: !toggleSortArrow.completed,
+      amount: false,
+    });
+  };
+
+  const onAmountSort = () => {
+    setSortAscending(!isSortAscending);
+    setSortConfig({
+      sort: 'amount',
+      sortDirection: sortDirection,
+    });
+    setToggleSortArrow({
+      ...toggleSortArrow,
+      amount: !toggleSortArrow.amount,
+      completed: false,
+    });
+  };
+
+  const onCreatedSort = () => {
+    setSortAscending(!isSortAscending);
+    setSortConfig({
+      sort: 'createdAt',
+      sortDirection: sortDirection,
+    });
+    setToggleSortArrow({
+      ...toggleSortArrow,
+      created: !toggleSortArrow.created,
+      completed: false,
+      amount: false,
+    });
   };
 
   const renderEmpty = () => {
@@ -192,10 +243,13 @@ const Transactions: NextPage = () => {
             <HeaderWrapper>
               <HeaderLeft>
                 <Typography variant="subtitle4">Transactions</Typography>
-                <SearchBox />
+                <SearchBox
+                  value={searchConfig.searchKeyword}
+                  onChangeHandler={handleSearchChange}
+                />
               </HeaderLeft>
               <HeaderButtons>
-                <Filter />
+                <Filter transactions onChange={handleFilterChange} />
               </HeaderButtons>
             </HeaderWrapper>
             <LinkMenu menus={menus} clickHandler={setFilterRule} />
@@ -205,9 +259,9 @@ const Transactions: NextPage = () => {
                   <Table>
                     <TableHeader>
                       <tr>
-                        <TableHeaderCell>Fena ID</TableHeaderCell>
+                        <TableHeaderCell>Reference number</TableHeaderCell>
                         <TableHeaderCell>Amount</TableHeaderCell>
-                        <TableHeaderCell>Fee</TableHeaderCell>
+                        {/* <TableHeaderCell>Fee</TableHeaderCell> */}
                         <TableHeaderCell>Status</TableHeaderCell>
                         <TableHeaderCell>Merchant</TableHeaderCell>
                         <TableHeaderCell>Date Completed</TableHeaderCell>
@@ -223,18 +277,18 @@ const Transactions: NextPage = () => {
                             setIsOpenPreview(true);
                           }}
                         >
-                          <TableBodyCell>{item._id}</TableBodyCell>
+                          <TableBodyCell>{item.reference}</TableBodyCell>
                           <AmmountCell>£{item.amount}</AmmountCell>
-                          <AmmountCell>£{item.fee}</AmmountCell>
+                          {/* <AmmountCell>£{item.fee}</AmmountCell> */}
                           <TableBodyCell>
                             <StatusWrapper status={item.status}>
                               {item.status}
                             </StatusWrapper>
                           </TableBodyCell>
-                          <TableBodyCell>{item.merchantName}</TableBodyCell>
+                          <TableBodyCell>{item.owner?.name}</TableBodyCell>
                           <TableBodyCell>
-                            {item.completedOn
-                              ? moment(item.completedOn).format('MM/DD/YYYY')
+                            {item.completedAt
+                              ? moment(item.completedAt).format('MM/DD/YYYY')
                               : 'None'}
                           </TableBodyCell>
                           <TableBodyCell>
@@ -274,5 +328,13 @@ const Transactions: NextPage = () => {
     </Layout>
   );
 };
+
+export async function getStaticProps(context: any) {
+  return {
+    props: {
+      protected: true,
+    },
+  };
+}
 
 export default Transactions;

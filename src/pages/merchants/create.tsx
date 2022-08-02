@@ -5,6 +5,8 @@ import CloseIcon from 'image/icon/close.svg';
 import Layout from '../../components/Layout';
 import router from 'next/router';
 import AddNewMerchantForm from '../../containers/AddNewMerchantForm';
+import { useState } from 'react';
+import SuccessContainer from '../../containers/AddMerchantSuccess';
 
 const Header = styled.div`
   display: flex;
@@ -24,14 +26,33 @@ const HeaderText = styled(Typography)`
   padding-left: 10px;
 `;
 
+const Content = styled.section`
+  display: flex;
+  flex-direction: column;
+  padding: 30px calc((100vw - 380px) / 2);
+`;
+
 const CreateMerchantPage: NextPage = () => {
+  const [successEmail, setSuccessEmail] = useState({
+    email: '',
+    sendEmail: true,
+  });
   return (
     <Layout>
       <Header>
         <Close onClick={() => router.back()} />
         <HeaderText>Add new merchant</HeaderText>
       </Header>
-      <AddNewMerchantForm />
+      <Content>
+        {!successEmail?.email ? (
+          <AddNewMerchantForm setSuccess={setSuccessEmail} />
+        ) : (
+          <SuccessContainer
+            email={successEmail?.email}
+            sendEmail={successEmail.sendEmail}
+          />
+        )}
+      </Content>
     </Layout>
   );
 };

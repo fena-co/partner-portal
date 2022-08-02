@@ -69,8 +69,8 @@ const DropDownList = styled.ul`
   padding: 0;
   margin-top: 8px;
   background: #fff;
-  height: 300px;
-  overflow-y: scroll;
+  max-height: 300px;
+  overflow: auto;
 `;
 
 const IconWrapper = styled.span`
@@ -100,6 +100,9 @@ const Category = styled.div`
   align-items: center;
   padding: 10px 15px;
   cursor: pointer;
+  &:hover {
+    background-color: #f4f7f9;
+  }
 `;
 
 const CategoryTitleWrapper = styled.div`
@@ -147,6 +150,7 @@ interface DeepItem {
 }
 
 interface DropdownProps {
+  withoutSearch?: boolean;
   items: (Item | DeepItem)[];
   leftIcon?: () => JSX.Element;
   // variant?: 'error' | 'success' | 'active' | 'default';
@@ -157,6 +161,7 @@ interface DropdownProps {
 }
 
 const Dropdown: FC<DropdownProps> = ({
+  withoutSearch,
   items,
   onChange,
   leftIcon,
@@ -238,12 +243,15 @@ const Dropdown: FC<DropdownProps> = ({
           <DropDownListContainer onClick={(e) => e.stopPropagation()}>
             {' '}
             <DropDownList>
-              <SearchInput
-                ref={searchRef}
-                value={searchString}
-                onChange={handleSearch}
-                placeholder="Search..."
-              />
+              {!withoutSearch && (
+                <SearchInput
+                  ref={searchRef}
+                  value={searchString}
+                  onChange={handleSearch}
+                  placeholder="Search..."
+                />
+              )}
+
               {items.filter(filterItems).map((el, index) => {
                 const isDeepItem = (el as any).value === undefined;
                 return (
@@ -258,8 +266,12 @@ const Dropdown: FC<DropdownProps> = ({
                       }
                     >
                       <CategoryTitleWrapper>
-                        {withCountryFlags && <CountryFlagIcon code={(el as any).value} />}
-                        <CategoryTitle variant="body1">{el.label}</CategoryTitle>
+                        {withCountryFlags && (
+                          <CountryFlagIcon code={(el as any).value} />
+                        )}
+                        <CategoryTitle variant="body1">
+                          {el.label}
+                        </CategoryTitle>
                       </CategoryTitleWrapper>
                       {isDeepItem && (
                         <StyledArrowDown

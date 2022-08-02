@@ -90,7 +90,7 @@ const MenuItem = styled.div<{ color?: string }>`
 `;
 
 interface ContextMenuProps {
-  actions: {
+  actions?: {
     label: string;
     color?: string;
     onClick: () => void;
@@ -136,7 +136,7 @@ function ContextMenu(props: ContextMenuProps) {
               ACTIONS
             </Typography>
           </MenuHeader>
-          {props.actions.map((action) => (
+          {props.actions?.map((action) => (
             <MenuItem key={action.label} color={action.color}>
               <a onClick={action.onClick}>{action.label}</a>
             </MenuItem>
